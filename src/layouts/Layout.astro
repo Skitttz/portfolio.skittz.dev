@@ -6,20 +6,21 @@ import { ClientRouter } from 'astro:transitions';
 <!doctype html>
 <html lang="en" class="overflow-y-hidden">
   <head>
-    <script is:inline>
-      (function applyTheme() {
-        const theme = localStorage.getItem('theme');
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else if (theme === 'light') {
-          document.documentElement.classList.remove('dark');
-        } else {
-          const prefersDark = window.matchMedia(
-            '(prefers-color-scheme: dark)',
-          ).matches;
-          document.documentElement.classList.toggle('dark', prefersDark);
-        }
-      })();
+    <script>
+      const themeToggle = document.getElementById('theme-toggle');
+      const htmlElement = document.documentElement;
+
+      if (localStorage.getItem('theme') === 'dark') {
+        htmlElement.classList.add('dark');
+      }
+
+      themeToggle.addEventListener('click', () => {
+        htmlElement.classList.toggle('dark');
+        const newTheme = htmlElement.classList.contains('dark')
+          ? 'dark'
+          : 'light';
+        localStorage.setItem('theme', newTheme);
+      });
     </script>
 
     <meta charset="UTF-8" />
@@ -45,7 +46,7 @@ import { ClientRouter } from 'astro:transitions';
 </html>
 
 <ClientRouter />
-<script is:inline>
+<script>
   document.addEventListener('astro:after-swap', () => {
     const theme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia(
@@ -64,6 +65,6 @@ import { ClientRouter } from 'astro:transitions';
     height: 100%;
   }
   html {
-    color-scheme: light dark;
+    color-scheme: dark light;
   }
 </style>

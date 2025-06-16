@@ -32,8 +32,8 @@ try {
 }
 ---
 
-<div class="flex justify-center text-2xl">
-  <div class="relative group">
+<div class="flex justify-center text-2xl z-50">
+  <div class="relative group z-50">
     <div
       class="w-24 h-24 bg-white dark:bg-gray-900 rounded-2xl shadow-lg flex items-center justify-center border border-gray-200 dark:border-gray-800 cursor-pointer transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
     >
@@ -67,25 +67,80 @@ try {
       class="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
     >
       <div
-        class="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 p-6 w-80 max-w-sm relative"
+        class="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 p-6 w-80 max-w-sm relative z-50"
       >
         <div
           class="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-l border-t border-gray-100 dark:border-gray-800 rotate-45"
         >
         </div>
 
-        <div class="flex items-center space-x-3 mb-4">
-          <img
-            src="https://github.com/skitttz.png"
-            alt="Avatar"
-            class="w-14 h-14 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
-          />
-          <div>
-            <p
-              class="text-gray-900 dark:text-white font-semibold text-base tracking-tight"
+        <div class="flex items-center space-x-4 mb-5">
+          <div class="relative">
+            <img
+              src="https://github.com/skitttz.png"
+              alt="Avatar"
+              class="w-16 h-16 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600 ring-offset-2 ring-offset-white dark:ring-offset-gray-800"
+            />
+            <div
+              class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center"
             >
-              @skitttz
-            </p>
+              <div class="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse">
+              </div>
+            </div>
+          </div>
+          <div class="flex-1 flex flex-col gap-0.5">
+            <div class="flex items-center space-x-2">
+              <h3
+                class="text-gray-900 dark:text-white font-bold text-lg tracking-tight"
+              >
+                @skitttz
+              </h3>
+              <svg
+                class="w-4 h-4 text-blue-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            <div
+              class="text-left text-gray-600 dark:text-gray-400 text-sm mt-1"
+            >
+              Mid-level Developer
+            </div>
+            <div
+              class="flex items-center space-x-3 mt-2 text-xs text-gray-500 dark:text-gray-400"
+            >
+              <span class="flex items-center">
+                <svg
+                  class="w-3 h-3 mr-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                    clip-rule="evenodd"></path>
+                </svg>
+                Brazil
+              </span>
+              <span class="flex items-center">
+                <svg
+                  class="w-3 h-3 mr-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"></path>
+                </svg>
+                Joined 2019
+              </span>
+            </div>
           </div>
         </div>
 
