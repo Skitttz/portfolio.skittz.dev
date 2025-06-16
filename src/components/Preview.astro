@@ -14,7 +14,7 @@ interface IGitHubRepo {
 let topRepos: IGitHubRepo[] = [];
 
 try {
-  const res = await fetch("https://api.github.com/users/skitttz/repos");
+  const res = await fetch('https://api.github.com/users/skitttz/repos');
 
   if (!res.ok) {
     throw new Error(`GitHub API error: ${res.status}`);
@@ -26,21 +26,21 @@ try {
 
   topRepos = repos
     .sort((a, b) => b.stargazers_count - a.stargazers_count)
-    .slice(0, 4);
+    .slice(0, 3);
 } catch (error) {
-  console.error("Error API", error);
+  console.error('Error API', error);
 }
 ---
 
 <div class="flex justify-center text-2xl">
   <div class="relative group">
     <div
-      class="w-24 h-24 bg-white dark:bg-gray-800 rounded-2xl shadow-lg flex items-center justify-center border border-gray-200 dark:border-gray-700 cursor-pointer transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
+      class="w-24 h-24 bg-white dark:bg-gray-900 rounded-2xl shadow-lg flex items-center justify-center border border-gray-200 dark:border-gray-800 cursor-pointer transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
     >
       <img
         class="w-20 h-20 rounded-xl object-cover"
         src="https://github.com/skitttz.png"
-        alt="Avatar do GitHub"
+        alt="Preview"
       />
     </div>
 
@@ -48,11 +48,11 @@ try {
       class="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-100 group-hover:opacity-0 transition-all duration-300 pointer-events-none"
     >
       <div
-        class="whitespace-nowrap text-white text-xs px-3 py-1 rounded-lg shadow-lg relative"
+        class="whitespace-nowrap text-white text-xs px-4 py-2 rounded-full bg-gray-800 dark:bg-gray-700 shadow-md relative font-medium tracking-wide"
       >
         Hover it!
         <div
-          class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800 dark:border-t-gray-700"
+          class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-t-6 border-transparent border-t-gray-800 dark:border-t-gray-700"
         >
         </div>
       </div>
@@ -64,13 +64,13 @@ try {
     </div>
 
     <div
-      class="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto z-50"
+      class="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
     >
       <div
-        class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 w-80 max-w-sm relative"
+        class="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 p-6 w-80 max-w-sm relative"
       >
         <div
-          class="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white dark:bg-gray-800 border-l border-t border-gray-200 dark:border-gray-700 rotate-45"
+          class="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-l border-t border-gray-100 dark:border-gray-800 rotate-45"
         >
         </div>
 
@@ -78,16 +78,18 @@ try {
           <img
             src="https://github.com/skitttz.png"
             alt="Avatar"
-            class="w-14 h-14 rounded-full object-cover"
+            class="w-14 h-14 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
           />
           <div>
-            <p class="text-gray-900 dark:text-white font-semibold text-base">
+            <p
+              class="text-gray-900 dark:text-white font-semibold text-base tracking-tight"
+            >
               @skitttz
             </p>
           </div>
         </div>
 
-        <div class="space-y-2 mb-4">
+        <div class="space-y-3 mb-4">
           {
             topRepos.length > 0 ? (
               topRepos.map((repo) => (
@@ -95,20 +97,20 @@ try {
                   href={repo.html_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="block bg-gray-50 dark:bg-gray-700 rounded-xl p-3 border border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 group transition-all duration-200"
+                  class="block bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 group transition-all duration-200 transform hover:-translate-y-0.5"
                 >
-                  <div class="text-gray-900 dark:text-white font-semibold text-sm">
+                  <div class="text-gray-900 dark:text-white font-semibold text-sm tracking-tight">
                     {repo.name}
                   </div>
-                  <p class="text-gray-600 dark:text-gray-400 text-xs mt-1 truncate">
-                    {repo.description || "No description available"}
+                  <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
+                    {repo.description || 'No description available'}
                   </p>
                   <div class="text-gray-500 dark:text-gray-400 text-xs mt-2 flex items-center justify-between">
                     <span class="flex items-center">
                       ⭐ {repo.stargazers_count}
                     </span>
                     {repo.language && (
-                      <span class="bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded text-xs border dark:border-gray-500">
+                      <span class="bg-gray-200/50 dark:bg-gray-600/50 px-2 py-1 rounded-full text-xs border border-gray-300/50 dark:border-gray-600/50 font-medium">
                         {repo.language}
                       </span>
                     )}
@@ -117,7 +119,7 @@ try {
               ))
             ) : (
               <div class="text-center py-4">
-                <p class="text-gray-500 dark:text-gray-400 text-sm">
+                <p class="text-gray-500 dark:text-gray-300 text-sm">
                   No repositories found
                 </p>
               </div>
@@ -125,12 +127,12 @@ try {
           }
         </div>
 
-        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="pt-4 border-t border-gray-200/50 dark:border-gray-700/50">
           <a
             href="https://github.com/skitttz"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium transition-colors duration-200"
+            class="text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 text-sm font-medium transition-colors duration-200 tracking-wide"
           >
             View profile →
           </a>
