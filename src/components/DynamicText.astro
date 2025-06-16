@@ -1,0 +1,191 @@
+---
+interface Props {
+  texts?: string[];
+  typingSpeed?: number;
+  erasingSpeed?: number;
+  displayDuration?: number;
+  className?: string;
+}
+
+const {
+  texts = ["Front-End Developer", "Software Engineer", "UI/UX Designer"],
+  typingSpeed = 75,
+  erasingSpeed = 40,
+  displayDuration = 4000,
+  className = "",
+} = Astro.props;
+---
+
+<span
+  id="typewriter-text"
+  class:list={[
+    "font-bold bg-gradient-to-r from-blue-600 to-slate-600 dark:from-blue-400 dark:to-slate-300 bg-clip-text text-transparent min-h-[1.5rem] inline-block relative",
+    className,
+  ]}
+  data-texts={JSON.stringify(texts)}
+  data-typing-speed={typingSpeed}
+  data-erasing-speed={erasingSpeed}
+  data-display-duration={displayDuration}
+>
+  <span class="typewriter-cursor">|</span>
+</span>
+
+<style>
+  @keyframes blink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    51%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .typewriter-cursor {
+    animation: blink 1s infinite;
+    margin-left: 2px;
+  }
+
+  .typewriter-text {
+    position: relative;
+  }
+</style>
+
+<script>
+  class TypewriterEffect {
+    private element: HTMLElement;
+    private cursor: HTMLElement;
+    private texts: string[];
+    private typingSpeed: number;
+    private erasingSpeed: number;
+    private displayDuration: number;
+    private currentIndex: number = 0;
+    private isTyping: boolean = false;
+    private isErasing: boolean = false;
+    private timeoutId: number | null = null;
+    private intervalId: number | null = null;
+
+    constructor(element: HTMLElement) {
+      this.element = element;
+      this.cursor = element.querySelector(".typewriter-cursor") as HTMLElement;
+
+      this.texts = JSON.parse(element.dataset.texts || "[]");
+      this.typingSpeed = parseInt(element.dataset.typingSpeed || "75");
+      this.erasingSpeed = parseInt(element.dataset.erasingSpeed || "40");
+      this.displayDuration = parseInt(
+        element.dataset.displayDuration || "4000"
+      );
+
+      this.init();
+    }
+
+    private init(): void {
+      if (this.texts.length === 0) return;
+
+      this.startCycle();
+    }
+
+    private startCycle(): void {
+      this.typeText();
+    }
+
+    private typeText(): void {
+      if (this.isTyping || this.isErasing) return;
+
+      this.isTyping = true;
+      const currentText = this.texts[this.currentIndex];
+      let charIndex = 0;
+
+      const typeNextChar = () => {
+        if (charIndex <= currentText.length) {
+          const textToShow = currentText.substring(0, charIndex);
+          this.updateText(textToShow);
+          charIndex++;
+          this.timeoutId = window.setTimeout(typeNextChar, this.typingSpeed);
+        } else {
+          this.isTyping = false;
+          this.scheduleErase();
+        }
+      };
+
+      typeNextChar();
+    }
+
+    private scheduleErase(): void {
+      this.timeoutId = window.setTimeout(() => {
+        this.eraseText();
+      }, this.displayDuration);
+    }
+
+    private eraseText(): void {
+      if (this.isTyping || this.isErasing) return;
+
+      this.isErasing = true;
+      const currentText = this.texts[this.currentIndex];
+      let charIndex = currentText.length;
+
+      const eraseNextChar = () => {
+        if (charIndex >= 0) {
+          const textToShow = currentText.substring(0, charIndex);
+          this.updateText(textToShow);
+          charIndex--;
+          this.timeoutId = window.setTimeout(eraseNextChar, this.erasingSpeed);
+        } else {
+          this.isErasing = false;
+          this.nextText();
+        }
+      };
+
+      eraseNextChar();
+    }
+
+    private nextText(): void {
+      this.currentIndex = (this.currentIndex + 1) % this.texts.length;
+      this.typeText();
+    }
+
+    private updateText(text: string): void {
+      if (this.cursor) {
+        this.cursor.remove();
+      }
+
+      this.element.textContent = text;
+
+      if (this.cursor) {
+        this.element.appendChild(this.cursor);
+      }
+    }
+
+    public destroy(): void {
+      if (this.timeoutId) {
+        clearTimeout(this.timeoutId);
+      }
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const typewriterElements = document.querySelectorAll(
+      '[id^="typewriter-text"]'
+    );
+
+    typewriterElements.forEach((element) => {
+      new TypewriterEffect(element as HTMLElement);
+    });
+  });
+
+  document.addEventListener("astro:before-preparation", () => {
+    const typewriterElements = document.querySelectorAll(
+      '[id^="typewriter-text"]'
+    );
+    typewriterElements.forEach((element) => {
+      const instance = (element as any).typewriterInstance;
+      if (instance && typeof instance.destroy === "function") {
+        instance.destroy();
+      }
+    });
+  });
+</script>
