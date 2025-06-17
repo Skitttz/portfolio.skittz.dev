@@ -13,17 +13,11 @@
       "@components/*": [
         "src/components/*"
       ],
-      "@assets/*": [
-        "src/assets/*"
-      ],
       "@pages/*": [
         "src/pages/*"
       ],
       "@layouts/*": [
         "src/layouts/*"
-      ],
-      "@utils/*": [
-        "src/utils/*"
       ],
     }
   }

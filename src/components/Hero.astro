@@ -1,10 +1,11 @@
 ---
-import DynamicText from '../components/DynamicText.astro';
-import GithubPreview from '../components/GithubPreview.astro';
-import GithubPreviewLoading from '../components/GithubPreviewLoading.astro';
-import StatusIndicator from '../components/StatusIndicator.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
-import Layout from '../layouts/Layout.astro';
+import DynamicText from '@components/DynamicText.astro';
+import GithubPreview from '@components/GithubPreview.astro';
+import GithubPreviewLoading from '@components/GithubPreviewLoading.astro';
+import StatusIndicator from '@components/StatusIndicator.astro';
+import ThemeToggle from '@components/ThemeToggle.astro';
+import Layout from '@layouts/Layout.astro';
+import Button from './Button.astro';
 import Footer from './Footer.astro';
 ---
 
@@ -24,7 +25,7 @@ import Footer from './Footer.astro';
   </div>
 
   <main
-    class="relative z-10 min-h-[95dvh] flex items-center justify-center px-6"
+    class="relative z-10 min-h-screen flex items-center justify-center px-6"
   >
     <div class="max-w-2xl mx-auto text-center space-y-8">
       <div class="space-y-6">
@@ -53,14 +54,12 @@ import Footer from './Footer.astro';
             Skittz.
           </h1>
         </div>
-
         <div class="flex items-center justify-center space-x-2 text-lg">
           <span class="text-gray-600 dark:text-gray-400"
             >I'm a <DynamicText /></span
           >
         </div>
       </div>
-
       <div class="flex justify-center">
         <div
           class="bg-gray-200 dark:bg-gray-700 text-white rounded-xl px-5 py-3 shadow-lg max-w-sm"
@@ -81,18 +80,12 @@ import Footer from './Footer.astro';
           </div>
         </div>
       </div>
-
       <div class="pt-4">
-        <a
-          href="/resume.pdf"
-          download
-          class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-        >
-          Download CV
-        </a>
+        <Button />
       </div>
     </div>
   </main>
+
   <Footer />
 </Layout>
 
@@ -120,6 +113,17 @@ import Footer from './Footer.astro';
   @media (max-width: 640px) {
     .profile-tooltip {
       display: none;
+    }
+
+    main {
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+    }
+  }
+
+  @supports (-webkit-touch-callout: none) {
+    main {
+      min-height: -webkit-fill-available;
     }
   }
 </style>
