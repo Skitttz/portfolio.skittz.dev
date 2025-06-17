@@ -11,24 +11,60 @@ interface IGitHubRepo {
   updated_at: string;
 }
 
-let topRepos: IGitHubRepo[] = [];
+let cache: IGitHubRepo[] | null = null;
+let lastFetch = 0;
+const staleTime = 60 * 60 * 1000;
 
-try {
-  const res = await fetch('https://api.github.com/users/skitttz/repos');
+async function getTopRepos(): Promise<IGitHubRepo[] | null> {
+  const now = Date.now();
 
-  if (!res.ok) {
-    throw new Error(`GitHub API error: ${res.status}`);
+  if (cache && now - lastFetch < staleTime) {
+    return cache;
   }
 
-  const data = await res.json();
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-  const repos: IGitHubRepo[] = Array.isArray(data) ? data : [];
+    const res = await fetch('https://api.github.com/users/skitttz/repos', {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Portfolio',
+        Accept: 'application/vnd.github.v3+json',
+      },
+    });
 
-  topRepos = repos
-    .sort((a, b) => b.stargazers_count - a.stargazers_count)
-    .slice(0, 3);
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
+    }
+
+    const data: IGitHubRepo[] = await res.json();
+
+    cache = data
+      .filter((repo) => !repo.name.includes('skitttz'))
+      .sort((a, b) => b.stargazers_count - a.stargazers_count)
+      .slice(0, 3);
+
+    lastFetch = now;
+    return cache;
+  } catch (error) {
+    console.error(
+      '[Error Search Repo]:',
+      error.name === 'AbortError' ? 'Timeout (AbortError)' : error,
+    );
+    return null;
+  }
+}
+
+let topRepos: IGitHubRepo[] | null = null;
+
+try {
+  topRepos = await getTopRepos();
 } catch (error) {
-  console.error('Error API', error);
+  console.error('Critical error:', error);
+  topRepos = null;
 }
 ---
 
@@ -40,7 +76,6 @@ try {
       <img
         class="w-20 h-20 rounded-xl object-cover"
         src="https://github.com/skitttz.png"
-        alt="Preview"
       />
     </div>
 
@@ -146,7 +181,7 @@ try {
 
         <div class="space-y-3 mb-4">
           {
-            topRepos.length > 0 ? (
+            topRepos && topRepos.length > 0 ? (
               topRepos.map((repo) => (
                 <a
                   href={repo.html_url}

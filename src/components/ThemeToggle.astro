@@ -25,9 +25,17 @@
 </button>
 
 <script>
-  const themeToggle = document.getElementById('theme-toggle');
+  function initTheme() {
+    const theme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)',
+    ).matches;
+    const isDark = theme === 'dark' || (!theme && prefersDark);
 
-  themeToggle?.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark', isDark);
+  }
+
+  function toggleTheme() {
     const isDark = document.documentElement.classList.contains('dark');
 
     if (isDark) {
@@ -37,5 +45,17 @@
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     }
+  }
+
+  initTheme();
+
+  const themeToggle = document.getElementById('theme-toggle');
+  themeToggle?.addEventListener('click', toggleTheme);
+
+  document.addEventListener('astro:after-swap', () => {
+    initTheme();
+
+    const newThemeToggle = document.getElementById('theme-toggle');
+    newThemeToggle?.addEventListener('click', toggleTheme);
   });
 </script>
