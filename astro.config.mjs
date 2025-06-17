@@ -1,7 +1,10 @@
-import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "astro/config";
+import tailwind from '@astrojs/tailwind';
+import { defineConfig } from 'astro/config';
+
+import vercel from '@astrojs/vercel';
+
 export default defineConfig({
-  vite: {
-    plugins: [tailwindcss()],
-  },
+  integrations: [tailwind()],
+  output: 'server',
+  adapter: vercel({webAnalytics: true}),
 });
