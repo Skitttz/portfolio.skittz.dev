@@ -51,6 +51,23 @@ export default {
         sans: ["var(--font-sans)", "sans-serif"],
         roboto: ["var(--font-roboto)", "sans-serif"],
       },
+			keyframes: {
+        blurIn: {
+          '0%': {
+            opacity: '0',
+            filter: 'blur(8px)',
+            transform: 'translateY(20px)',
+          },
+          '100%': {
+            opacity: '1',
+            filter: 'blur(0px)',
+            transform: 'translateY(0)',
+          },
+        },
+      },
+      animation: {
+        blurIn: 'blurIn 0.8s ease-out forwards',
+      },
     },
   },
   plugins: [],

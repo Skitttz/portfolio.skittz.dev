@@ -13,80 +13,81 @@ import Footer from './Footer.astro';
   <div class="fixed top-6 right-6 z-50">
     <ThemeToggle />
   </div>
-
-  <div
-    class="absolute inset-0 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
-  >
+  <div class="flex flex-col justify-center min-h-screen h-dvh relative">
     <div
-      class="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
-      style="background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0); background-size: 20px 20px;"
+      class="absolute inset-0 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
     >
-    </div>
-  </div>
-
-  <main
-    class="relative z-10 min-h-screen flex items-center justify-center px-6"
-  >
-    <div class="max-w-2xl mx-auto text-center space-y-8">
-      <div class="space-y-6">
-        <div class="space-y-2">
-          <div class="flex gap-2 items-center">
-            <h1
-              class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white"
-            >
-              Hey, I'm
-            </h1>
-            <GithubPreview server:defer>
-              <GithubPreviewLoading slot="fallback" />
-            </GithubPreview>
-            <h2
-              class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white"
-            >
-              Carlos
-            </h2>
-          </div>
-          <p class="text-xl text-gray-600 dark:text-gray-300">
-            but, you can call me
-          </p>
-          <h1
-            class="italic text-gray-900 dark:text-white font-medium text-3xl md:text-5xl"
-          >
-            Skittz.
-          </h1>
-        </div>
-        <div class="flex items-center justify-center space-x-2 text-lg">
-          <span class="text-gray-600 dark:text-gray-400"
-            >I'm a <DynamicText /></span
-          >
-        </div>
+      <div
+        class="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
+        style="background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0); background-size: 20px 20px;"
+      >
       </div>
-      <div class="flex justify-center">
-        <div
-          class="bg-gray-200 dark:bg-gray-700 text-white rounded-xl px-5 py-3 shadow-lg max-w-sm"
-        >
-          <div class="flex items-center space-x-3">
-            <div class="text-left flex flex-col gap-2 justify-center">
-              <div class="font-semibold text-sm"><StatusIndicator /></div>
-              <div class="text-xs text-gray-600 dark:text-gray-400">
-                Hit me up at <a
-                  target="_blank"
-                  href="https://linkedin.com/in/carlos-vinicius-dev"
-                  rel="noopener noreferrer"
-                  aria-label="LinkedIn"
-                  class="dark:text-gray-100 underline">Linkedin</a
-                >.
+    </div>
+
+    <main
+      class="relative z-10 flex items-center justify-center px-6 flex-grow animate-blurIn"
+    >
+      <div class="max-w-2xl mx-auto text-center space-y-8">
+        <div class="space-y-6">
+          <div class="space-y-2">
+            <div class="flex gap-2 items-center">
+              <h1
+                class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white"
+              >
+                Hey, I'm
+              </h1>
+              <GithubPreview server:defer>
+                <GithubPreviewLoading slot="fallback" />
+              </GithubPreview>
+              <h2
+                class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white"
+              >
+                Carlos
+              </h2>
+            </div>
+            <p class="text-xl text-gray-600 dark:text-gray-300">
+              but, you can call me
+            </p>
+            <h1
+              class="italic text-gray-900 dark:text-white font-medium text-3xl md:text-5xl"
+            >
+              Skittz.
+            </h1>
+          </div>
+          <div class="flex items-center justify-center space-x-2 text-lg">
+            <span class="text-gray-600 dark:text-gray-400"
+              >I'm a <DynamicText /></span
+            >
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <div
+            class="bg-gray-200 dark:bg-gray-700 text-white rounded-xl px-5 py-3 shadow-lg max-w-sm"
+          >
+            <div class="flex items-center space-x-3">
+              <div class="text-left flex flex-col gap-2 justify-center">
+                <div class="font-semibold text-sm"><StatusIndicator /></div>
+                <div class="text-xs text-gray-600 dark:text-gray-400">
+                  Hit me up at <a
+                    target="_blank"
+                    href="https://linkedin.com/in/carlos-vinicius-dev"
+                    rel="noopener noreferrer"
+                    aria-label="LinkedIn"
+                    class="dark:text-gray-100 underline">Linkedin</a
+                  >.
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="pt-4">
+          <Button />
+        </div>
       </div>
-      <div class="pt-4">
-        <Button />
-      </div>
-    </div>
-  </main>
+    </main>
 
-  <Footer />
+    <Footer />
+  </div>
 </Layout>
 
 <style>
