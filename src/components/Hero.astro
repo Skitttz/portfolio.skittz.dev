@@ -13,7 +13,7 @@ import Footer from './Footer.astro';
   <div class="fixed top-6 right-6 z-[9999]">
     <ThemeToggle />
   </div>
-  <div class="flex flex-col min-h-[110dvh] sm:min-h-[100dvh] relative">
+  <div class="flex flex-col min-h-[120dvh] sm:min-h-[100dvh] relative">
     <div
       class="absolute inset-0 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
     >
@@ -91,11 +91,6 @@ import Footer from './Footer.astro';
 </Layout>
 
 <style>
-  .profile-image:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease;
-  }
-
   @keyframes fadeInUp {
     from {
       opacity: 0;
@@ -109,22 +104,5 @@ import Footer from './Footer.astro';
 
   main > div > div {
     animation: fadeInUp 0.8s ease-out;
-  }
-
-  @media (max-width: 640px) {
-    .profile-tooltip {
-      display: none;
-    }
-
-    main {
-      min-height: 100vh;
-      min-height: -webkit-fill-available;
-    }
-  }
-
-  @supports (-webkit-touch-callout: none) {
-    main {
-      min-height: -webkit-fill-available;
-    }
   }
 </style>
