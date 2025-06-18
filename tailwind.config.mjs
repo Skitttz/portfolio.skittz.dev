@@ -50,6 +50,7 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)", "sans-serif"],
         roboto: ["var(--font-roboto)", "sans-serif"],
+        wind: ["var(--font-wind)","system-ui"]
       },
 			keyframes: {
         blurIn: {
