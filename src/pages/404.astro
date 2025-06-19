@@ -1,0 +1,37 @@
+---
+import Footer from "@components/Footer.astro";
+import ThemeToggle from "@components/ThemeToggle.astro";
+import Layout from "@layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<Layout title="Page Not Found - 404">
+  <div class="fixed top-6 right-6 z-[9999]">
+    <ThemeToggle />
+  </div>
+  <div
+    class="flex flex-col min-h-[100dvh] relative bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
+  >
+    <main
+      class="relative z-50 flex items-center justify-center px-6 flex-grow animate-blurIn"
+    >
+      <div class="flex flex-col items-center justify-center flex-grow p-8">
+        <h1
+          class="text-4xl sm:text-6xl font-wind font-semibold text-gray-800 dark:text-gray-200 dark:border-gray-200 mb-4"
+        >
+          404
+        </h1>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+          The page you’re looking for doesn’t exist. Please check the URL or go
+          to Home.
+        </p>
+        <a
+          href="/"
+          class="flex items-center gap-2 bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 px-4 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-blue-500 transition-colors"
+        >
+          <Icon name="mdi:home" /> Home</a
+        >
+      </div>
+    </main>
+  </div>
+</Layout>
