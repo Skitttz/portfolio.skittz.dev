@@ -5,8 +5,8 @@ import GithubPreviewLoading from "@components/GithubPreviewLoading.astro";
 import StatusIndicator from "@components/StatusIndicator.astro";
 import ThemeToggle from "@components/ThemeToggle.astro";
 import Layout from "@layouts/Layout.astro";
-import Button from "./Button.astro";
 import Footer from "./Footer.astro";
+import Button from "@components/Button.astro";
 ---
 
 <Layout title="Carlos Vinicius - Developer">
@@ -80,8 +80,11 @@ import Footer from "./Footer.astro";
             </div>
           </div>
         </div>
-        <div class="pt-4">
-          <Button />
+        <div
+          class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4"
+        >
+          <Button href="/resume.pdf" text="Download CV" download={true} />
+          <Button href="/articles" text="Explore" variant="blog" />
         </div>
       </div>
     </main>

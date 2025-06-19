@@ -44,14 +44,10 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
     const data: IGitHubRepo[] = await res.json();
     const targetRepos = ["nights4films", "cats", "MBA-Rocketseat"];
 
-    cache = data
-      .filter(
-        (repo) =>
-          !repo.name.includes("skitttz") &&
-          targetRepos.includes(repo.name.toLowerCase())
-      )
-      .sort((a, b) => b.stargazers_count - a.stargazers_count)
-      .slice(0, 3);
+    cache = data.filter(
+      (repo) =>
+        !repo.name.includes("skitttz") && targetRepos.includes(repo.name)
+    );
 
     lastFetch = now;
     return cache;

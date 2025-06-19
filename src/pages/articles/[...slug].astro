@@ -2,6 +2,7 @@
 import Layout from "@layouts/Layout.astro";
 import ThemeToggle from "@components/ThemeToggle.astro";
 import { getEntry } from "astro:content";
+import Footer from "@components/Footer.astro";
 
 const { slug } = Astro.params;
 const article = await getEntry("articles", slug);
@@ -159,13 +160,9 @@ const readingTime = `${Math.ceil(wordCount / wordsPerMinute)} min read`;
             <Content />
           </div>
         </div>
-
-        <footer
-          class="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700 animate-fadeInUp animation-delay-600"
-        >
-        </footer>
       </article>
     </main>
+    <Footer />
   </div>
 </Layout>
 

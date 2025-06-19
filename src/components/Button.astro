@@ -1,9 +1,19 @@
+---
+const { href, text, download = false, variant = "default" } = Astro.props;
+
+const variants = {
+  default: "bg-gray-700 text-slate-200 dark:bg-blue-700",
+  blog: "bg-gray-100 text-slate-600 dark:text-slate-200 dark:bg-gray-800",
+};
+const variantClass = variants[variant] ?? variants.default;
+---
+
 <a
-  href="/resume.pdf"
-  download
-  class="relative inline-flex items-center justify-center overflow-hidden bg-gray-700 dark:bg-blue-700 text-slate-200 font-medium py-3 px-6 rounded-md shadow hover:shadow-md transition-all duration-300 group"
+  href={href}
+  class={`relative inline-flex items-center justify-center overflow-hidden ${variantClass} font-medium py-3 px-6 rounded-md shadow hover:shadow-md transition-all duration-300 group`}
+  {...download ? { download: true } : {}}
 >
-  <span class="relative z-10">Download CV</span>
+  <span class="relative z-10">{text}</span>
 
   <span
     class="absolute inset-0 rounded-md bg-[linear-gradient(90deg,rgba(255,255,255,0.1)_0%,rgba(255,255,255,0.3)_50%,rgba(255,255,255,0.1)_100%)] bg-[length:200%_100%] opacity-0 group-hover:opacity-100 transition-all duration-500 scale-x-0 group-hover:scale-x-100 origin-left"
