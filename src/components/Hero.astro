@@ -84,7 +84,12 @@ import Button from "@components/Button.astro";
           class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <Button href="/resume.pdf" text="Download CV" download={true} />
-          <Button href="/articles" text="Explore" variant="blog" />
+          <Button
+            href="/articles"
+            text="Explore"
+            variant="blog"
+            customClassName="w-[152px] sm:w-auto"
+          />
         </div>
       </div>
     </main>

@@ -1,5 +1,11 @@
 ---
-const { href, text, download = false, variant = "default" } = Astro.props;
+const {
+  href,
+  text,
+  download = false,
+  variant = "default",
+  customClassName,
+} = Astro.props;
 
 const variants = {
   default: "bg-gray-700 text-slate-200 dark:bg-blue-700",
@@ -10,7 +16,7 @@ const variantClass = variants[variant] ?? variants.default;
 
 <a
   href={href}
-  class={`relative inline-flex items-center justify-center overflow-hidden ${variantClass} font-medium py-3 px-6 rounded-md shadow hover:shadow-md transition-all duration-300 group`}
+  class={`relative inline-flex items-center justify-center overflow-hidden ${variantClass} ${customClassName} font-medium py-3 px-6 rounded-md shadow hover:shadow-md transition-all duration-300 group`}
   {...download ? { download: true } : {}}
 >
   <span class="relative z-10">{text}</span>
