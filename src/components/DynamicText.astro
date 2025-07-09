@@ -8,18 +8,18 @@ interface Props {
 }
 
 const {
-  texts = ['Front-End Developer.', 'Software Engineer.', 'UI Developer.'],
+  texts = ["Front-End Developer.", "Software Engineer.", "UI Developer."],
   typingSpeed = 75,
   erasingSpeed = 40,
   displayDuration = 4000,
-  className = '',
+  className = "",
 } = Astro.props;
 ---
 
 <span
   id="typewriter-text"
   class:list={[
-    'font-bold bg-gradient-to-r from-blue-600 to-slate-600 dark:from-blue-400 dark:to-slate-300 bg-clip-text text-transparent min-h-[1.5rem] inline-block relative',
+    "font-bold bg-gradient-to-r from-blue-600 to-slate-600 dark:from-blue-400 dark:to-slate-300 bg-clip-text text-transparent min-h-[1.5rem] inline-block relative",
     className,
   ]}
   data-texts={JSON.stringify(texts)}
@@ -68,13 +68,13 @@ const {
 
     constructor(element: HTMLElement) {
       this.element = element;
-      this.cursor = element.querySelector('.typewriter-cursor') as HTMLElement;
+      this.cursor = element.querySelector(".typewriter-cursor") as HTMLElement;
 
-      this.texts = JSON.parse(element.dataset.texts || '[]');
-      this.typingSpeed = parseInt(element.dataset.typingSpeed || '75');
-      this.erasingSpeed = parseInt(element.dataset.erasingSpeed || '40');
+      this.texts = JSON.parse(element.dataset.texts || "[]");
+      this.typingSpeed = parseInt(element.dataset.typingSpeed || "75");
+      this.erasingSpeed = parseInt(element.dataset.erasingSpeed || "40");
       this.displayDuration = parseInt(
-        element.dataset.displayDuration || '4000',
+        element.dataset.displayDuration || "4000"
       );
 
       this.init();
@@ -167,23 +167,27 @@ const {
     }
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  const initializeTypewriter = () => {
     const typewriterElements = document.querySelectorAll(
-      '[id^="typewriter-text"]',
+      '[id^="typewriter-text"]'
     );
 
     typewriterElements.forEach((element) => {
-      new TypewriterEffect(element as HTMLElement);
+      const instance = new TypewriterEffect(element as HTMLElement);
+      (element as any).typewriterInstance = instance;
     });
-  });
+  };
 
-  document.addEventListener('astro:before-preparation', () => {
+  document.addEventListener("astro:page-load", initializeTypewriter);
+  document.addEventListener("astro:after-swap", initializeTypewriter);
+
+  document.addEventListener("astro:before-preparation", () => {
     const typewriterElements = document.querySelectorAll(
-      '[id^="typewriter-text"]',
+      '[id^="typewriter-text"]'
     );
     typewriterElements.forEach((element) => {
       const instance = (element as any).typewriterInstance;
-      if (instance && typeof instance.destroy === 'function') {
+      if (instance && typeof instance.destroy === "function") {
         instance.destroy();
       }
     });
