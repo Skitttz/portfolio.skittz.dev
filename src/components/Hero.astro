@@ -56,7 +56,9 @@ const textsToDynamicText: string[] =
 <div class="fixed top-6 right-20 z-[9999]">
   <LangToggle lang={lang} />
 </div>
-<div class="flex flex-col min-h-[120dvh] sm:min-h-[100dvh] relative">
+<div
+  class="flex flex-col sm:pt-0 pt-16 min-h-[120dvh] sm:min-h-[100dvh] relative"
+>
   <div
     class="absolute inset-0 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
   >
@@ -128,7 +130,12 @@ const textsToDynamicText: string[] =
       <div
         class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4"
       >
-        <Button href={`/${fileName}.pdf`} text={textPrimary} download={true} />
+        <Button
+          href={`/${fileName}.pdf`}
+          text={textPrimary}
+          download={true}
+          customClassName="min-w-[152px]"
+        />
         <Button
           href={`/${lang}/articles`}
           text={textSecondary}
