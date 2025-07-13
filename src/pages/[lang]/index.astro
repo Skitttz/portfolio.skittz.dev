@@ -1,0 +1,27 @@
+---
+import Hero from '@components/Hero.astro';
+import Layout from '@layouts/Layout.astro';
+import en from '@locales/en.json';
+import pt from '@locales/pt-br.json';
+
+const { lang } = Astro.params;
+const locales = { en, pt };
+const translations = locales[lang] || pt;
+---
+
+<Layout lang={lang} title="Portfolio {Carlos Vinicius}" class:list={'h-dvh'}>
+  <Hero
+    lang={lang}
+    button={{
+      textPrimary: translations.button.textPrimary,
+      textSecondary: translations.button.textSecondary,
+    }}
+    textIntro={translations.textIntro}
+    name={translations.name}
+    selfProfissionalText={translations.selfProfissionalText}
+    tagline={translations.tagline}
+    nickname={translations.nickname}
+    fileName={translations.fileName}
+    linkedInText={translations.linkedInText}
+  />
+</Layout>

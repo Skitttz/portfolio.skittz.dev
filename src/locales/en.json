@@ -1,0 +1,20 @@
+{
+  "button": {
+    "textPrimary": "Download CV",
+    "textSecondary": "Explore"
+  },
+  "textIntro": "Hey, I'm",
+  "name": "Carlos",
+  "selfProfissionalText": "I'm a",
+  "tagline": "but, you can call me",
+  "nickname": "Skittz",
+  "fileName": "curriculo-carlos-vinicius",
+  "linkedInText": "Hit me up at",
+  "githubPreview": {
+    "actionText": "Hover it!",
+    "createdAtText": "Joined",
+    "country": "Brazil",
+    "seniorityLevel": "Mid-level Developer"
+  },
+  "footerText": "All rights reserved."
+}

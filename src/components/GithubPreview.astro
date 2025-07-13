@@ -1,4 +1,15 @@
 ---
+import en from '@locales/en.json';
+import pt from '@locales/pt-br.json';
+
+export interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const locales = { en, pt };
+const translations = locales[lang] || pt;
+
 interface IGitHubRepo {
   id: number;
   name: string;
@@ -27,11 +38,11 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    const res = await fetch("https://api.github.com/users/skitttz/repos", {
+    const res = await fetch('https://api.github.com/users/skitttz/repos', {
       signal: controller.signal,
       headers: {
-        "User-Agent": "Portfolio",
-        Accept: "application/vnd.github.v3+json",
+        'User-Agent': 'Portfolio',
+        Accept: 'application/vnd.github.v3+json',
       },
     });
 
@@ -42,19 +53,19 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
     }
 
     const data: IGitHubRepo[] = await res.json();
-    const targetRepos = ["nights4films", "cats", "MBA-Rocketseat"];
+    const targetRepos = ['nights4films', 'cats', 'MBA-Rocketseat'];
 
     cache = data.filter(
       (repo) =>
-        !repo.name.includes("skitttz") && targetRepos.includes(repo.name)
+        !repo.name.includes('skitttz') && targetRepos.includes(repo.name),
     );
 
     lastFetch = now;
     return cache;
   } catch (error) {
     console.error(
-      "[Error Search Repo]:",
-      error.name === "AbortError" ? "Timeout (AbortError)" : error
+      '[Error Search Repo]:',
+      error.name === 'AbortError' ? 'Timeout (AbortError)' : error,
     );
     return null;
   }
@@ -65,7 +76,7 @@ let topRepos: IGitHubRepo[] | null = null;
 try {
   topRepos = await getTopRepos();
 } catch (error) {
-  console.error("Critical error:", error);
+  console.error('Critical error:', error);
   topRepos = null;
 }
 ---
@@ -87,7 +98,7 @@ try {
       <div
         class="whitespace-nowrap text-white text-xs px-4 py-2 rounded-full bg-gray-800 dark:bg-gray-700 shadow-md relative font-medium tracking-wide"
       >
-        Hover it!
+        {translations.githubPreview.actionText}
         <div
           class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-t-6 border-transparent border-t-gray-800 dark:border-t-gray-700"
         >
@@ -146,7 +157,7 @@ try {
             <div
               class="text-left text-gray-600 dark:text-gray-400 text-sm mt-1"
             >
-              Mid-level Developer
+              {translations.githubPreview.seniorityLevel}
             </div>
             <div
               class="flex items-center space-x-3 mt-2 text-xs text-gray-500 dark:text-gray-400"
@@ -162,7 +173,7 @@ try {
                     d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
                     clip-rule="evenodd"></path>
                 </svg>
-                Brazil
+                {translations.githubPreview.country}
               </span>
               <span class="flex items-center">
                 <svg
@@ -175,7 +186,7 @@ try {
                     d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
                     clip-rule="evenodd"></path>
                 </svg>
-                Joined 2019
+                {translations.githubPreview.createdAtText} 2019
               </span>
             </div>
           </div>
@@ -186,7 +197,7 @@ try {
             topRepos && topRepos.length > 0 ? (
               topRepos.map((repo) => (
                 <a
-                  href={repo.name === "cats" ? repo.homepage : repo.html_url}
+                  href={repo.name === 'cats' ? repo.html_url : repo.homepage}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="block bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 group transition-all duration-200 transform hover:-translate-y-0.5 z-50"
@@ -195,7 +206,7 @@ try {
                     {repo.name}
                   </div>
                   <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
-                    {repo.description || "No description available"}
+                    {repo.description || 'No description available'}
                   </p>
                   <div class="text-gray-500 dark:text-gray-400 text-xs mt-2 flex items-center justify-between">
                     <span class="flex items-center">

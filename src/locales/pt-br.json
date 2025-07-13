@@ -1,0 +1,20 @@
+{
+  "button": {
+    "textPrimary": "Baixar CV",
+    "textSecondary": "Explorar"
+  },
+  "textIntro": "Olá! Eu sou",
+  "name": "Carlos",
+  "selfProfissionalText": "Sou um",
+  "tagline": "mas pode me chamar de",
+  "nickname": "Skittz",
+  "fileName": "curriculo-carlos-vinicius-2025",
+  "linkedInText": "Estou também no",
+  "githubPreview": {
+    "actionText": "Passe o mouse!",
+    "createdAtText": "Entrou em",
+    "country": "Brasil",
+    "seniorityLevel": "Desenvolvedor Pleno"
+  },
+  "footerText": "Todos os direitos reservados."
+}

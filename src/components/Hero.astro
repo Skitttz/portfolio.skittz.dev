@@ -1,104 +1,133 @@
 ---
-import DynamicText from "@components/DynamicText.astro";
-import GithubPreview from "@components/GithubPreview.astro";
-import GithubPreviewLoading from "@components/GithubPreviewLoading.astro";
-import StatusIndicator from "@components/StatusIndicator.astro";
-import ThemeToggle from "@components/ThemeToggle.astro";
-import Layout from "@layouts/Layout.astro";
-import Footer from "./Footer.astro";
-import Button from "@components/Button.astro";
-import VersionToggle from "./VersionToggle.astro";
+import Button from '@components/Button.astro';
+import DynamicText from '@components/DynamicText.astro';
+import GithubPreview from '@components/GithubPreview.astro';
+import GithubPreviewLoading from '@components/GithubPreviewLoading.astro';
+import StatusIndicator from '@components/StatusIndicator.astro';
+import ThemeToggle from '@components/ThemeToggle.astro';
+import Footer from './Footer.astro';
+import LangToggle from './LangToggle.astro';
+import VersionToggle from './VersionToggle.astro';
+
+export interface Props {
+  lang: string;
+  button: {
+    textPrimary: string;
+    textSecondary: string;
+  };
+  textIntro: string;
+  selfProfissionalText: string;
+  name: string;
+  tagline: string;
+  nickname: string;
+  fileName: string;
+  linkedInText: string;
+}
+
+const {
+  button: { textPrimary, textSecondary },
+  textIntro,
+  selfProfissionalText,
+  name,
+  tagline,
+  nickname,
+  fileName,
+  linkedInText,
+  lang,
+} = Astro.props;
 ---
 
-<Layout title="Carlos Vinicius - Developer">
-  <VersionToggle />
-  <div class="fixed top-6 right-6 z-[9999]">
-    <ThemeToggle />
-  </div>
-  <div class="flex flex-col min-h-[120dvh] sm:min-h-[100dvh] relative">
+<VersionToggle />
+<div class="fixed top-6 right-6 z-[9999]">
+  <ThemeToggle />
+</div>
+<div class="fixed top-6 right-20 z-[9999]">
+  <LangToggle lang={lang} />
+</div>
+<div class="flex flex-col min-h-[120dvh] sm:min-h-[100dvh] relative">
+  <div
+    class="absolute inset-0 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
+  >
     <div
-      class="absolute inset-0 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
+      class="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
+      style="background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0); background-size: 20px 20px;"
     >
-      <div
-        class="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
-        style="background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0); background-size: 20px 20px;"
-      >
-      </div>
     </div>
+  </div>
 
-    <main
-      class="relative z-50 flex items-center justify-center px-6 flex-grow animate-blurIn"
-    >
-      <div class="max-w-2xl mx-auto text-center space-y-8">
-        <div class="space-y-6">
-          <div class="space-y-2">
-            <div class="flex gap-2 items-center">
-              <h1
-                class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white"
-              >
-                Hey, I'm
-              </h1>
-              <GithubPreview server:defer>
-                <GithubPreviewLoading slot="fallback" />
-              </GithubPreview>
-              <h2
-                class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white"
-              >
-                Carlos
-              </h2>
-            </div>
-            <p class="text-base text-gray-600 dark:text-gray-300">
-              but, you can call me
-            </p>
+  <main
+    class="relative z-50 flex items-center justify-center px-6 flex-grow animate-blurIn"
+  >
+    <div class="max-w-2xl mx-auto text-center space-y-8">
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <div class="flex gap-2 items-center">
             <h1
-              class="font-wind italic text-gray-900 dark:text-white font-medium text-5xl md:text-6xl mt-1"
+              class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white"
             >
-              Skittz.
+              {textIntro}
             </h1>
-          </div>
-          <div class="flex items-center justify-center space-x-2 text-lg">
-            <span class="text-gray-600 dark:text-gray-400"
-              >I'm a <DynamicText /></span
+            <GithubPreview lang={lang} server:defer>
+              <GithubPreviewLoading textslot="fallback" />
+            </GithubPreview>
+            <h2
+              class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white"
             >
+              {name}
+            </h2>
           </div>
-        </div>
-        <div class="flex justify-center">
-          <div
-            class="bg-gray-200 dark:bg-gray-700 text-white rounded-xl px-5 py-3 shadow-lg max-w-sm"
+          <p class="text-base text-gray-600 dark:text-gray-300">
+            {tagline}
+          </p>
+          <h1
+            class="font-wind italic text-gray-900 dark:text-white font-medium text-5xl md:text-6xl mt-1"
           >
-            <div class="flex items-center space-x-3">
-              <div class="text-left flex flex-col gap-2 justify-center">
-                <div class="font-semibold text-sm"><StatusIndicator /></div>
-                <div class="text-xs text-gray-600 dark:text-gray-400">
-                  Hit me up at <a
-                    target="_blank"
-                    href="https://linkedin.com/in/carlos-vinicius-dev"
-                    rel="noopener noreferrer"
-                    aria-label="LinkedIn"
-                    class="dark:text-gray-100 underline">Linkedin</a
-                  >.
-                </div>
+            {nickname}.
+          </h1>
+        </div>
+        <div class="flex items-center justify-center space-x-2 text-lg">
+          <span class="text-gray-600 dark:text-gray-400"
+            >{selfProfissionalText} <DynamicText /></span
+          >
+        </div>
+      </div>
+      <div class="flex justify-center">
+        <div
+          class="bg-gray-200 dark:bg-gray-700 text-white rounded-xl px-5 py-3 shadow-lg max-w-sm"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="text-left flex flex-col gap-2 justify-center">
+              <div class="font-semibold text-sm"><StatusIndicator /></div>
+              <div class="text-xs text-gray-600 dark:text-gray-400">
+                {linkedInText}
+                <a
+                  target="_blank"
+                  href="https://linkedin.com/in/carlos-vinicius-dev"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  class="dark:text-gray-100 underline">Linkedin</a
+                >.
               </div>
             </div>
           </div>
         </div>
-        <div
-          class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
-          <Button href="/curriculo-carlos-vinicius.pdf" text="Download CV" download={true} />
-          <Button
-            href="/articles"
-            text="Explore"
-            variant="blog"
-            customClassName="w-[152px] sm:w-auto"
-          />
-        </div>
       </div>
-    </main>
+      <div
+        class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4"
+      >
+        <Button href={`/${fileName}.pdf`} text={textPrimary} download={true} />
+        <Button
+          href={`/${lang}/articles`}
+          text={textSecondary}
+          variant="blog"
+          customClassName="w-[152px] sm:w-auto"
+        />
+      </div>
+    </div>
+  </main>
 
-    <Footer />
-  </div>
-</Layout>
+  <Footer lang={lang} />
+</div>
 
 <style>
   @keyframes fadeInUp {

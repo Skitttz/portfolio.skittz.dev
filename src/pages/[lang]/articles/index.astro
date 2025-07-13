@@ -1,28 +1,35 @@
 ---
-import Layout from "@layouts/Layout.astro";
-import ThemeToggle from "@components/ThemeToggle.astro";
-import { getCollection } from "astro:content";
-import { Icon } from "astro-icon/components";
-import Footer from "@components/Footer.astro";
+import LangToggle from '@/components/LangToggle.astro';
+import Footer from '@components/Footer.astro';
+import ThemeToggle from '@components/ThemeToggle.astro';
+import Layout from '@layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+import { getCollection } from 'astro:content';
 
-const posts = await getCollection("articles");
+const posts = await getCollection('articles');
+
+const { lang } = Astro.params;
 
 const sortedPosts = posts.sort(
-  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
 );
 
 function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   }).format(date);
 }
 ---
 
-<Layout title="Blog">
+<Layout lang="en" title="Blog">
   <div class="fixed top-6 right-6 z-[9999]">
     <ThemeToggle />
+  </div>
+
+  <div class="fixed top-6 right-20 z-[9999]">
+    <LangToggle lang={lang} />
   </div>
 
   <div class="flex flex-col min-h-[100dvh] relative">
@@ -116,7 +123,7 @@ function formatDate(date: Date) {
         }
       </div>
     </main>
-    <Footer />
+    <Footer lang={lang} />
   </div>
 </Layout>
 

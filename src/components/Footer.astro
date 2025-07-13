@@ -1,3 +1,15 @@
+---
+import en from '@locales/en.json';
+import pt from '@locales/pt-br.json';
+export interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const locales = { en, pt };
+const translations = locales[lang] || pt;
+---
+
 <footer class="z-10 bg-transparent border-t-gray-700">
   <div
     class="max-w-4xl mx-auto px-2 py-4 border-t border-gray-300 dark:border-gray-700"
@@ -6,7 +18,7 @@
       class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0"
     >
       <div class="text-sm text-gray-600 dark:text-gray-400">
-        © 2025 Skittz. All rights reserved.
+        © 2025 Skittz. {translations.footerText}
       </div>
       <div class="flex items-center space-x-6">
         <a
