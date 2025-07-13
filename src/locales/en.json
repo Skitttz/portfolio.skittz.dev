@@ -8,7 +8,7 @@
   "selfProfissionalText": "I'm a",
   "tagline": "but, you can call me",
   "nickname": "Skittz",
-  "fileName": "curriculo-carlos-vinicius",
+  "fileName": "resume-carlos-vinicius",
   "linkedInText": "Hit me up at",
   "githubPreview": {
     "actionText": "Hover it!",
@@ -16,5 +16,12 @@
     "country": "Brazil",
     "seniorityLevel": "Mid-level Developer"
   },
-  "footerText": "All rights reserved."
+  "footerText": "All rights reserved.",
+  "notFoundArticle": {
+    "title": "No articles found",
+    "description": "It seems that there are no articles available at the moment. Please check back later."
+  },
+  "buttonArticle": {
+    "text": "Back to articles"
+  }
 }

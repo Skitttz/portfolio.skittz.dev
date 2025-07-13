@@ -1,29 +1,32 @@
 ---
-import LangToggle from '@/components/LangToggle.astro';
-import Footer from '@components/Footer.astro';
-import ThemeToggle from '@components/ThemeToggle.astro';
-import Layout from '@layouts/Layout.astro';
-import { Icon } from 'astro-icon/components';
-import { getCollection } from 'astro:content';
-
-const posts = await getCollection('articles');
+import LangToggle from "@/components/LangToggle.astro";
+import NotFoundArticle from "@/components/NotFoundArticle.astro";
+import Footer from "@components/Footer.astro";
+import ThemeToggle from "@components/ThemeToggle.astro";
+import Layout from "@layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+import { getCollection } from "astro:content";
 
 const { lang } = Astro.params;
 
+const posts = (await getCollection("articles")).filter(
+  (post) => post.data.lang === lang
+);
+
 const sortedPosts = posts.sort(
-  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
 
 function formatDate(date: Date) {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   }).format(date);
 }
 ---
 
-<Layout lang="en" title="Blog">
+<Layout lang={lang} title="Blog">
   <div class="fixed top-6 right-6 z-[9999]">
     <ThemeToggle />
   </div>
@@ -62,7 +65,7 @@ function formatDate(date: Date) {
               style={`animation-delay: ${600 + index * 100}ms`}
             >
               <a
-                href={`/articles/${post.slug}`}
+                href={`/${post.data.lang}/articles/${post.slug}`}
                 class="flex items-start gap-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg border border-gray-200/50 dark:border-gray-700/50"
               >
                 <img
@@ -94,33 +97,7 @@ function formatDate(date: Date) {
           ))
         }
 
-        {
-          sortedPosts.length === 0 && (
-            <div class="text-center py-16 animate-fadeInUp">
-              <div class="w-24 h-24 mx-auto mb-6 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                <svg
-                  class="w-12 h-12 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-              </div>
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                No articles found
-              </h3>
-              <p class="text-gray-600 dark:text-gray-300">
-                Articles will appear here once they are published.
-              </p>
-            </div>
-          )
-        }
+        {sortedPosts.length === 0 && <NotFoundArticle lang={lang} />}
       </div>
     </main>
     <Footer lang={lang} />

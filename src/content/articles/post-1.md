@@ -4,6 +4,7 @@ slug: "astro-js-experience"
 date: 2025-06-19
 author: "Skittz"
 description: "An honest review of building with AstroJS - the good, the bad, and the unexpected."
+lang: "en"
 ---
 
 # My AstroJS Journey: Performance Meets Frustration

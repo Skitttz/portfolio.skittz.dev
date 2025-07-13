@@ -8,7 +8,7 @@
   "selfProfissionalText": "Sou um",
   "tagline": "mas pode me chamar de",
   "nickname": "Skittz",
-  "fileName": "curriculo-carlos-vinicius-2025",
+  "fileName": "curriculo-carlos-vinicius",
   "linkedInText": "Estou também no",
   "githubPreview": {
     "actionText": "Passe o mouse!",
@@ -16,5 +16,12 @@
     "country": "Brasil",
     "seniorityLevel": "Desenvolvedor Pleno"
   },
-  "footerText": "Todos os direitos reservados."
+  "footerText": "Todos os direitos reservados.",
+  "notFoundArticle": {
+    "title": "Nenhuma postagem encontrada",
+    "description": "Parece que não há postagens disponíveis no momento. Por favor, volte mais tarde."
+  },
+  "buttonArticle": {
+    "text": "Voltar"
+  }
 }

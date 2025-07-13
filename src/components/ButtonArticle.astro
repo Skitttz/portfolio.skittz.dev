@@ -1,0 +1,35 @@
+---
+import en from "@locales/en.json";
+import pt from "@locales/pt-br.json";
+
+export interface Props {
+  lang: string;
+}
+
+const locales = { en, pt };
+const { lang } = Astro.props;
+const translations = locales[lang] || pt;
+---
+
+<div class="relative z-50 pt-8 px-6">
+  <div class="max-w-4xl mx-auto">
+    <a
+      href={`/${lang}/articles`}
+      class="inline-flex items-center px-4 py-2 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl hover:bg-white/70 dark:hover:bg-gray-800/70 transition-all duration-200 text-gray-700 dark:text-gray-300 hover:scale-105 border border-gray-200/50 dark:border-gray-700/50 animate-fadeInUp"
+    >
+      <svg
+        class="w-5 h-5 mr-2"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg>
+      {translations.buttonArticle.text}
+    </a>
+  </div>
+</div>
