@@ -25,6 +25,9 @@
       "@locales/*": [
         "src/locales/*"
       ],
+      "@utils/*": [
+        "src/utils/*"
+      ]
     }
   }
 }

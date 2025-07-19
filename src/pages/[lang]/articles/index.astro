@@ -6,6 +6,7 @@ import ThemeToggle from "@components/ThemeToggle.astro";
 import Layout from "@layouts/Layout.astro";
 import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
+import { getHrefLang } from "@/utils/get-href-lang.ts";
 
 const { lang } = Astro.params;
 
@@ -48,7 +49,7 @@ function formatDate(date: Date) {
     <div class="relative z-50 pt-8 px-6">
       <div class="max-w-4xl mx-auto text-left">
         <a
-          href="/"
+          href={getHrefLang(lang)}
           class="inline-flex items-center p-3 bg-gray-200/50 dark:bg-gray-700/50 backdrop-blur-sm rounded-xl hover:bg-gray-200/70 dark:hover:bg-gray-700/70 transition-all duration-200 text-gray-700 dark:text-gray-300 hover:scale-105 border border-gray-300/50 dark:border-gray-600/50"
         >
           <Icon name="mdi:home" />
