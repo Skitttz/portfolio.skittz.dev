@@ -1,6 +1,7 @@
 ---
 import en from "@locales/en.json";
 import pt from "@locales/pt-br.json";
+import { isMobile } from "@/utils/is-mobile";
 
 export interface Props {
   lang: string;
@@ -9,6 +10,13 @@ export interface Props {
 const { lang } = Astro.props;
 const locales = { en, pt };
 const translations = locales[lang] || pt;
+
+const userAgent = Astro.request.headers.get("user-agent");
+let actionText = translations.githubPreview.actionText;
+if (isMobile(userAgent)) {
+  actionText =
+    lang === "pt-br" ? "Toque para ver os projetos!" : "Tap to see projects!";
+}
 
 interface IGitHubRepo {
   id: number;
@@ -97,11 +105,13 @@ try {
     >
       <div
         class="whitespace-nowrap text-white text-xs px-4 py-2 rounded-full bg-gray-800 dark:bg-gray-700 shadow-md relative font-medium tracking-wide"
-        id="github-preview-action"
-        data-lang={lang}
-        data-testid="github-preview-action"
       >
-        {translations.githubPreview.actionText}
+        <span
+          id="github-preview-action"
+          data-lang={lang}
+          data-testid="github-preview-action"
+          class="action-text">{actionText}</span
+        >
         <div
           class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-t-6 border-transparent border-t-gray-800 dark:border-t-gray-700"
         >
@@ -238,16 +248,3 @@ try {
     </div>
   </div>
 </div>
-
-<script is:inline>
-  import { isMobile } from "@/utils/is-mobile";
-
-  window.addEventListener("DOMContentLoaded", () => {
-    const el = document.getElementById("github-preview-action");
-    if (el && isMobile()) {
-      const lang = el.getAttribute("data-lang") || "pt";
-      el.textContent =
-        lang === "pt" ? "Toque para ver os projetos!" : "Tap to see projects!";
-    }
-  });
-</script>
