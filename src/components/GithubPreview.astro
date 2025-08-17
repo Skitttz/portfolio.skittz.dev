@@ -242,10 +242,12 @@ try {
 <script is:inline>
   import { isMobile } from "@/utils/is-mobile";
 
-  const el = document.getElementById("github-preview-action");
-  if (el && isMobile()) {
-    const lang = el.getAttribute("data-lang") || "pt";
-    el.textContent =
-      lang === "pt" ? "Toque para ver os projetos!" : "Tap to see projects!";
-  }
+  window.addEventListener("DOMContentLoaded", () => {
+    const el = document.getElementById("github-preview-action");
+    if (el && isMobile()) {
+      const lang = el.getAttribute("data-lang") || "pt";
+      el.textContent =
+        lang === "pt" ? "Toque para ver os projetos!" : "Tap to see projects!";
+    }
+  });
 </script>
