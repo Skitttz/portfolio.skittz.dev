@@ -2,6 +2,13 @@
 import en from "@locales/en.json";
 import pt from "@locales/pt-br.json";
 import { isMobile } from "@/utils/is-mobile";
+import { avatarTriggerId, closeModalBtnId, modalId } from "@/constants";
+
+const modalConfig = {
+  avatarTriggerId,
+  closeModalBtnId,
+  modalId,
+};
 
 export interface Props {
   lang: string;
@@ -95,7 +102,7 @@ try {
   <div class="relative group z-50">
     <div
       class="w-24 h-24 bg-white dark:bg-gray-900 rounded-2xl shadow-lg flex items-center justify-center border border-gray-200 dark:border-gray-800 cursor-pointer transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
-      id="avatar-trigger"
+      id={avatarTriggerId}
       data-mobile={isMobileDevice}
     >
       <img
@@ -131,41 +138,44 @@ try {
     {
       isMobileDevice ? (
         <div
-          id="mobile-modal"
-          class="hidden fixed inset-0 flex items-center justify-center bg-black/50 z-[9999999]"
+          id={modalId}
+          class="hidden fixed inset-0 z-[9999999] bg-black/50 backdrop-blur-sm"
         >
-          <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 w-11/12 max-w-md relative">
-            <button
-              id="close-modal-btn"
-              class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              aria-label="Fechar modal"
-            >
-              ✕
-            </button>
-            <div class="space-y-3 pt-6">
-              {topRepos && topRepos.length > 0 ? (
-                topRepos.map((repo) => (
-                  <a
-                    href={repo.name === "cats" ? repo.html_url : repo.homepage}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="block bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition"
-                  >
-                    <div class="text-gray-900 dark:text-white font-semibold text-sm tracking-tight">
-                      {repo.name}
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
-                      {repo.description || "No description available"}
+          <div class="flex items-center justify-center min-h-full p-4">
+            <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 w-11/12 max-w-md relative">
+              <button
+                id={closeModalBtnId}
+                class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                ✕
+              </button>
+              <div class="space-y-3 pt-6">
+                {topRepos && topRepos.length > 0 ? (
+                  topRepos.map((repo) => (
+                    <a
+                      href={
+                        repo.name === "cats" ? repo.html_url : repo.homepage
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="block bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition"
+                    >
+                      <div class="text-gray-900 dark:text-white font-semibold text-sm tracking-tight">
+                        {repo.name}
+                      </div>
+                      <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
+                        {repo.description || "No description available"}
+                      </p>
+                    </a>
+                  ))
+                ) : (
+                  <div class="text-center py-4">
+                    <p class="text-gray-500 dark:text-gray-300 text-sm">
+                      Ops... Couldn't find repositories :(
                     </p>
-                  </a>
-                ))
-              ) : (
-                <div class="text-center py-4">
-                  <p class="text-gray-500 dark:text-gray-300 text-sm">
-                    Ops... Couldn't find repositories :(
-                  </p>
-                </div>
-              )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -282,7 +292,7 @@ try {
   </div>
 </div>
 
-<script is:inline>
+<script is:inline define:vars={{ modalConfig }}>
   const MobileModal = (() => {
     let elements = {};
     let isOpen = false;
@@ -296,32 +306,42 @@ try {
         e.stopPropagation();
         actions.open();
       },
-      close: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        actions.close();
+      close: () => {
+        const modal = $(modalConfig.modalId);
+        modal.classList.add("hidden");
+        document.body.style.overflow = "";
+        document.body.classList.remove("modal-open");
+        isOpen = false;
       },
-      backdrop: (e) => e.target === $("mobile-modal") && actions.close(),
+      backdrop: (e) => {
+        if (e.target === $(modalConfig.modalId)) {
+          actions.close();
+        }
+      },
       keydown: (e) => e.key === "Escape" && isOpen && actions.close(),
     };
 
     const actions = {
       open: () => {
-        $("mobile-modal").classList.remove("hidden");
+        const modal = $(modalConfig.modalId);
+        modal.classList.remove("hidden");
         document.body.style.overflow = "hidden";
+        document.body.classList.add("modal-open");
         isOpen = true;
       },
       close: () => {
-        $("mobile-modal").classList.add("hidden");
+        const modal = $(modalConfig.modalId);
+        modal.classList.add("hidden");
         document.body.style.overflow = "";
+        document.body.classList.remove("modal-open");
         isOpen = false;
       },
     };
 
     const bindEvents = () => {
-      const avatar = $("avatar-trigger");
-      const modal = $("mobile-modal");
-      const closeBtn = $("close-modal-btn");
+      const avatar = $(modalConfig.avatarTriggerId);
+      const modal = $(modalConfig.modalId);
+      const closeBtn = $(modalConfig.closeModalBtnId);
 
       avatar?.addEventListener("click", handlers.open);
       avatar?.addEventListener("touchend", handlers.open);
@@ -331,7 +351,7 @@ try {
     };
 
     const init = () => {
-      if (!$("avatar-trigger") || !$("mobile-modal")) return;
+      if (!$(modalConfig.avatarTriggerId) || !$(modalConfig.modalId)) return;
       bindEvents();
     };
 
