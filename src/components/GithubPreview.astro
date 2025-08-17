@@ -1,6 +1,6 @@
 ---
-import en from '@locales/en.json';
-import pt from '@locales/pt-br.json';
+import en from "@locales/en.json";
+import pt from "@locales/pt-br.json";
 
 export interface Props {
   lang: string;
@@ -38,11 +38,11 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    const res = await fetch('https://api.github.com/users/skitttz/repos', {
+    const res = await fetch("https://api.github.com/users/skitttz/repos", {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'Portfolio',
-        Accept: 'application/vnd.github.v3+json',
+        "User-Agent": "Portfolio",
+        Accept: "application/vnd.github.v3+json",
       },
     });
 
@@ -53,19 +53,19 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
     }
 
     const data: IGitHubRepo[] = await res.json();
-    const targetRepos = ['nights4films', 'cats', 'MBA-Rocketseat'];
+    const targetRepos = ["nights4films", "cats", "MBA-Rocketseat"];
 
     cache = data.filter(
       (repo) =>
-        !repo.name.includes('skitttz') && targetRepos.includes(repo.name),
+        !repo.name.includes("skitttz") && targetRepos.includes(repo.name)
     );
 
     lastFetch = now;
     return cache;
   } catch (error) {
     console.error(
-      '[Error Search Repo]:',
-      error.name === 'AbortError' ? 'Timeout (AbortError)' : error,
+      "[Error Search Repo]:",
+      error.name === "AbortError" ? "Timeout (AbortError)" : error
     );
     return null;
   }
@@ -76,7 +76,7 @@ let topRepos: IGitHubRepo[] | null = null;
 try {
   topRepos = await getTopRepos();
 } catch (error) {
-  console.error('Critical error:', error);
+  console.error("Critical error:", error);
   topRepos = null;
 }
 ---
@@ -97,6 +97,9 @@ try {
     >
       <div
         class="whitespace-nowrap text-white text-xs px-4 py-2 rounded-full bg-gray-800 dark:bg-gray-700 shadow-md relative font-medium tracking-wide"
+        id="github-preview-action"
+        data-lang={lang}
+        data-testid="github-preview-action"
       >
         {translations.githubPreview.actionText}
         <div
@@ -197,7 +200,7 @@ try {
             topRepos && topRepos.length > 0 ? (
               topRepos.map((repo) => (
                 <a
-                  href={repo.name === 'cats' ? repo.html_url : repo.homepage}
+                  href={repo.name === "cats" ? repo.html_url : repo.homepage}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="block bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 group transition-all duration-200 transform hover:-translate-y-0.5 z-50"
@@ -206,7 +209,7 @@ try {
                     {repo.name}
                   </div>
                   <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
-                    {repo.description || 'No description available'}
+                    {repo.description || "No description available"}
                   </p>
                   <div class="text-gray-500 dark:text-gray-400 text-xs mt-2 flex items-center justify-between">
                     <span class="flex items-center">
@@ -235,3 +238,14 @@ try {
     </div>
   </div>
 </div>
+
+<script is:inline>
+  import { isMobile } from "@/utils/is-mobile";
+
+  const el = document.getElementById("github-preview-action");
+  if (el && isMobile()) {
+    const lang = el.getAttribute("data-lang") || "pt";
+    el.textContent =
+      lang === "pt" ? "Toque para ver os projetos!" : "Tap to see projects!";
+  }
+</script>
