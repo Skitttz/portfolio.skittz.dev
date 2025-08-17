@@ -13,7 +13,9 @@ const translations = locales[lang] || pt;
 
 const userAgent = Astro.request.headers.get("user-agent");
 let actionText = translations.githubPreview.actionText;
-if (isMobile(userAgent)) {
+const isMobileDevice = isMobile(userAgent);
+
+if (isMobileDevice) {
   actionText =
     lang === "pt-br" ? "Toque para ver os projetos!" : "Tap to see projects!";
 }
@@ -93,6 +95,8 @@ try {
   <div class="relative group z-50">
     <div
       class="w-24 h-24 bg-white dark:bg-gray-900 rounded-2xl shadow-lg flex items-center justify-center border border-gray-200 dark:border-gray-800 cursor-pointer transition-all duration-300 group-hover:scale-105 group-hover:shadow-xl"
+      id="avatar-trigger"
+      data-mobile={isMobileDevice}
     >
       <img
         class="w-20 h-20 rounded-xl object-cover"
@@ -124,127 +128,217 @@ try {
     >
     </div>
 
-    <div
-      class="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
-    >
-      <div
-        class="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 p-6 w-80 max-w-sm relative z-50"
-      >
+    {
+      isMobileDevice ? (
         <div
-          class="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-l border-t border-gray-100 dark:border-gray-800 rotate-45"
+          id="mobile-modal"
+          class="hidden fixed inset-0 flex items-center justify-center bg-black/50 z-[9999999]"
         >
-        </div>
-
-        <div class="flex items-center space-x-4 mb-5">
-          <div class="relative">
-            <img
-              src="https://github.com/skitttz.png"
-              alt="Avatar"
-              class="w-16 h-16 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600 ring-offset-2 ring-offset-white dark:ring-offset-gray-800"
-            />
-            <div
-              class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center"
+          <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 w-11/12 max-w-md relative">
+            <button
+              id="close-modal-btn"
+              class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label="Fechar modal"
             >
-              <div class="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse">
-              </div>
-            </div>
-          </div>
-          <div class="flex-1 flex flex-col gap-0.5">
-            <div class="flex items-center space-x-2">
-              <h3
-                class="text-gray-900 dark:text-white font-bold text-lg tracking-tight"
-              >
-                @skitttz
-              </h3>
-              <svg
-                class="w-4 h-4 text-blue-500"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clip-rule="evenodd"></path>
-              </svg>
-            </div>
-            <div
-              class="text-left text-gray-600 dark:text-gray-400 text-sm mt-1"
-            >
-              {translations.githubPreview.seniorityLevel}
-            </div>
-            <div
-              class="flex items-center space-x-3 mt-2 text-xs text-gray-500 dark:text-gray-400"
-            >
-              <span class="flex items-center">
-                <svg
-                  class="w-3 h-3 mr-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                    clip-rule="evenodd"></path>
-                </svg>
-                {translations.githubPreview.country}
-              </span>
-              <span class="flex items-center">
-                <svg
-                  class="w-3 h-3 mr-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                    clip-rule="evenodd"></path>
-                </svg>
-                {translations.githubPreview.createdAtText} 2019
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="space-y-3 mb-4 z-50">
-          {
-            topRepos && topRepos.length > 0 ? (
-              topRepos.map((repo) => (
-                <a
-                  href={repo.name === "cats" ? repo.html_url : repo.homepage}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="block bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 group transition-all duration-200 transform hover:-translate-y-0.5 z-50"
-                >
-                  <div class="text-gray-900 dark:text-white font-semibold text-sm tracking-tight">
-                    {repo.name}
-                  </div>
-                  <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
-                    {repo.description || "No description available"}
+              ✕
+            </button>
+            <div class="space-y-3 pt-6">
+              {topRepos && topRepos.length > 0 ? (
+                topRepos.map((repo) => (
+                  <a
+                    href={repo.name === "cats" ? repo.html_url : repo.homepage}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="block bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition"
+                  >
+                    <div class="text-gray-900 dark:text-white font-semibold text-sm tracking-tight">
+                      {repo.name}
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
+                      {repo.description || "No description available"}
+                    </p>
+                  </a>
+                ))
+              ) : (
+                <div class="text-center py-4">
+                  <p class="text-gray-500 dark:text-gray-300 text-sm">
+                    Ops... Couldn't find repositories :(
                   </p>
-                  <div class="text-gray-500 dark:text-gray-400 text-xs mt-2 flex items-center justify-between">
-                    <span class="flex items-center">
-                      ⭐ {repo.stargazers_count}
-                    </span>
-                    {repo.language && (
-                      <span class="bg-gray-200/50 dark:bg-gray-600/50 px-2 py-1 rounded-full text-xs border border-gray-300/50 dark:border-gray-600/50 font-medium">
-                        {repo.language}
-                      </span>
-                    )}
-                  </div>
-                </a>
-              ))
-            ) : (
-              <div class="text-center py-4">
-                <p class="text-gray-500 dark:text-gray-300 text-sm">
-                  {
-                    "Ops... Couldn't find repositories. Something's not right :("
-                  }
-                </p>
-              </div>
-            )
-          }
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      ) : (
+        <div class="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50">
+          <div class="bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 p-6 w-80 max-w-sm relative z-50">
+            <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-l border-t border-gray-100 dark:border-gray-800 rotate-45" />
+
+            <div class="flex items-center space-x-4 mb-5">
+              <div class="relative">
+                <img
+                  src="https://github.com/skitttz.png"
+                  alt="Avatar"
+                  class="w-16 h-16 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600 ring-offset-2 ring-offset-white dark:ring-offset-gray-800"
+                />
+                <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center">
+                  <div class="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse" />
+                </div>
+              </div>
+              <div class="flex-1 flex flex-col gap-0.5">
+                <div class="flex items-center space-x-2">
+                  <h3 class="text-gray-900 dark:text-white font-bold text-lg tracking-tight">
+                    @skitttz
+                  </h3>
+                  <svg
+                    class="w-4 h-4 text-blue-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div class="text-left text-gray-600 dark:text-gray-400 text-sm mt-1">
+                  {translations.githubPreview.seniorityLevel}
+                </div>
+                <div class="flex items-center space-x-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <span class="flex items-center">
+                    <svg
+                      class="w-3 h-3 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    {translations.githubPreview.country}
+                  </span>
+                  <span class="flex items-center">
+                    <svg
+                      class="w-3 h-3 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    {translations.githubPreview.createdAtText} 2019
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-3 mb-4 z-50">
+              {topRepos && topRepos.length > 0 ? (
+                topRepos.map((repo) => (
+                  <a
+                    href={repo.name === "cats" ? repo.html_url : repo.homepage}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="block bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 group transition-all duration-200 transform hover:-translate-y-0.5 z-50"
+                  >
+                    <div class="text-gray-900 dark:text-white font-semibold text-sm tracking-tight">
+                      {repo.name}
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
+                      {repo.description || "No description available"}
+                    </p>
+                    <div class="text-gray-500 dark:text-gray-400 text-xs mt-2 flex items-center justify-between">
+                      <span class="flex items-center">
+                        ⭐ {repo.stargazers_count}
+                      </span>
+                      {repo.language && (
+                        <span class="bg-gray-200/50 dark:bg-gray-600/50 px-2 py-1 rounded-full text-xs border border-gray-300/50 dark:border-gray-600/50 font-medium">
+                          {repo.language}
+                        </span>
+                      )}
+                    </div>
+                  </a>
+                ))
+              ) : (
+                <div class="text-center py-4">
+                  <p class="text-gray-500 dark:text-gray-300 text-sm">
+                    {
+                      "Ops... Couldn't find repositories. Something's not right :("
+                    }
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )
+    }
   </div>
 </div>
+
+<script is:inline>
+  const MobileModal = (() => {
+    let elements = {};
+    let isOpen = false;
+
+    const $ = (id) =>
+      elements[id] || (elements[id] = document.getElementById(id));
+
+    const handlers = {
+      open: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        actions.open();
+      },
+      close: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        actions.close();
+      },
+      backdrop: (e) => e.target === $("mobile-modal") && actions.close(),
+      keydown: (e) => e.key === "Escape" && isOpen && actions.close(),
+    };
+
+    const actions = {
+      open: () => {
+        $("mobile-modal").classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        isOpen = true;
+      },
+      close: () => {
+        $("mobile-modal").classList.add("hidden");
+        document.body.style.overflow = "";
+        isOpen = false;
+      },
+    };
+
+    const bindEvents = () => {
+      const avatar = $("avatar-trigger");
+      const modal = $("mobile-modal");
+      const closeBtn = $("close-modal-btn");
+
+      avatar?.addEventListener("click", handlers.open);
+      avatar?.addEventListener("touchend", handlers.open);
+      closeBtn?.addEventListener("click", handlers.close);
+      modal?.addEventListener("click", handlers.backdrop);
+      document.addEventListener("keydown", handlers.keydown);
+    };
+
+    const init = () => {
+      if (!$("avatar-trigger") || !$("mobile-modal")) return;
+      bindEvents();
+    };
+
+    return { init };
+  })();
+
+  document.readyState === "loading"
+    ? document.addEventListener("DOMContentLoaded", MobileModal.init)
+    : MobileModal.init();
+</script>
