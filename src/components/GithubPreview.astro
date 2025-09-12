@@ -153,9 +153,7 @@ try {
                 {topRepos && topRepos.length > 0 ? (
                   topRepos.map((repo) => (
                     <a
-                      href={
-                        repo.name === 'cats' ? repo.html_url : repo.homepage
-                      }
+                      href={repo.homepage}
                       target="_blank"
                       rel="noopener noreferrer"
                       class="block bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 transition"
@@ -252,7 +250,7 @@ try {
               {topRepos && topRepos.length > 0 ? (
                 topRepos.map((repo) => (
                   <a
-                    href={repo.name === 'cats' ? repo.html_url : repo.homepage}
+                    href={repo.homepage}
                     target="_blank"
                     rel="noopener noreferrer"
                     class="block bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 group transition-all duration-200 transform hover:-translate-y-0.5 z-50"
