@@ -1,8 +1,8 @@
 ---
-import en from "@locales/en.json";
-import pt from "@locales/pt-br.json";
-import { isMobile } from "@/utils/is-mobile";
-import { avatarTriggerId, closeModalBtnId, modalId } from "@/constants";
+import en from '@locales/en.json';
+import pt from '@locales/pt-br.json';
+import { isMobile } from '@/utils/is-mobile';
+import { avatarTriggerId, closeModalBtnId, modalId } from '@/constants';
 
 const modalConfig = {
   avatarTriggerId,
@@ -18,13 +18,13 @@ const { lang } = Astro.props;
 const locales = { en, pt };
 const translations = locales[lang] || pt;
 
-const userAgent = Astro.request.headers.get("user-agent");
+const userAgent = Astro.request.headers.get('user-agent');
 let actionText = translations.githubPreview.actionText;
 const isMobileDevice = isMobile(userAgent);
 
 if (isMobileDevice) {
   actionText =
-    lang === "pt-br" ? "Toque para ver os projetos!" : "Tap to see projects!";
+    lang === 'pt-br' ? 'Toque para ver os projetos!' : 'Tap to see projects!';
 }
 
 interface IGitHubRepo {
@@ -55,11 +55,11 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    const res = await fetch("https://api.github.com/users/skitttz/repos", {
+    const res = await fetch('https://api.github.com/users/skitttz/repos', {
       signal: controller.signal,
       headers: {
-        "User-Agent": "Portfolio",
-        Accept: "application/vnd.github.v3+json",
+        'User-Agent': 'Portfolio',
+        Accept: 'application/vnd.github.v3+json',
       },
     });
 
@@ -70,19 +70,19 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
     }
 
     const data: IGitHubRepo[] = await res.json();
-    const targetRepos = ["nights4films", "cats", "MBA-Rocketseat"];
+    const targetRepos = ['nights4films', 'cats', 'MBA-Rocketseat'];
 
     cache = data.filter(
       (repo) =>
-        !repo.name.includes("skitttz") && targetRepos.includes(repo.name)
+        !repo.name.includes('skitttz') && targetRepos.includes(repo.name),
     );
 
     lastFetch = now;
     return cache;
   } catch (error) {
     console.error(
-      "[Error Search Repo]:",
-      error.name === "AbortError" ? "Timeout (AbortError)" : error
+      '[Error Search Repo]:',
+      error.name === 'AbortError' ? 'Timeout (AbortError)' : error,
     );
     return null;
   }
@@ -93,7 +93,7 @@ let topRepos: IGitHubRepo[] | null = null;
 try {
   topRepos = await getTopRepos();
 } catch (error) {
-  console.error("Critical error:", error);
+  console.error('Critical error:', error);
   topRepos = null;
 }
 ---
@@ -154,7 +154,7 @@ try {
                   topRepos.map((repo) => (
                     <a
                       href={
-                        repo.name === "cats" ? repo.html_url : repo.homepage
+                        repo.name === 'cats' ? repo.html_url : repo.homepage
                       }
                       target="_blank"
                       rel="noopener noreferrer"
@@ -164,7 +164,7 @@ try {
                         {repo.name}
                       </div>
                       <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
-                        {repo.description || "No description available"}
+                        {repo.description || 'No description available'}
                       </p>
                     </a>
                   ))
@@ -252,7 +252,7 @@ try {
               {topRepos && topRepos.length > 0 ? (
                 topRepos.map((repo) => (
                   <a
-                    href={repo.name === "cats" ? repo.html_url : repo.homepage}
+                    href={repo.name === 'cats' ? repo.html_url : repo.homepage}
                     target="_blank"
                     rel="noopener noreferrer"
                     class="block bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 group transition-all duration-200 transform hover:-translate-y-0.5 z-50"
@@ -261,7 +261,7 @@ try {
                       {repo.name}
                     </div>
                     <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
-                      {repo.description || "No description available"}
+                      {repo.description || 'No description available'}
                     </p>
                     <div class="text-gray-500 dark:text-gray-400 text-xs mt-2 flex items-center justify-between">
                       <span class="flex items-center">
@@ -290,75 +290,75 @@ try {
       )
     }
   </div>
+
+  <script is:inline define:vars={{ modalConfig }}>
+    const MobileModal = (() => {
+      let elements = {};
+      let isOpen = false;
+
+      const $ = (id) =>
+        elements[id] || (elements[id] = document.getElementById(id));
+
+      const handlers = {
+        open: (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          actions.open();
+        },
+        close: () => {
+          const modal = $(modalConfig.modalId);
+          modal.classList.add('hidden');
+          document.body.style.overflow = '';
+          document.body.classList.remove('modal-open');
+          isOpen = false;
+        },
+        backdrop: (e) => {
+          if (e.target === $(modalConfig.modalId)) {
+            actions.close();
+          }
+        },
+        keydown: (e) => e.key === 'Escape' && isOpen && actions.close(),
+      };
+
+      const actions = {
+        open: () => {
+          const modal = $(modalConfig.modalId);
+          modal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+          document.body.classList.add('modal-open');
+          isOpen = true;
+        },
+        close: () => {
+          const modal = $(modalConfig.modalId);
+          modal.classList.add('hidden');
+          document.body.style.overflow = '';
+          document.body.classList.remove('modal-open');
+          isOpen = false;
+        },
+      };
+
+      const bindEvents = () => {
+        const avatar = $(modalConfig.avatarTriggerId);
+        const modal = $(modalConfig.modalId);
+        const closeBtn = $(modalConfig.closeModalBtnId);
+
+        avatar?.addEventListener('click', handlers.open);
+        avatar?.addEventListener('touchend', handlers.open);
+        closeBtn?.addEventListener('click', handlers.close);
+        modal?.addEventListener('click', handlers.backdrop);
+        document.addEventListener('keydown', handlers.keydown);
+      };
+
+      const init = () => {
+        if (!$(modalConfig.avatarTriggerId) || !$(modalConfig.modalId)) return;
+        bindEvents();
+      };
+
+      return { init };
+    })();
+
+    document.readyState === 'loading'
+      ? document.addEventListener('DOMContentLoaded', MobileModal.init)
+      : MobileModal.init();
+  </script>
 </div>
-
-<script is:inline define:vars={{ modalConfig }}>
-  const MobileModal = (() => {
-    let elements = {};
-    let isOpen = false;
-
-    const $ = (id) =>
-      elements[id] || (elements[id] = document.getElementById(id));
-
-    const handlers = {
-      open: (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        actions.open();
-      },
-      close: () => {
-        const modal = $(modalConfig.modalId);
-        modal.classList.add("hidden");
-        document.body.style.overflow = "";
-        document.body.classList.remove("modal-open");
-        isOpen = false;
-      },
-      backdrop: (e) => {
-        if (e.target === $(modalConfig.modalId)) {
-          actions.close();
-        }
-      },
-      keydown: (e) => e.key === "Escape" && isOpen && actions.close(),
-    };
-
-    const actions = {
-      open: () => {
-        const modal = $(modalConfig.modalId);
-        modal.classList.remove("hidden");
-        document.body.style.overflow = "hidden";
-        document.body.classList.add("modal-open");
-        isOpen = true;
-      },
-      close: () => {
-        const modal = $(modalConfig.modalId);
-        modal.classList.add("hidden");
-        document.body.style.overflow = "";
-        document.body.classList.remove("modal-open");
-        isOpen = false;
-      },
-    };
-
-    const bindEvents = () => {
-      const avatar = $(modalConfig.avatarTriggerId);
-      const modal = $(modalConfig.modalId);
-      const closeBtn = $(modalConfig.closeModalBtnId);
-
-      avatar?.addEventListener("click", handlers.open);
-      avatar?.addEventListener("touchend", handlers.open);
-      closeBtn?.addEventListener("click", handlers.close);
-      modal?.addEventListener("click", handlers.backdrop);
-      document.addEventListener("keydown", handlers.keydown);
-    };
-
-    const init = () => {
-      if (!$(modalConfig.avatarTriggerId) || !$(modalConfig.modalId)) return;
-      bindEvents();
-    };
-
-    return { init };
-  })();
-
-  document.readyState === "loading"
-    ? document.addEventListener("DOMContentLoaded", MobileModal.init)
-    : MobileModal.init();
-</script>

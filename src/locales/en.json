@@ -12,6 +12,7 @@
   "linkedInText": "Hit me up at",
   "githubPreview": {
     "actionText": "Hover it!",
+    "actionTextMobile": "Touch me!",
     "createdAtText": "Joined",
     "country": "Brazil",
     "seniorityLevel": "Mid-level Developer"

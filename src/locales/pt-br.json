@@ -12,6 +12,7 @@
   "linkedInText": "Estou também no",
   "githubPreview": {
     "actionText": "Passe o mouse!",
+    "actionTextMobile": "Clique aqui!",
     "createdAtText": "Entrou em",
     "country": "Brasil",
     "seniorityLevel": "Desenvolvedor Pleno"
