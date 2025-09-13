@@ -70,7 +70,7 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
     }
 
     const data: IGitHubRepo[] = await res.json();
-    const targetRepos = ['nights4films', 'cats', 'MBA-Rocketseat'];
+    const targetRepos = ['nights4films', 'cats', 'SurfCurse'];
 
     cache = data.filter(
       (repo) =>
