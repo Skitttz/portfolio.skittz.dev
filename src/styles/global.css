@@ -161,13 +161,18 @@
   }
 }
 
-#mobile-modal {
-  isolation: isolates;
-}
+@layer components {
 
-body.modal-open [class*="fixed"]:not(#mobile-modal):not(#mobile-modal *),
-body.modal-open footer {
-  opacity: 0.2;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
+  body.modal-open [class*="fixed"]:not(#mobile-modal):not(#mobile-modal *),
+  body.modal-open footer {
+    @apply opacity-20 pointer-events-none transition-opacity duration-200 ease-in-out;
+  }
+
+  body.modal-open [class*="main-header"]:not(#mobile-modal):not(#mobile-modal *) {
+    @apply pt-0;
+  }
+
+  #mobile-modal {
+    @apply isolate;
+  }
 }

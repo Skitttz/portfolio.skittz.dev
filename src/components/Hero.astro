@@ -1,13 +1,13 @@
 ---
-import Button from "@components/Button.astro";
-import DynamicText from "@components/DynamicText.astro";
-import GithubPreview from "@components/GithubPreview.astro";
-import GithubPreviewLoading from "@components/GithubPreviewLoading.astro";
-import StatusIndicator from "@components/StatusIndicator.astro";
-import ThemeToggle from "@components/ThemeToggle.astro";
-import Footer from "./Footer.astro";
-import LangToggle from "./LangToggle.astro";
-import VersionToggle from "./VersionToggle.astro";
+import Button from '@components/Button.astro';
+import DynamicText from '@components/DynamicText.astro';
+import GithubPreview from '@components/GithubPreview.astro';
+import GithubPreviewLoading from '@components/GithubPreviewLoading.astro';
+import StatusIndicator from '@components/StatusIndicator.astro';
+import ThemeToggle from '@components/ThemeToggle.astro';
+import Footer from './Footer.astro';
+import LangToggle from './LangToggle.astro';
+import VersionToggle from './VersionToggle.astro';
 
 export interface Props {
   lang: string;
@@ -37,11 +37,11 @@ const {
 } = Astro.props;
 
 const textsProfissional = {
-  en: ["Front-End Developer.", "Software Engineer.", "UI Developer."],
-  "pt-br": [
-    "Desenvolvedor Front-End.",
-    "Engenheiro de Software.",
-    "Desenvolvedor de UI.",
+  en: ['Front-End Developer.', 'Software Engineer.', 'UI Developer.'],
+  'pt-br': [
+    'Desenvolvedor Front-End.',
+    'Engenheiro de Software.',
+    'Desenvolvedor de UI.',
   ],
 };
 
@@ -57,7 +57,7 @@ const textsToDynamicText: string[] =
   <LangToggle lang={lang} />
 </div>
 <div
-  class="flex flex-col sm:pt-0 pt-16 min-h-[120dvh] sm:min-h-[100dvh] relative"
+  class="flex flex-col sm:pt-0 min-h-[120dvh] pt-16 sm:min-h-[100dvh] relative main-header"
 >
   <div
     class="absolute inset-0 bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"
