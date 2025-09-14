@@ -1,12 +1,13 @@
 ---
-import ButtonArticle from "@/components/ButtonArticle.astro";
-import Footer from "@components/Footer.astro";
-import ThemeToggle from "@components/ThemeToggle.astro";
-import Layout from "@layouts/Layout.astro";
-import { getEntry } from "astro:content";
+import ButtonArticle from '@/components/ButtonArticle.astro';
+import { formatDate } from '@/utils/format-date';
+import Footer from '@components/Footer.astro';
+import ThemeToggle from '@components/ThemeToggle.astro';
+import Layout from '@layouts/Layout.astro';
+import { getEntry } from 'astro:content';
 
 const { slug, lang } = Astro.params;
-const article = await getEntry("articles", slug);
+const article = await getEntry('articles', slug);
 
 if (!article) {
   throw new Error(`Not Found: ${slug}`);
@@ -14,18 +15,20 @@ if (!article) {
 
 const { Content } = await article.render();
 
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
+function formatReadingTime(wordCount: number, lang: string) {
+  const wordsPerMinute = 200;
+  const minutes = Math.ceil(wordCount / wordsPerMinute);
+
+  if (lang?.toLowerCase() === 'pt-br') {
+    return `${minutes} min de leitura`;
+  }
+
+  return `${minutes} min read`;
 }
 
-const wordsPerMinute = 200;
-const textContent = article.body || "";
+const textContent = article.body || '';
 const wordCount = textContent.split(/\s+/).length;
-const readingTime = `${Math.ceil(wordCount / wordsPerMinute)} min read`;
+const readingTime = formatReadingTime(wordCount, lang);
 ---
 
 <Layout lang={lang} title={article.data.title}>
@@ -82,7 +85,7 @@ const readingTime = `${Math.ceil(wordCount / wordsPerMinute)} min read`;
                   ></path>
                 </svg>
                 <time datetime={article.data.date.toISOString()}>
-                  {formatDate(new Date(article.data.date))}
+                  {formatDate(new Date(article.data.date), lang)}
                 </time>
               </div>
 
