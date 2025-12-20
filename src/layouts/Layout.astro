@@ -1,4 +1,5 @@
 ---
+import SnowfallComponent from '@/components/Snow';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 
@@ -41,7 +42,8 @@ const { title, lang } = Astro.props;
     <title>{title}</title>
   </head>
 
-  <body>
+  <body style={{ position: 'relative' }}>
+    <SnowfallComponent client:load />
     <slot />
   </body>
 </html>
