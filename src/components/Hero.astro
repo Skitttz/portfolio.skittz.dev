@@ -7,6 +7,7 @@ import StatusIndicator from '@components/StatusIndicator.astro';
 import ThemeToggle from '@components/ThemeToggle.astro';
 import Footer from './Footer.astro';
 import LangToggle from './LangToggle.astro';
+import SnowfallToggle from './SnowfallToggle.astro';
 import VersionToggle from './VersionToggle.astro';
 
 export interface Props {
@@ -50,10 +51,13 @@ const textsToDynamicText: string[] =
 ---
 
 <VersionToggle />
-<div class="fixed top-6 right-6 z-[9999]">
+<div class="fixed top-6 right-20 z-[9999]">
   <ThemeToggle />
 </div>
-<div class="fixed top-6 right-20 z-[9999]">
+<div class="fixed top-6 right-6 z-[9999]">
+  <SnowfallToggle />
+</div>
+<div class="fixed top-6 right-36 z-[9999]">
   <LangToggle lang={lang} />
 </div>
 <div

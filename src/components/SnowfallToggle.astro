@@ -1,0 +1,91 @@
+<button
+  id="snowfall-toggle"
+  class="z-[10000] w-10 h-10 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-blue-500/30 hover:bg-gray-100/80 dark:hover:bg-blue-500/20 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg flex items-center justify-center cursor-pointer relative group"
+  aria-label="Toggle snowfall"
+>
+  <svg
+    id="snowflake-icon"
+    class="h-5 w-5 rotate-0 scale-100 transition-all duration-500"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.5"
+    viewBox="0 0 24 24"
+    style="filter: drop-shadow(0 0 2px rgba(100, 149, 237, 0.4))"
+  >
+    <path d="M12 2v20M4.93 4.93l14.14 14.14M2 12h20M4.93 19.07l14.14-14.14"
+    ></path>
+    <circle cx="12" cy="2" r="1" fill="currentColor"></circle>
+    <circle cx="12" cy="22" r="1" fill="currentColor"></circle>
+    <circle cx="2" cy="12" r="1" fill="currentColor"></circle>
+    <circle cx="22" cy="12" r="1" fill="currentColor"></circle>
+  </svg>
+
+  <svg
+    id="snowman-icon"
+    class="absolute h-6 w-6 scale-0 rotate-90 transition-all duration-500"
+    viewBox="0 0 64 64"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="32" cy="34" r="16" fill="#f5cba7"></circle>
+    <path d="M16 32a16 16 0 0 1 32 0z" fill="#e74c3c"></path>
+    <circle cx="26" cy="34" r="2" fill="#000"></circle>
+    <circle cx="38" cy="34" r="2" fill="#000"></circle>
+    <path d="M26 40c4 4 8 4 12 0" stroke="#000" stroke-width="2" fill="none"
+    ></path>
+    <rect x="16" y="44" width="32" height="6" rx="3" fill="#ecf0f1"></rect>
+    <circle cx="48" cy="18" r="4" fill="#ecf0f1"></circle>
+  </svg>
+</button>
+
+<script is:inline>
+  import { SNOWFALL_STORAGE_KEY } from './SnowfallController';
+
+  function bindSnowfallToggle() {
+    const btn = document.getElementById('snowfall-toggle');
+    const snowflakeIcon = document.getElementById('snowflake-icon');
+    const snowmanIcon = document.getElementById('snowman-icon');
+
+    if (!btn || !snowflakeIcon || !snowmanIcon) return;
+
+    function updateVisual(isActive) {
+      if (isActive) {
+        snowflakeIcon.classList.add('scale-0', '-rotate-90');
+        snowflakeIcon.classList.remove('scale-100', 'rotate-0');
+
+        snowmanIcon.classList.add('scale-100', 'rotate-0');
+        snowmanIcon.classList.remove('scale-0', 'rotate-90');
+
+        btn.style.animation = 'glow-pulse 2s ease-in-out infinite';
+        btn.style.borderColor = 'rgba(59, 130, 246, 0.6)';
+        btn.style.background = 'rgba(59, 130, 246, 0.15)';
+        snowmanIcon.style.animation = 'gentle-swing 3s ease-in-out infinite';
+      } else {
+        snowflakeIcon.classList.add('scale-100', 'rotate-0');
+        snowflakeIcon.classList.remove('scale-0', '-rotate-90');
+
+        snowmanIcon.classList.add('scale-0', 'rotate-90');
+        snowmanIcon.classList.remove('scale-100', 'rotate-0');
+
+        btn.style.animation = '';
+        btn.style.borderColor = '';
+        btn.style.background = '';
+        snowmanIcon.style.animation = '';
+      }
+    }
+
+    const snowfallEnabled = localStorage.getItem(SNOWFALL_STORAGE_KEY) === 'on';
+    updateVisual(snowfallEnabled);
+
+    btn.addEventListener('click', () => {
+      const currentState = localStorage.getItem(SNOWFALL_STORAGE_KEY) === 'on';
+      const newState = currentState ? 'off' : 'on';
+
+      localStorage.setItem(SNOWFALL_STORAGE_KEY, newState);
+      updateVisual(newState === 'on');
+      window.toggleSnowfall?.();
+    });
+  }
+
+  bindSnowfallToggle();
+  document.addEventListener('astro:after-swap', bindSnowfallToggle);
+</script>

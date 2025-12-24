@@ -88,6 +88,38 @@
     color: hsl(var(--foreground));
   }
 
+  @keyframes glow-pulse {
+
+    0%,
+    100% {
+      box-shadow:
+        0 4px 12px rgba(59, 130, 246, 0.3),
+        0 0 0 0 rgba(59, 130, 246, 0);
+    }
+
+    50% {
+      box-shadow:
+        0 4px 20px rgba(59, 130, 246, 0.5),
+        0 0 20px 4px rgba(59, 130, 246, 0.3);
+    }
+  }
+
+  @keyframes gentle-swing {
+
+    0%,
+    100% {
+      transform: rotate(0deg) scale(1);
+    }
+
+    25% {
+      transform: rotate(-5deg) scale(1.05);
+    }
+
+    75% {
+      transform: rotate(5deg) scale(1.05);
+    }
+  }
+
   /* Prose Customizations */
   .prose {
     @apply text-gray-800 dark:text-gray-200;
@@ -175,4 +207,5 @@
   #mobile-modal {
     @apply isolate;
   }
+
 }

@@ -1,16 +1,26 @@
 import { Snowfall } from 'react-snowfall';
 
-export default function SnowfallComponent() {
+export default function SnowfallComponent({ enabled }) {
   return (
-    <Snowfall
+    <div
       style={{
         position: 'fixed',
-        width: '100vw',
-        height: '100vh',
-        zIndex: 9999,
+        inset: 0,
         pointerEvents: 'none',
+        zIndex: 9998,
+        opacity: enabled ? 1 : 0,
+        transition: 'opacity 0.8s ease',
       }}
-      snowflakeCount={200}
-    />
+    >
+      {enabled && (
+        <Snowfall
+          snowflakeCount={200}
+          style={{
+            width: '100vw',
+            height: '100vh',
+          }}
+        />
+      )}
+    </div>
   );
 }
