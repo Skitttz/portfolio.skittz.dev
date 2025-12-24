@@ -42,17 +42,20 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+
       fontFamily: {
         sans: ["var(--font-sans)", "sans-serif"],
         roboto: ["var(--font-roboto)", "sans-serif"],
-        wind: ["var(--font-wind)","system-ui"]
+        wind: ["var(--font-wind)", "system-ui"],
       },
-			keyframes: {
+
+      keyframes: {
         blurIn: {
           '0%': {
             opacity: '0',
@@ -65,9 +68,36 @@ export default {
             transform: 'translateY(0)',
           },
         },
+
+        glowPulse: {
+          '0%, 100%': {
+            boxShadow:
+              '0 4px 12px rgba(59, 130, 246, 0.3), 0 0 0 0 rgba(59, 130, 246, 0)',
+          },
+          '50%': {
+            boxShadow:
+              '0 4px 20px rgba(59, 130, 246, 0.5), 0 0 20px 4px rgba(59, 130, 246, 0.3)',
+          },
+        },
+
+        gentleSwing: {
+          '0%, 100%': {
+            transform: 'rotate(0deg) scale(1)',
+          },
+          '25%': {
+            transform: 'rotate(-5deg) scale(1.05)',
+          },
+          '75%': {
+            transform: 'rotate(5deg) scale(1.05)',
+          },
+        },
       },
+
+      /* 🎬 ANIMATIONS */
       animation: {
         blurIn: 'blurIn 0.8s ease-out forwards',
+        glowPulse: 'glowPulse 2s ease-in-out infinite',
+        gentleSwing: 'gentleSwing 3s ease-in-out infinite',
       },
     },
   },
@@ -75,7 +105,7 @@ export default {
   safelist: [
     'dark',
     {
-      pattern: /^(bg|text|border|hover|dark)-.*/,
+      pattern: /^(bg|text|border|hover|dark|animate)-.*/,
     },
   ],
-}
+};
