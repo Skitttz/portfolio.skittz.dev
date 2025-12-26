@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import SnowfallComponent from './Snow';
+import { SnowfallElement } from './SnowfallElement';
 
 export const SNOWFALL_STORAGE_KEY = 'snowfall';
 
@@ -24,5 +24,5 @@ export function SnowfallController() {
     };
   }, [enabled]);
 
-  return <SnowfallComponent enabled={enabled} />;
+  return <SnowfallElement enabled={enabled} />;
 }

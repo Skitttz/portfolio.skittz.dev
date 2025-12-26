@@ -1,5 +1,5 @@
 ---
-import { SNOWFALL_STORAGE_KEY } from "./SnowfallController";
+import { SNOWFALL_STORAGE_KEY } from '../react/SnowfallController';
 ---
 
 <button
@@ -43,58 +43,58 @@ import { SNOWFALL_STORAGE_KEY } from "./SnowfallController";
 
 <script is:inline define:vars={{ SNOWFALL_STORAGE_KEY }}>
   function bindSnowfallToggle() {
-    const btn = document.getElementById("snowfall-toggle");
-    const snowflakeIcon = document.getElementById("snowflake-icon");
-    const snowmanIcon = document.getElementById("snowman-icon");
+    const btn = document.getElementById('snowfall-toggle');
+    const snowflakeIcon = document.getElementById('snowflake-icon');
+    const snowmanIcon = document.getElementById('snowman-icon');
 
     if (!btn || !snowflakeIcon || !snowmanIcon) return;
 
     function updateVisual(isActive) {
       snowmanIcon.classList.remove(
-        "scale-0",
-        "scale-100",
-        "rotate-0",
-        "rotate-90",
-        "-rotate-90"
+        'scale-0',
+        'scale-100',
+        'rotate-0',
+        'rotate-90',
+        '-rotate-90',
       );
 
       snowflakeIcon.classList.remove(
-        "scale-0",
-        "scale-100",
-        "rotate-0",
-        "rotate-90",
-        "animate-gentleSwing"
+        'scale-0',
+        'scale-100',
+        'rotate-0',
+        'rotate-90',
+        'animate-gentleSwing',
       );
 
-      btn.classList.remove("animate-glowPulse");
+      btn.classList.remove('animate-glowPulse');
 
       if (isActive) {
-        snowmanIcon.classList.add("scale-0", "-rotate-90");
+        snowmanIcon.classList.add('scale-0', '-rotate-90');
 
         snowflakeIcon.classList.add(
-          "scale-100",
-          "rotate-0",
-          "animate-gentleSwing"
+          'scale-100',
+          'rotate-0',
+          'animate-gentleSwing',
         );
 
-        btn.classList.add("animate-glowPulse");
+        btn.classList.add('animate-glowPulse');
       } else {
-        snowmanIcon.classList.add("scale-100", "rotate-0");
+        snowmanIcon.classList.add('scale-100', 'rotate-0');
 
-        snowflakeIcon.classList.add("scale-0", "rotate-90");
+        snowflakeIcon.classList.add('scale-0', 'rotate-90');
       }
     }
 
-    const snowfallEnabled = localStorage.getItem(SNOWFALL_STORAGE_KEY) === "on";
+    const snowfallEnabled = localStorage.getItem(SNOWFALL_STORAGE_KEY) === 'on';
 
     updateVisual(snowfallEnabled);
 
     if (!btn.dataset.bound) {
-      btn.dataset.bound = "true";
-      btn.addEventListener("click", () => {
-        const isOn = localStorage.getItem(SNOWFALL_STORAGE_KEY) === "on";
+      btn.dataset.bound = 'true';
+      btn.addEventListener('click', () => {
+        const isOn = localStorage.getItem(SNOWFALL_STORAGE_KEY) === 'on';
 
-        localStorage.setItem(SNOWFALL_STORAGE_KEY, isOn ? "off" : "on");
+        localStorage.setItem(SNOWFALL_STORAGE_KEY, isOn ? 'off' : 'on');
 
         updateVisual(!isOn);
         window.toggleSnowfall?.();
@@ -103,5 +103,5 @@ import { SNOWFALL_STORAGE_KEY } from "./SnowfallController";
   }
 
   bindSnowfallToggle();
-  document.addEventListener("astro:after-swap", bindSnowfallToggle);
+  document.addEventListener('astro:after-swap', bindSnowfallToggle);
 </script>

@@ -1,6 +1,6 @@
 import { Snowfall } from 'react-snowfall';
 
-export default function SnowfallComponent({ enabled }) {
+export function SnowfallElement({ enabled }) {
   return (
     <div
       style={{

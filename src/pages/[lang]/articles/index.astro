@@ -1,10 +1,10 @@
 ---
-import LangToggle from '@/components/LangToggle.astro';
-import NotFoundArticle from '@/components/NotFoundArticle.astro';
+import LangToggle from '@/components/astro/LangToggle.astro';
+import NotFoundArticle from '@/components/astro/NotFoundArticle.astro';
 import { formatDate } from '@/utils/format-date';
 import { getHrefLang } from '@/utils/get-href-lang.ts';
-import Footer from '@components/Footer.astro';
-import ThemeToggle from '@components/ThemeToggle.astro';
+import Footer from '@components/astro/Footer.astro';
+import ThemeToggle from '@components/astro/ThemeToggle.astro';
 import Layout from '@layouts/Layout.astro';
 import { Icon } from 'astro-icon/components';
 import { getCollection } from 'astro:content';
@@ -75,11 +75,10 @@ const sortedPosts = posts.sort(
                   >
                     {formatDate(new Date(post.data.date), lang)}
                   </time>
-
+                  astro/
                   <h2 class="text-lg md:text-xl font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
                     {post.data.title}
                   </h2>
-
                   {post.data.description && (
                     <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                       {post.data.description}

@@ -1,8 +1,8 @@
 ---
-import ButtonArticle from '@/components/ButtonArticle.astro';
+import ButtonArticle from '@/components/astro/ButtonArticle.astro';
 import { formatDate } from '@/utils/format-date';
-import Footer from '@components/Footer.astro';
-import ThemeToggle from '@components/ThemeToggle.astro';
+import Footer from '@components/astro/Footer.astro';
+import ThemeToggle from '@components/astro/ThemeToggle.astro';
 import Layout from '@layouts/Layout.astro';
 import { getEntry } from 'astro:content';
 
@@ -127,6 +127,7 @@ const readingTime = formatReadingTime(wordCount, lang);
               </div>
             </div>
           </div>
+          astro/
         </header>
 
         <div
