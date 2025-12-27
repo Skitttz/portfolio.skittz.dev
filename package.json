@@ -14,7 +14,7 @@
     "@astrojs/node": "^9.2.2",
     "@astrojs/react": "^4.4.2",
     "@astrojs/tailwind": "^6.0.2",
-    "@astrojs/vercel": "^8.1.5",
+    "@astrojs/vercel": "^8.0.4",
     "@tailwindcss/vite": "^4.1.10",
     "astro": "^5.9.3",
     "astro-icon": "^1.1.5",
@@ -24,6 +24,7 @@
     "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
+    "@iconify-json/material-symbols": "^1.2.50",
     "@iconify-json/mdi": "^1.2.3"
   }
 }

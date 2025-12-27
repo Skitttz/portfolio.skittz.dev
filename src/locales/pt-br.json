@@ -5,6 +5,13 @@
   },
   "textIntro": "Olá! Eu sou",
   "name": "Carlos",
+  "answer": "Quem?",
+  "about": {
+    "title": "Sobre",
+    "role": "Desenvolvedor Front-end",
+    "location": "Aracaju-SE, Brasil",
+    "description": "Atuo como Desenvolvedor Front-end, com foco na construção de interfaces web modernas, responsivas e bem estruturadas. Minha stack principal é React, com experiência no ecossistema, incluindo Next.js. Já trabalhei com Vite como ferramenta de build e desenvolvimento, além de atuar em arquiteturas de Micro Frontends (MFE), voltadas para modularização e escalabilidade.\n\nTenho familiaridade com AstroJS, tecnologia utilizada no desenvolvimento deste portfólio, explorando uma abordagem focada em performance e entrega de conteúdo.\n\nNo back-end, possuo conhecimentos básicos em Node.js e Express, com experiência na criação de APIs REST e implementação de operações CRUD. Também já trabalhei com Headless CMS, utilizando Strapi (open source) e WordPress em modo headless, integrando essas soluções a aplicações front-end.\n\nPossuo conhecimento em prototipação, contribuindo para um melhor alinhamento entre design e desenvolvimento.\n\nBusco evolução constante como desenvolvedor, com foco em boas práticas, performance e qualidade de código."
+  },
   "selfProfissionalText": "Sou um",
   "tagline": "mas pode me chamar de",
   "nickname": "Skittz",

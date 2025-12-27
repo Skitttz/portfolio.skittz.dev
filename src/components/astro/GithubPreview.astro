@@ -1,8 +1,12 @@
 ---
-import en from '@locales/en.json';
-import pt from '@locales/pt-br.json';
-import { isMobile } from '@/utils/is-mobile';
-import { avatarTriggerId, closeModalBtnId, modalId } from '@/constants';
+import en from "@locales/en.json";
+import pt from "@locales/pt-br.json";
+import { isMobile } from "@/utils/is-mobile";
+import {
+  avatarTriggerId,
+  closeModalBtnId,
+  modalId,
+} from "@/constants/github-preview";
 
 const modalConfig = {
   avatarTriggerId,
@@ -18,13 +22,13 @@ const { lang } = Astro.props;
 const locales = { en, pt };
 const translations = locales[lang] || pt;
 
-const userAgent = Astro.request.headers.get('user-agent');
+const userAgent = Astro.request.headers.get("user-agent");
 let actionText = translations.githubPreview.actionText;
 const isMobileDevice = isMobile(userAgent);
 
 if (isMobileDevice) {
   actionText =
-    lang === 'pt-br' ? 'Toque para ver os projetos!' : 'Tap to see projects!';
+    lang === "pt-br" ? "Toque para ver os projetos!" : "Tap to see projects!";
 }
 
 interface IGitHubRepo {
@@ -51,16 +55,22 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
     return cache;
   }
 
+  const headers = {
+    "User-Agent": "Portfolio",
+    Accept: "application/vnd.github.v3+json",
+  };
+
+  if (import.meta.env.GITHUB_TOKEN) {
+    headers["Authorization"] = `Bearer ${import.meta.env.GITHUB_TOKEN}`;
+  }
+
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    const res = await fetch('https://api.github.com/users/skitttz/repos', {
+    const res = await fetch("https://api.github.com/users/skitttz/repos", {
       signal: controller.signal,
-      headers: {
-        'User-Agent': 'Portfolio',
-        Accept: 'application/vnd.github.v3+json',
-      },
+      headers,
     });
 
     clearTimeout(timeoutId);
@@ -70,19 +80,19 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
     }
 
     const data: IGitHubRepo[] = await res.json();
-    const targetRepos = ['nights4films', 'cats', 'SurfCurse'];
+    const targetRepos = ["nights4films", "cats", "SurfCurse"];
 
     cache = data.filter(
       (repo) =>
-        !repo.name.includes('skitttz') && targetRepos.includes(repo.name),
+        !repo.name.includes("skitttz") && targetRepos.includes(repo.name)
     );
 
     lastFetch = now;
     return cache;
   } catch (error) {
     console.error(
-      '[Error Search Repo]:',
-      error.name === 'AbortError' ? 'Timeout (AbortError)' : error,
+      "[Error Search Repo]:",
+      error.name === "AbortError" ? "Timeout (AbortError)" : error
     );
     return null;
   }
@@ -93,7 +103,7 @@ let topRepos: IGitHubRepo[] | null = null;
 try {
   topRepos = await getTopRepos();
 } catch (error) {
-  console.error('Critical error:', error);
+  console.error("Critical error:", error);
   topRepos = null;
 }
 ---
@@ -162,14 +172,14 @@ try {
                         {repo.name}
                       </div>
                       <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
-                        {repo.description || 'No description available'}
+                        {repo.description || "No description available"}
                       </p>
                     </a>
                   ))
                 ) : (
                   <div class="text-center py-4">
                     <p class="text-gray-500 dark:text-gray-300 text-sm">
-                      Ops... Couldn't find repositories :(
+                      Ops... Couldn't find repositories =/
                     </p>
                   </div>
                 )}
@@ -259,7 +269,7 @@ try {
                       {repo.name}
                     </div>
                     <p class="text-gray-600 dark:text-gray-300 text-xs mt-1 line-clamp-2">
-                      {repo.description || 'No description available'}
+                      {repo.description || "No description available"}
                     </p>
                     <div class="text-gray-500 dark:text-gray-400 text-xs mt-2 flex items-center justify-between">
                       <span class="flex items-center">
@@ -305,9 +315,9 @@ try {
         },
         close: () => {
           const modal = $(modalConfig.modalId);
-          modal.classList.add('hidden');
-          document.body.style.overflow = '';
-          document.body.classList.remove('modal-open');
+          modal.classList.add("hidden");
+          document.body.style.overflow = "";
+          document.body.classList.remove("modal-open");
           isOpen = false;
         },
         backdrop: (e) => {
@@ -315,22 +325,22 @@ try {
             actions.close();
           }
         },
-        keydown: (e) => e.key === 'Escape' && isOpen && actions.close(),
+        keydown: (e) => e.key === "Escape" && isOpen && actions.close(),
       };
 
       const actions = {
         open: () => {
           const modal = $(modalConfig.modalId);
-          modal.classList.remove('hidden');
-          document.body.style.overflow = 'hidden';
-          document.body.classList.add('modal-open');
+          modal.classList.remove("hidden");
+          document.body.style.overflow = "hidden";
+          document.body.classList.add("modal-open");
           isOpen = true;
         },
         close: () => {
           const modal = $(modalConfig.modalId);
-          modal.classList.add('hidden');
-          document.body.style.overflow = '';
-          document.body.classList.remove('modal-open');
+          modal.classList.add("hidden");
+          document.body.style.overflow = "";
+          document.body.classList.remove("modal-open");
           isOpen = false;
         },
       };
@@ -340,11 +350,11 @@ try {
         const modal = $(modalConfig.modalId);
         const closeBtn = $(modalConfig.closeModalBtnId);
 
-        avatar?.addEventListener('click', handlers.open);
-        avatar?.addEventListener('touchend', handlers.open);
-        closeBtn?.addEventListener('click', handlers.close);
-        modal?.addEventListener('click', handlers.backdrop);
-        document.addEventListener('keydown', handlers.keydown);
+        avatar?.addEventListener("click", handlers.open);
+        avatar?.addEventListener("touchend", handlers.open);
+        closeBtn?.addEventListener("click", handlers.close);
+        modal?.addEventListener("click", handlers.backdrop);
+        document.addEventListener("keydown", handlers.keydown);
       };
 
       const init = () => {
@@ -355,8 +365,8 @@ try {
       return { init };
     })();
 
-    document.readyState === 'loading'
-      ? document.addEventListener('DOMContentLoaded', MobileModal.init)
+    document.readyState === "loading"
+      ? document.addEventListener("DOMContentLoaded", MobileModal.init)
       : MobileModal.init();
   </script>
 </div>

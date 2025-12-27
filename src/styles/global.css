@@ -175,4 +175,19 @@
   #mobile-modal {
     @apply isolate;
   }
+
+  body.modal-tooltip-open
+    [class*="fixed"]:not(#modal-tooltip):not(#modal-tooltip *),
+  body.modal-tooltip-open footer {
+    @apply opacity-20 pointer-events-none transition-opacity duration-200 ease-in-out;
+  }
+
+  body.modal-tooltip-open
+    [class*="main-header"]:not(#modal-tooltip):not(#modal-tooltip *) {
+    @apply pt-0;
+  }
+
+  #modal-tooltip {
+    @apply isolate;
+  }
 }

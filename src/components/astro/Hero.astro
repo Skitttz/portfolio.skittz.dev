@@ -1,14 +1,15 @@
 ---
-import Button from '@components/astro/Button.astro';
-import DynamicText from '@components/astro/DynamicText.astro';
-import GithubPreview from '@components/astro/GithubPreview.astro';
-import GithubPreviewLoading from '@components/astro/GithubPreviewLoading.astro';
-import StatusIndicator from '@components/astro/StatusIndicator.astro';
-import ThemeToggle from '@components/astro/ThemeToggle.astro';
-import Footer from './Footer.astro';
-import LangToggle from './LangToggle.astro';
-import SnowfallToggle from './SnowfallToggle.astro';
-import VersionToggle from './VersionToggle.astro';
+import Button from "@components/astro/Button.astro";
+import DynamicText from "@components/astro/DynamicText.astro";
+import GithubPreview from "@components/astro/GithubPreview.astro";
+import GithubPreviewLoading from "@components/astro/GithubPreviewLoading.astro";
+import StatusIndicator from "@components/astro/StatusIndicator.astro";
+import ThemeToggle from "@components/astro/ThemeToggle.astro";
+import Footer from "./Footer.astro";
+import LangToggle from "./LangToggle.astro";
+import SnowfallToggle from "./SnowfallToggle.astro";
+import VersionToggle from "./VersionToggle.astro";
+import TooltipAboutMe from "./TooltipAboutMe.astro";
 
 export interface Props {
   lang: string;
@@ -23,6 +24,13 @@ export interface Props {
   nickname: string;
   fileName: string;
   linkedInText: string;
+  answer: string;
+  about: {
+    title: string;
+    description: string;
+    role: string;
+    location: string;
+  };
 }
 
 const {
@@ -34,15 +42,17 @@ const {
   nickname,
   fileName,
   linkedInText,
+  answer,
   lang,
+  about,
 } = Astro.props;
 
 const textsProfissional = {
-  en: ['Front-End Developer.', 'Software Engineer.', 'UI Developer.'],
-  'pt-br': [
-    'Desenvolvedor Front-End.',
-    'Engenheiro de Software.',
-    'Desenvolvedor de UI.',
+  en: ["Front-End Developer.", "Software Engineer.", "UI Developer."],
+  "pt-br": [
+    "Desenvolvedor Front-End.",
+    "Engenheiro de Software.",
+    "Desenvolvedor de UI.",
   ],
 };
 
@@ -88,11 +98,14 @@ const textsToDynamicText: string[] =
             <GithubPreview lang={lang} server:defer>
               <GithubPreviewLoading textslot="fallback" />
             </GithubPreview>
-            <h2
-              class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white"
-            >
-              {name}
-            </h2>
+            <TooltipAboutMe
+              name={name}
+              answer={answer}
+              description={about.description}
+              title={about.title}
+              role={about.role}
+              location={about.location}
+            />
           </div>
           <p class="text-base text-gray-600 dark:text-gray-300">
             {tagline}

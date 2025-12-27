@@ -1,15 +1,15 @@
 ---
-import Hero from '@components/astro/Hero.astro';
-import Layout from '@layouts/Layout.astro';
-import en from '@locales/en.json';
-import pt from '@locales/pt-br.json';
+import Hero from "@components/astro/Hero.astro";
+import Layout from "@layouts/Layout.astro";
+import en from "@locales/en.json";
+import pt from "@locales/pt-br.json";
 
 const { lang } = Astro.params;
 const locales = { en, pt };
 const translations = locales[lang] || pt;
 ---
 
-<Layout lang={lang} title="Portfolio {Carlos Vinicius}" class:list={'h-dvh'}>
+<Layout lang={lang} title="Portfolio {Carlos Vinicius}" class:list={"h-dvh"}>
   <Hero
     lang={lang}
     button={{
@@ -17,11 +17,18 @@ const translations = locales[lang] || pt;
       textSecondary: translations.button.textSecondary,
     }}
     textIntro={translations.textIntro}
+    answer={translations.answer}
     name={translations.name}
     selfProfissionalText={translations.selfProfissionalText}
     tagline={translations.tagline}
     nickname={translations.nickname}
     fileName={translations.fileName}
     linkedInText={translations.linkedInText}
+    about={{
+      title: translations.about.title,
+      description: translations.about.description,
+      location: translations.about.location,
+      role: translations.about.role,
+    }}
   />
 </Layout>
