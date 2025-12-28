@@ -1,6 +1,6 @@
 ---
-import { aboutMeIds } from "@/constants/about-me";
-import { Icon } from "astro-icon/components";
+import { aboutMeIds } from '@/constants/about-me';
+import { Icon } from 'astro-icon/components';
 
 const modalTooltipConfig = {
   tooltipTriggerId: aboutMeIds.tooltipTriggerId,
@@ -45,7 +45,6 @@ const { name, answer, title, description, role, location } = Astro.props;
   </div>
 </div>
 
-<!-- Modal fora da estrutura do group -->
 <div
   id={aboutMeIds.modalId}
   class="hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm"
@@ -61,7 +60,9 @@ const { name, answer, title, description, role, location } = Astro.props;
       >
         ✕
       </button>
-      <div class="md:max-w-full max-w-4xl mx-auto pt-6 grid grid-cols-1 md:grid-cols-[1fr_300px] gap-6">
+      <div
+        class="md:max-w-full max-w-4xl mx-auto pt-6 grid grid-cols-1 md:grid-cols-[1fr_300px] gap-6"
+      >
         <div class="flex flex-col md:flex-row items-center gap-8">
           <div
             class="hidden md:block w-px h-40 bg-gradient-to-b from-transparent via-gray-300 dark:via-gray-600 to-transparent"
@@ -70,9 +71,7 @@ const { name, answer, title, description, role, location } = Astro.props;
 
           <div class="space-y-3 text-center md:text-left">
             <div>
-              <h2
-                class="text-2xl font-semibold text-gray-900 dark:text-white"
-              >
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
                 {title}
               </h2>
 
@@ -92,7 +91,7 @@ const { name, answer, title, description, role, location } = Astro.props;
               {
                 description &&
                   description
-                    .split("\n\n")
+                    .split('\n\n')
                     .map((paragraph) => <p>{paragraph}</p>)
               }
             </div>
@@ -112,77 +111,77 @@ const { name, answer, title, description, role, location } = Astro.props;
   </div>
 </div>
 
-          <script is:inline define:vars={{ modalTooltipConfig }}>
-            const modalSetup = (() => {
-              let elements = {};
-              let isOpen = false;
+<script is:inline define:vars={{ modalTooltipConfig }}>
+  const modalSetup = (() => {
+    let elements = {};
+    let isOpen = false;
 
-              const $ = (id) =>
-                elements[id] || (elements[id] = document.getElementById(id));
+    const $ = (id) =>
+      elements[id] || (elements[id] = document.getElementById(id));
 
-              const handlers = {
-                open: (e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  actions.open();
-                },
-                close: () => {
-                  const modal = $(modalTooltipConfig.modalId);
-                  modal.classList.add("hidden");
-                  document.body.style.overflow = "";
-                  document.body.classList.remove("modal-tooltip-open");
-                  isOpen = false;
-                },
-                backdrop: (e) => {
-                  if (e.target === $(modalTooltipConfig.modalId)) {
-                    actions.close();
-                  }
-                },
-                keydown: (e) => e.key === "Escape" && isOpen && actions.close(),
-              };
+    const handlers = {
+      open: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        actions.open();
+      },
+      close: () => {
+        const modal = $(modalTooltipConfig.modalId);
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        document.body.classList.remove('modal-tooltip-open');
+        isOpen = false;
+      },
+      backdrop: (e) => {
+        if (e.target !== $(modalTooltipConfig.modalId)) {
+          actions.close();
+        }
+      },
+      keydown: (e) => e.key === 'Escape' && isOpen && actions.close(),
+    };
 
-              const actions = {
-                open: () => {
-                  const modal = $(modalTooltipConfig.modalId);
-                  modal.classList.remove("hidden");
-                  document.body.style.overflow = "hidden";
-                  document.body.classList.add("modal-tooltip-open");
-                  isOpen = true;
-                },
-                close: () => {
-                  const modal = $(modalTooltipConfig.modalId);
-                  modal.classList.add("hidden");
-                  document.body.style.overflow = "";
-                  document.body.classList.remove("modal-tooltip-open");
-                  isOpen = false;
-                },
-              };
+    const actions = {
+      open: () => {
+        const modal = $(modalTooltipConfig.modalId);
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('modal-tooltip-open');
+        isOpen = true;
+      },
+      close: () => {
+        const modal = $(modalTooltipConfig.modalId);
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        document.body.classList.remove('modal-tooltip-open');
+        isOpen = false;
+      },
+    };
 
-              const bindEvents = () => {
-                const tooltip = $(modalTooltipConfig.tooltipTriggerId);
-                const modal = $(modalTooltipConfig.modalId);
-                const closeBtn = $(modalTooltipConfig.closeModalBtnId);
-                tooltip?.addEventListener("click", handlers.open);
-                tooltip?.addEventListener("touchend", handlers.open);
-                closeBtn?.addEventListener("click", handlers.close);
-                modal?.addEventListener("click", handlers.backdrop);
-                document.addEventListener("keydown", handlers.keydown);
-              };
+    const bindEvents = () => {
+      const tooltip = $(modalTooltipConfig.tooltipTriggerId);
+      const modal = $(modalTooltipConfig.modalId);
+      const closeBtn = $(modalTooltipConfig.closeModalBtnId);
+      tooltip?.addEventListener('click', handlers.open);
+      tooltip?.addEventListener('touchend', handlers.open);
+      closeBtn?.addEventListener('click', handlers.close);
+      modal?.addEventListener('click', handlers.backdrop);
+      document.addEventListener('keydown', handlers.keydown);
+    };
 
-              const init = () => {
-                if (
-                  !$(modalTooltipConfig.tooltipTriggerId) ||
-                  !$(modalTooltipConfig.modalId)
-                ) {
-                  return;
-                }
-                bindEvents();
-              };
+    const init = () => {
+      if (
+        !$(modalTooltipConfig.tooltipTriggerId) ||
+        !$(modalTooltipConfig.modalId)
+      ) {
+        return;
+      }
+      bindEvents();
+    };
 
-              return { init };
-            })();
+    return { init };
+  })();
 
-            document.readyState === "loading"
-              ? document.addEventListener("DOMContentLoaded", modalSetup.init)
-              : modalSetup.init();
-          </script>
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', modalSetup.init)
+    : modalSetup.init();
+</script>
