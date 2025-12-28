@@ -164,7 +164,7 @@
 @layer components {
   body.modal-open [class*="fixed"]:not(#mobile-modal):not(#mobile-modal *),
   body.modal-open footer {
-    @apply opacity-20 pointer-events-none transition-opacity duration-200 ease-in-out;
+    @apply opacity-20 pointer-events-none transition-opacity duration-200 ease-in-out bg-black/50 backdrop-blur-sm;
   }
 
   body.modal-open
@@ -176,18 +176,18 @@
     @apply isolate;
   }
 
-  body.modal-tooltip-open
-    [class*="fixed"]:not(#modal-tooltip):not(#modal-tooltip *),
-  body.modal-tooltip-open footer {
-    @apply opacity-20 pointer-events-none transition-opacity duration-200 ease-in-out;
+  body.modal-about-me-open
+    [class*="fixed"]:not(#about-me-modal):not(#about-me-modal *),
+  body.modal-about-me-open footer {
+    @apply opacity-20 pointer-events-none transition-opacity duration-200 ease-in-out bg-black/50 backdrop-blur-sm;
   }
 
-  body.modal-tooltip-open
-    [class*="main-header"]:not(#modal-tooltip):not(#modal-tooltip *) {
+  body.modal-about-me-open
+    [class*="main-header"]:not(#about-me-modal):not(#about-me-modal *) {
     @apply pt-0;
   }
 
-  #modal-tooltip {
+  #about-me-modal {
     @apply isolate;
   }
 }

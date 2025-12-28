@@ -1,0 +1,183 @@
+---
+import { aboutMeIds } from "@/constants/about-me";
+import { Icon } from "astro-icon/components";
+
+const modalModalConfig = {
+  modalTriggerId: aboutMeIds.modalTriggerId,
+  closeModalBtnId: aboutMeIds.closeModalBtnId,
+  modalId: aboutMeIds.modalId,
+};
+export interface Props {
+  name: string;
+  answer: string;
+  title: string;
+  description: string;
+  role: string;
+  location: string;
+}
+
+const { name, answer, title, description, location } = Astro.props;
+---
+
+<div class="flex justify-center text-2xl">
+  <div class="flex justify-center text-2xl md:text-4xl">
+    <div
+      class="relative inline-flex items-center justify-center group cursor-pointer"
+      id={aboutMeIds.modalTriggerId}
+    >
+      <span
+        class="absolute size-12 scale-x-[1.03] scale-y-[0.97] transition-all duration-300 rotate-0 group-hover:scale-105 opacity-20 group-hover:opacity-40"
+      ></span>
+
+      <h2
+        class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white relative translate-x-[1px] translate-y-[2px]"
+      >
+        {name}
+      </h2>
+
+      <span
+        class="absolute -right-[22px] -top-[50%] text-[11px] italic tracking-normal text-gray-500 dark:text-gray-400 opacity-70 group-hover:opacity-100 transition-opacity flex gap-[2px] items-center"
+      >
+        <Icon name="material-symbols:info-outline" />
+        {answer}
+      </span>
+    </div>
+  </div>
+</div>
+
+<div id={aboutMeIds.modalId} class="hidden fixed inset-0 z-[100]">
+  <div
+    class="absolute inset-0 bg-black/50 backdrop-blur-sm select-none pointer-events-auto"
+    data-backdrop
+  >
+  </div>
+
+  <div class="flex items-center justify-center min-h-full p-4">
+    <div
+      class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 w-11/12 md:max-w-full md:max-h-full max-w-md relative"
+    >
+      <button
+        id={aboutMeIds.closeModalBtnId}
+        type="button"
+        class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full transition-colors z-50"
+      >
+        ✕
+      </button>
+      <div
+        class="md:max-w-full max-w-4xl mx-auto pt-6 grid grid-cols-1 items-start md:grid-cols-[1fr_300px] gap-6"
+      >
+        <div class="flex flex-col md:flex-row items-start gap-8">
+          <div
+            class="hidden md:block w-px h-40 bg-gradient-to-b from-transparent via-gray-300 dark:via-gray-600 to-transparent"
+          >
+          </div>
+
+          <div class="space-y-3 text-center md:text-left">
+            <div>
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+                {title}
+              </h2>
+
+              {
+                location && (
+                  <span class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mt-1 max-md:justify-center max-md:py-1">
+                    <Icon name="material-symbols:location-on-rounded" />
+                    {location}
+                  </span>
+                )
+              }
+            </div>
+
+            <div
+              class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed space-y-4 max-md:overflow-y-scroll max-md:max-h-60 h-full pr-2"
+            >
+              {
+                description &&
+                  description
+                    .split("\n\n")
+                    .map((paragraph) => <p>{paragraph}</p>)
+              }
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center justify-center">
+          <img
+            src="/photo.JPEG"
+            alt="image-me-about"
+            width="300"
+            height="300"
+            class="mx-auto rounded-md"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ modalModalConfig }}>
+  const modalSetup = (() => {
+    let elements = {};
+    let isOpen = false;
+
+    const $ = (id) =>
+      elements[id] || (elements[id] = document.getElementById(id));
+
+    const handlers = {
+      open: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        actions.open();
+      },
+      close: () => {
+        const modal = $(modalModalConfig.modalId);
+        modal.classList.add("hidden");
+        document.body.style.overflow = "";
+        document.body.classList.remove("modal-about-me-open");
+        isOpen = false;
+      },
+      keydown: (e) => e.key === "Escape" && isOpen && actions.close(),
+    };
+
+    const actions = {
+      open: () => {
+        const modal = $(modalModalConfig.modalId);
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+        document.body.classList.add("modal-about-me-open");
+        isOpen = true;
+      },
+      close: () => {
+        const modal = $(modalModalConfig.modalId);
+        modal.classList.add("hidden");
+        document.body.style.overflow = "";
+        document.body.classList.remove("modal-about-me-open");
+        isOpen = false;
+      },
+    };
+
+    const bindEvents = () => {
+      const modalTrigger = $(modalModalConfig.modalTriggerId);
+      const modal = $(modalModalConfig.modalId);
+      const backdrop = modal.querySelector("[data-backdrop]");
+      const closeBtn = $(modalModalConfig.closeModalBtnId);
+      modalTrigger?.addEventListener("click", handlers.open);
+      modalTrigger?.addEventListener("touchend", handlers.open);
+      closeBtn?.addEventListener("click", handlers.close);
+      backdrop?.addEventListener("click", handlers.close);
+      document.addEventListener("keydown", handlers.keydown);
+    };
+
+    const init = () => {
+      if (!$(modalModalConfig.modalTriggerId) || !$(modalModalConfig.modalId)) {
+        return;
+      }
+      bindEvents();
+    };
+
+    return { init };
+  })();
+
+  document.readyState === "loading"
+    ? document.addEventListener("DOMContentLoaded", modalSetup.init)
+    : modalSetup.init();
+</script>

@@ -9,7 +9,7 @@ import Footer from "./Footer.astro";
 import LangToggle from "./LangToggle.astro";
 import SnowfallToggle from "./SnowfallToggle.astro";
 import VersionToggle from "./VersionToggle.astro";
-import TooltipAboutMe from "./TooltipAboutMe.astro";
+import ModalAboutMe from "./ModalAboutMe.astro";
 
 export interface Props {
   lang: string;
@@ -98,7 +98,7 @@ const textsToDynamicText: string[] =
             <GithubPreview lang={lang} server:defer>
               <GithubPreviewLoading textslot="fallback" />
             </GithubPreview>
-            <TooltipAboutMe
+            <ModalAboutMe
               name={name}
               answer={answer}
               description={about.description}
