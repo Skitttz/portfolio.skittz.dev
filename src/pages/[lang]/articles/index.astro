@@ -1,22 +1,22 @@
 ---
-import LangToggle from '@/components/astro/LangToggle.astro';
-import NotFoundArticle from '@/components/astro/NotFoundArticle.astro';
-import { formatDate } from '@/utils/format-date';
-import { getHrefLang } from '@/utils/get-href-lang.ts';
-import Footer from '@components/astro/Footer.astro';
-import ThemeToggle from '@components/astro/ThemeToggle.astro';
-import Layout from '@layouts/Layout.astro';
-import { Icon } from 'astro-icon/components';
-import { getCollection } from 'astro:content';
+import LangToggle from "@/components/astro/LangToggle.astro";
+import NotFoundArticle from "@/components/astro/NotFoundArticle.astro";
+import { formatDate } from "@/utils/format-date";
+import { getHrefLang } from "@/utils/get-href-lang.ts";
+import Footer from "@components/astro/Footer.astro";
+import ThemeToggle from "@components/astro/ThemeToggle.astro";
+import Layout from "@layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+import { getCollection } from "astro:content";
 
 const { lang } = Astro.params;
 
-const posts = (await getCollection('articles')).filter(
-  (post) => post.data.lang === lang,
+const posts = (await getCollection("articles")).filter(
+  (post) => post.data.lang === lang
 );
 
 const sortedPosts = posts.sort(
-  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
 ---
 
@@ -75,7 +75,6 @@ const sortedPosts = posts.sort(
                   >
                     {formatDate(new Date(post.data.date), lang)}
                   </time>
-                  astro/
                   <h2 class="text-lg md:text-xl font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
                     {post.data.title}
                   </h2>
