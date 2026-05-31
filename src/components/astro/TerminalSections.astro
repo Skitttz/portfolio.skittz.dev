@@ -1,0 +1,617 @@
+---
+import { terminalContent } from "@/constants/terminal-content";
+
+export interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+
+const terminal =
+  terminalContent[lang as keyof typeof terminalContent] || terminalContent.en;
+const initialHistory = terminal.welcome.join("\n");
+---
+
+<section
+  class="terminal-section scroll-mt-8 px-6 py-12 md:py-16"
+  data-terminal-section
+  data-page-section
+>
+  <div class="mx-auto max-w-5xl">
+    <div class="relative z-[1] mb-4 grid gap-2">
+      <p
+        class="m-0 font-mono text-xs uppercase tracking-[0.12em] text-[var(--terminal-command)]"
+      >
+        {terminal.label}
+      </p>
+      <h2
+        class="m-0 max-w-3xl text-[clamp(1.65rem,3vw,2.75rem)] leading-[1.05] text-[var(--terminal-text)]"
+      >
+        {terminal.title}
+      </h2>
+      <span
+        class="font-mono text-sm text-[var(--terminal-muted)]"
+        data-terminal-hint>{terminal.hint}</span
+      >
+    </div>
+
+    <div
+      class="terminal-window relative z-[1] overflow-hidden rounded-[0.85rem] border bg-[var(--terminal-window-bg)] font-mono shadow-[0_24px_70px_rgba(15,23,42,0.16)] dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
+      data-terminal-root
+    >
+      <div
+        class="terminal-topbar flex items-center justify-between gap-3 border-b bg-[var(--terminal-bar-bg)] px-3 py-2 pl-4"
+      >
+        <strong class="text-xs font-medium text-[var(--terminal-muted)]"
+          >~/portfolio</strong
+        >
+        <div
+          class="flex items-center gap-1.5"
+          aria-label="Terminal window controls"
+        >
+          <button
+            type="button"
+            class="terminal-control is-minimize grid size-[1.05rem] cursor-pointer place-items-center rounded-full border-0 p-0 transition-[filter] duration-150 hover:brightness-110 focus-visible:brightness-110"
+            data-terminal-action="minimize"
+            aria-label="Minimize terminal"
+          >
+            <span></span>
+          </button>
+          <button
+            type="button"
+            class="terminal-control is-maximize grid size-[1.05rem] cursor-pointer place-items-center rounded-full border-0 p-0 transition-[filter] duration-150 hover:brightness-110 focus-visible:brightness-110"
+            data-terminal-action="maximize"
+            aria-label="Maximize terminal"
+          >
+            <span></span>
+          </button>
+          <button
+            type="button"
+            class="terminal-control is-close grid size-[1.05rem] cursor-pointer place-items-center rounded-full border-0 p-0 transition-[filter] duration-150 hover:brightness-110 focus-visible:brightness-110"
+            data-terminal-action="close"
+            aria-label="Close terminal"
+          >
+            <span></span>
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="terminal-screen h-[21rem] cursor-text overflow-y-auto px-[1.05rem] py-4 text-[var(--terminal-screen-text)] opacity-100 max-sm:h-96 max-sm:p-3.5"
+        data-terminal-screen
+      >
+        <pre
+          class="m-0 whitespace-pre-wrap break-words font-[inherit] leading-[1.58] text-[var(--terminal-screen-text)]"
+          data-terminal-history>{initialHistory}</pre>
+
+        <form
+          class="terminal-prompt-row mt-1 flex items-baseline gap-2 text-[var(--terminal-screen-text)] max-sm:flex-col max-sm:items-start max-sm:gap-0.5"
+          data-terminal-form
+        >
+          <label
+            class="shrink-0 whitespace-nowrap text-[var(--terminal-screen-command)]"
+            for="terminal-input"
+            data-terminal-prompt>{terminal.prompt}</label
+          >
+          <input
+            class="min-w-0 flex-1 appearance-none border-0 bg-transparent p-0 font-[inherit] leading-[1.58] text-[var(--terminal-screen-text)] caret-[var(--terminal-screen-command)] shadow-none outline-none ring-0 focus:border-0 focus:outline-none focus:ring-0 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0"
+            id="terminal-input"
+            data-terminal-input
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            value=""
+          />
+        </form>
+      </div>
+    </div>
+
+    <button
+      class="terminal-restore relative z-[1] mt-4 cursor-pointer rounded-[0.7rem] border px-4 py-3 font-mono text-sm text-[var(--terminal-command)] shadow-[0_12px_30px_rgba(15,23,42,0.08)]"
+      type="button"
+      data-terminal-restore
+      hidden
+    >
+      {terminal.restoreLabel}
+    </button>
+  </div>
+</section>
+
+<script is:inline define:vars={{ terminal }}>
+  const initPortfolioTerminal = () => {
+    document.querySelectorAll("[data-terminal-root]").forEach((root) => {
+      if (root.dataset.ready === "true") return;
+      root.dataset.ready = "true";
+
+      const screen = root.querySelector("[data-terminal-screen]");
+      const history = root.querySelector("[data-terminal-history]");
+      const form = root.querySelector("[data-terminal-form]");
+      const input = root.querySelector("[data-terminal-input]");
+      const hint = root.parentElement.querySelector("[data-terminal-hint]");
+      const restoreButton = root.parentElement.querySelector(
+        "[data-terminal-restore]",
+      );
+      const prompt = terminal.prompt;
+      const commandMap = new Map(
+        terminal.commands.map((command) => [command.name, command]),
+      );
+      const initialHistory = terminal.welcome.join("\n");
+      const bootLines = terminal.boot || [];
+      let bootTimeouts = [];
+
+      const clearBootTimeouts = () => {
+        bootTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+        bootTimeouts = [];
+      };
+
+      const scrollToBottom = () => {
+        screen.scrollTop = screen.scrollHeight;
+      };
+
+      const urlPattern = /https?:\/\/[^\s)]+/g;
+
+      const write = (text) => {
+        history.textContent = text;
+        scrollToBottom();
+      };
+
+      const appendText = (text) => {
+        history.append(document.createTextNode(String(text)));
+        scrollToBottom();
+      };
+
+      const appendLine = (text) => {
+        if (history.childNodes.length) {
+          history.append(document.createTextNode("\n"));
+        }
+
+        appendText(text);
+      };
+
+      const createSafeLink = (url) => {
+        try {
+          const parsedUrl = new URL(url);
+
+          if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+            return null;
+          }
+
+          const link = document.createElement("a");
+          link.href = parsedUrl.href;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.referrerPolicy = "no-referrer";
+          link.textContent = url;
+
+          return link;
+        } catch {
+          return null;
+        }
+      };
+
+      const appendLinkedText = (text) => {
+        const value = String(text);
+        let cursor = 0;
+
+        value.replace(urlPattern, (url, index) => {
+          appendText(value.slice(cursor, index));
+
+          const link = createSafeLink(url);
+          if (link) {
+            history.append(link);
+          } else {
+            appendText(url);
+          }
+
+          cursor = index + url.length;
+          return url;
+        });
+
+        appendText(value.slice(cursor));
+      };
+
+      const setHint = (text) => {
+        hint.textContent = text;
+      };
+
+      const bootTerminal = () => {
+        clearBootTimeouts();
+        input.disabled = true;
+        write("");
+
+        bootLines.forEach((line, index) => {
+          const timeoutId = window.setTimeout(
+            () => {
+              appendLine(line);
+
+              if (index === bootLines.length - 1) {
+                const readyTimeoutId = window.setTimeout(() => {
+                  write(initialHistory);
+                  input.disabled = false;
+                  input.focus();
+                  scrollToBottom();
+                }, 260);
+                bootTimeouts.push(readyTimeoutId);
+              }
+            },
+            260 * (index + 1),
+          );
+          bootTimeouts.push(timeoutId);
+        });
+      };
+
+      const runCommand = (rawValue) => {
+        const commandName = String(rawValue || "")
+          .trim()
+          .toLowerCase();
+        if (!commandName) return;
+
+        if (commandName === "clear") {
+          write(initialHistory);
+          input.value = "";
+          return;
+        }
+
+        const command = commandMap.get(commandName);
+        const output = command ? command.output : [terminal.unknown];
+        appendLine(`${prompt} ${commandName}`);
+        output.forEach((line) => {
+          appendText("\n  ");
+          appendLinkedText(line);
+        });
+        appendText("\n");
+        input.value = "";
+      };
+
+      root.querySelectorAll("[data-terminal-trigger]").forEach((button) => {
+        button.addEventListener("click", () => {
+          runCommand(button.dataset.terminalTrigger);
+          input.focus();
+        });
+      });
+
+      root.querySelectorAll("[data-terminal-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const action = button.dataset.terminalAction;
+
+          if (action === "minimize") {
+            if (root.classList.contains("is-minimized")) {
+              root.classList.remove("is-minimized");
+              button.setAttribute("aria-label", "Minimize terminal");
+              window.setTimeout(() => {
+                input.focus({ preventScroll: true });
+                scrollToBottom();
+              }, 460);
+              return;
+            }
+
+            root.classList.add("is-minimized");
+            root.classList.remove("is-maximized");
+            button.setAttribute("aria-label", "Restore terminal");
+            return;
+          }
+
+          if (action === "maximize") {
+            if (root.classList.contains("is-minimized")) return;
+            root.classList.toggle("is-maximized");
+            root.classList.remove("is-minimized");
+            window.setTimeout(() => {
+              root.scrollIntoView({ behavior: "smooth", block: "center" });
+              scrollToBottom();
+            }, 120);
+          }
+
+          if (action === "close") {
+            clearBootTimeouts();
+            input.disabled = false;
+            input.value = "";
+            write(initialHistory);
+            root.hidden = true;
+            restoreButton.hidden = false;
+            setHint(terminal.closedHint);
+          }
+        });
+      });
+
+      restoreButton.addEventListener("click", () => {
+        root.hidden = false;
+        restoreButton.hidden = true;
+        root.classList.remove("is-minimized");
+        root.classList.remove("is-maximized");
+        setHint(terminal.hint);
+        window.setTimeout(() => {
+          root.scrollIntoView({ behavior: "smooth", block: "center" });
+          bootTerminal();
+        }, 120);
+      });
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        runCommand(input.value);
+      });
+
+      root
+        .querySelector(".terminal-topbar")
+        .addEventListener("click", (event) => {
+          if (event.target.closest("[data-terminal-action]")) return;
+          if (!root.classList.contains("is-minimized")) return;
+
+          root.classList.remove("is-minimized");
+          root
+            .querySelector('[data-terminal-action="minimize"]')
+            ?.setAttribute("aria-label", "Minimize terminal");
+          window.setTimeout(() => {
+            input.focus({ preventScroll: true });
+            scrollToBottom();
+          }, 460);
+        });
+
+      screen.addEventListener("click", () => input.focus());
+      scrollToBottom();
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initPortfolioTerminal);
+  } else {
+    initPortfolioTerminal();
+  }
+
+  document.addEventListener("astro:after-swap", initPortfolioTerminal);
+</script>
+
+<style>
+  .terminal-section {
+    --terminal-page-bg:
+      radial-gradient(
+        circle at 72% 68%,
+        rgba(14, 165, 233, 0.06),
+        transparent 30rem
+      ),
+      linear-gradient(
+        180deg,
+        rgb(226, 232, 240) 0%,
+        rgb(226, 232, 240) 18%,
+        rgb(241, 245, 249) 56%,
+        rgb(248, 250, 252) 100%
+      );
+    --terminal-window-bg: rgba(255, 255, 255, 0.9);
+    --terminal-bar-bg: rgba(241, 245, 249, 0.92);
+    --terminal-screen-bg: rgb(2, 6, 23);
+    --terminal-border: rgba(148, 163, 184, 0.62);
+    --terminal-text: rgb(31, 41, 55);
+    --terminal-muted: rgb(100, 116, 139);
+    --terminal-command: rgb(4, 120, 87);
+    --terminal-accent: rgb(3, 105, 161);
+    --terminal-chip-bg: rgba(255, 255, 255, 0.7);
+    --terminal-screen-text: rgb(226, 232, 240);
+    --terminal-screen-muted: rgb(148, 163, 184);
+    --terminal-screen-command: rgb(74, 222, 128);
+    --terminal-link: rgb(56, 189, 248);
+
+    background: var(--terminal-page-bg);
+    color: var(--terminal-text);
+    position: relative;
+  }
+
+  .terminal-section::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 7rem;
+    background: linear-gradient(
+      180deg,
+      rgb(226, 232, 240),
+      rgba(226, 232, 240, 0)
+    );
+    pointer-events: none;
+  }
+
+  :global(.dark) .terminal-section {
+    --terminal-page-bg:
+      radial-gradient(
+        circle at 74% 66%,
+        rgba(34, 197, 94, 0.055),
+        transparent 30rem
+      ),
+      linear-gradient(
+        180deg,
+        rgb(8, 13, 27) 0%,
+        rgb(8, 13, 27) 26%,
+        rgb(5, 10, 22) 62%,
+        rgb(3, 7, 18) 100%
+      );
+    --terminal-window-bg: rgb(2, 6, 23);
+    --terminal-bar-bg: rgb(15, 23, 42);
+    --terminal-screen-bg: rgb(2, 6, 23);
+    --terminal-border: rgba(71, 85, 105, 0.82);
+    --terminal-text: rgb(226, 232, 240);
+    --terminal-muted: rgb(148, 163, 184);
+    --terminal-command: rgb(74, 222, 128);
+    --terminal-accent: rgb(125, 211, 252);
+    --terminal-chip-bg: rgba(15, 23, 42, 0.72);
+    --terminal-screen-text: rgb(226, 232, 240);
+    --terminal-screen-muted: rgb(148, 163, 184);
+    --terminal-screen-command: rgb(74, 222, 128);
+    --terminal-link: rgb(96, 165, 250);
+  }
+
+  :global(.dark) .terminal-section::before {
+    background: linear-gradient(180deg, rgb(8, 13, 27), rgba(8, 13, 27, 0));
+  }
+
+  .terminal-window {
+    border-color: var(--terminal-border);
+    transition: box-shadow 0.18s ease;
+  }
+
+  .terminal-topbar {
+    border-color: var(--terminal-border);
+  }
+
+  .terminal-control span {
+    display: block;
+    position: relative;
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  .is-minimize {
+    background: rgb(250, 204, 21);
+  }
+
+  .is-maximize {
+    background: rgb(34, 197, 94);
+  }
+
+  .is-close {
+    background: rgb(248, 113, 113);
+  }
+
+  .is-minimize span::before,
+  .is-maximize span::before,
+  .is-close span::before,
+  .is-close span::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    background: rgba(15, 23, 42, 0.72);
+    transform: translate(-50%, -50%);
+  }
+
+  .is-minimize span::before {
+    width: 0.48rem;
+    height: 0.08rem;
+  }
+
+  .terminal-window.is-minimized .is-minimize span::before,
+  .terminal-window.is-minimized .is-minimize span::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 0.42rem;
+    height: 0.08rem;
+    background: rgba(15, 23, 42, 0.72);
+  }
+
+  .terminal-window.is-minimized .is-minimize span::before {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+
+  .terminal-window.is-minimized .is-minimize span::after {
+    transform: translate(-50%, -50%);
+  }
+
+  .is-maximize span::before {
+    width: 0.42rem;
+    height: 0.42rem;
+    border: 0.08rem solid rgba(15, 23, 42, 0.72);
+    background: transparent;
+  }
+
+  .is-close span::before,
+  .is-close span::after {
+    width: 0.52rem;
+    height: 0.08rem;
+  }
+
+  .is-close span::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .is-close span::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  .terminal-window.is-minimized .terminal-screen {
+    height: 0;
+    padding-block: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .terminal-window.is-minimized .terminal-topbar {
+    border-bottom: 0;
+    cursor: pointer;
+  }
+
+  .terminal-window.is-minimized .is-maximize {
+    cursor: not-allowed;
+    filter: grayscale(1) opacity(0.5);
+  }
+
+  .terminal-window.is-maximized {
+    box-shadow: 0 30px 90px rgba(15, 23, 42, 0.18);
+  }
+
+  .terminal-window.is-maximized .terminal-screen {
+    height: 34rem;
+  }
+
+  .terminal-restore {
+    border-color: var(--terminal-border);
+    background:
+      linear-gradient(135deg, rgba(74, 222, 128, 0.08), transparent),
+      var(--terminal-chip-bg);
+    transition:
+      border-color 0.16s ease,
+      transform 0.16s ease;
+  }
+
+  .terminal-restore::before {
+    content: "$ ";
+    color: var(--terminal-accent);
+  }
+
+  .terminal-restore:hover,
+  .terminal-restore:focus-visible {
+    border-color: var(--terminal-command);
+    transform: translateY(-1px);
+  }
+
+  .terminal-screen {
+    background:
+      radial-gradient(
+        circle at 1px 1px,
+        rgba(148, 163, 184, 0.16) 1px,
+        transparent 0
+      ),
+      var(--terminal-screen-bg);
+    background-size: 18px 18px;
+    transition:
+      height 0.46s cubic-bezier(0.22, 1, 0.36, 1),
+      padding 0.46s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.18s ease 0.08s;
+  }
+
+  .terminal-screen :global(a) {
+    color: var(--terminal-link);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .terminal-screen :global(a:hover),
+  .terminal-screen :global(a:focus-visible) {
+    color: var(--terminal-accent);
+  }
+
+  .terminal-prompt-row input,
+  .terminal-prompt-row input:focus,
+  .terminal-prompt-row input:focus-visible,
+  .terminal-prompt-row input:active {
+    border-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  .terminal-prompt-row input::selection {
+    background: rgba(74, 222, 128, 0.28);
+  }
+
+  @media (max-width: 640px) {
+    .terminal-window.is-maximized .terminal-screen {
+      height: 34rem;
+    }
+  }
+</style>
