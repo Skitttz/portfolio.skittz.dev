@@ -1,9 +1,9 @@
 {
   "button": {
     "textPrimary": "Download CV",
-    "textSecondary": "Explore"
+    "textSecondary": "Explore posts"
   },
-  "textIntro": "Hey, I'm",
+  "textIntro": "Hi, I'm",
   "name": "Carlos",
   "answer": "Who?",
   "about": {
@@ -12,8 +12,8 @@
     "location": "Aracaju-SE, Brazil",
     "description": "I work as a Front-end Developer, focused on building modern, responsive, and well-structured web interfaces. My main stack is React, with experience across its ecosystem, including Next.js. I have worked with Vite as a build and development tool, as well as on Micro Frontends (MFE) architectures, aimed at modularity and scalability.\n\nI am familiar with AstroJS, which was used in the development of this portfolio, exploring a performance-focused and content-driven approach.\n\nOn the back-end, I have basic knowledge of Node.js and Express, with experience building REST APIs and implementing CRUD operations. I have also worked with Headless CMS solutions, using Strapi (open source) and WordPress in headless mode, integrating them with modern front-end applications.\n\nI have knowledge of prototyping, contributing to better alignment between design and development.\n\nI strive for constant growth as a developer, focusing on best practices, performance, and code quality."
   },
-  "selfProfissionalText": "I'm a",
-  "tagline": "but, you can call me",
+  "selfProfissionalText": "I work as",
+  "tagline": "Also known as",
   "nickname": "Skittz",
   "fileName": "resume-carlos-vinicius",
   "linkedInText": "Hit me up at",
