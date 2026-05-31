@@ -1,9 +1,7 @@
 ---
 if (import.meta.env.MODE === 'static') {
-  const supportedLangs = ['en', 'pt'];
-  const lang = supportedLangs.includes(navigator.language.split('-')[0])
-    ? navigator.language.split('-')[0]
-    : 'en';
+  const browserLang = navigator.language.toLowerCase();
+  const lang = browserLang.startsWith('pt') ? 'pt-br' : 'en';
   window.location.href = `/${lang}`;
 }
 ---
