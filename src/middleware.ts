@@ -2,7 +2,7 @@ import { sequence } from 'astro:middleware';
 
 const languageDetection = async ({ request, redirect, cookies }, next) => {
   const url = new URL(request.url);
-  const supportedLangs = ['en', 'pt', 'pt-br'];
+  const supportedLangs = ['en', 'pt-br'];
   const COOKIE_NAME = 'preferred_lang';
   
   if (url.pathname.startsWith('/_server-islands/') || 
@@ -13,6 +13,11 @@ const languageDetection = async ({ request, redirect, cookies }, next) => {
     return next();
   }
   
+  if (url.pathname === '/pt' || url.pathname.startsWith('/pt/')) {
+    const normalizedPath = url.pathname.replace(/^\/pt(?=\/|$)/, '/pt-br');
+    return redirect(`${normalizedPath}${url.search}`);
+  }
+
   if (supportedLangs.some(lang => url.pathname.startsWith(`/${lang}`))) {
     return next();
   }
@@ -27,11 +32,20 @@ const languageDetection = async ({ request, redirect, cookies }, next) => {
       );
       
       for (const lang of languages) {
+        if (lang === 'pt') {
+          userLang = 'pt-br';
+          break;
+        }
+
         if (supportedLangs.includes(lang)) {
           userLang = lang;
           break;
         }
         const shortLang = lang.split('-')[0];
+        if (shortLang === 'pt') {
+          userLang = 'pt-br';
+          break;
+        }
         if (supportedLangs.includes(shortLang)) {
           userLang = shortLang;
           break;
@@ -41,10 +55,6 @@ const languageDetection = async ({ request, redirect, cookies }, next) => {
   }
   
   userLang = userLang || 'en';
-  
-  if (userLang === 'pt' && supportedLangs.includes('pt-br')) {
-    userLang = 'pt-br';
-  }
   
   if (!supportedLangs.includes(userLang)) {
     userLang = 'en';
@@ -64,7 +74,7 @@ const languageDetection = async ({ request, redirect, cookies }, next) => {
 const serverIslandsHandler = async ({ request }, next) => {
   const url = new URL(request.url);
   
-  const match = url.pathname.match(/^\/(en|pt|pt-br)\/_server-islands\/(.+)$/);
+  const match = url.pathname.match(/^\/(en|pt-br)\/_server-islands\/(.+)$/);
   if (match) {
     const [, lang, islandPath] = match;
     const correctedPath = `/_server-islands/${islandPath}`;

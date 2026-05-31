@@ -52,7 +52,7 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)", "sans-serif"],
         roboto: ["var(--font-roboto)", "sans-serif"],
-        wind: ["var(--font-wind)", "system-ui"],
+        mono: ["var(--font-mono)", "monospace"],
       },
 
       keyframes: {
@@ -93,7 +93,7 @@ export default {
         },
       },
 
-      /* 🎬 ANIMATIONS */
+      /* ANIMATIONS */
       animation: {
         blurIn: 'blurIn 0.8s ease-out forwards',
         glowPulse: 'glowPulse 2s ease-in-out infinite',
