@@ -20,15 +20,14 @@ export interface Props {
 
 const { lang } = Astro.props;
 const locales = { en, pt };
-const translations = locales[lang] || pt;
+const translations = locales[lang as keyof typeof locales] || pt;
 
 const userAgent = Astro.request.headers.get("user-agent");
 let actionText = translations.githubPreview.actionText;
 const isMobileDevice = isMobile(userAgent);
 
 if (isMobileDevice) {
-  actionText =
-    lang === "pt-br" ? "Toque para ver os projetos!" : "Tap to see projects!";
+  actionText = translations.githubPreview.actionTextMobile;
 }
 
 interface IGitHubRepo {
@@ -58,11 +57,10 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
   const headers = {
     "User-Agent": "Portfolio",
     Accept: "application/vnd.github.v3+json",
+    ...(import.meta.env.GITHUB_TOKEN && {
+      Authorization: `Bearer ${import.meta.env.GITHUB_TOKEN}`,
+    }),
   };
-
-  if (import.meta.env.GITHUB_TOKEN) {
-    headers["Authorization"] = `Bearer ${import.meta.env.GITHUB_TOKEN}`;
-  }
 
   try {
     const controller = new AbortController();
@@ -84,16 +82,17 @@ async function getTopRepos(): Promise<IGitHubRepo[] | null> {
 
     cache = data.filter(
       (repo) =>
-        !repo.name.includes("skitttz") && targetRepos.includes(repo.name)
+        !repo.name.includes("skitttz") && targetRepos.includes(repo.name),
     );
 
     lastFetch = now;
     return cache;
   } catch (error) {
-    console.error(
-      "[Error Search Repo]:",
-      error.name === "AbortError" ? "Timeout (AbortError)" : error
-    );
+    if (error instanceof Error && error.name === "AbortError") {
+      console.error("[Error Search Repo]: Timeout (AbortError)");
+    } else {
+      console.error("[Error Search Repo]:", error);
+    }
     return null;
   }
 }
@@ -328,9 +327,19 @@ try {
         keydown: (e) => e.key === "Escape" && isOpen && actions.close(),
       };
 
+      const moveModalToBody = () => {
+        const modal = $(modalConfig.modalId);
+
+        if (modal?.parentElement !== document.body) {
+          document.body.appendChild(modal);
+        }
+
+        return modal;
+      };
+
       const actions = {
         open: () => {
-          const modal = $(modalConfig.modalId);
+          const modal = moveModalToBody();
           modal.classList.remove("hidden");
           document.body.style.overflow = "hidden";
           document.body.classList.add("modal-open");
@@ -349,16 +358,18 @@ try {
         const avatar = $(modalConfig.avatarTriggerId);
         const modal = $(modalConfig.modalId);
         const closeBtn = $(modalConfig.closeModalBtnId);
+        if (modal?.dataset.bound === "true") return;
 
         avatar?.addEventListener("click", handlers.open);
-        avatar?.addEventListener("touchend", handlers.open);
         closeBtn?.addEventListener("click", handlers.close);
         modal?.addEventListener("click", handlers.backdrop);
         document.addEventListener("keydown", handlers.keydown);
+        modal.dataset.bound = "true";
       };
 
       const init = () => {
         if (!$(modalConfig.avatarTriggerId) || !$(modalConfig.modalId)) return;
+        moveModalToBody();
         bindEvents();
       };
 
@@ -368,5 +379,7 @@ try {
     document.readyState === "loading"
       ? document.addEventListener("DOMContentLoaded", MobileModal.init)
       : MobileModal.init();
+
+    document.addEventListener("astro:after-swap", MobileModal.init);
   </script>
 </div>

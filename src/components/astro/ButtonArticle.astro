@@ -8,7 +8,7 @@ export interface Props {
 
 const locales = { en, pt };
 const { lang } = Astro.props;
-const translations = locales[lang] || pt;
+const translations = locales[lang as keyof typeof locales] || pt;
 ---
 
 <div class="relative z-50 pt-8 px-6">
