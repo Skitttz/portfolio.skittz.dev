@@ -30,13 +30,13 @@ const { name, answer, title, description, location } = Astro.props;
       ></span>
 
       <h2
-        class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-white relative translate-x-[1px] translate-y-[2px]"
+        class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-slate-100 relative translate-x-[1px] translate-y-[2px]"
       >
         {name}
       </h2>
 
       <span
-        class="absolute -right-[22px] -top-[50%] text-[11px] italic tracking-normal text-gray-500 dark:text-gray-400 opacity-70 group-hover:opacity-100 transition-opacity flex gap-[2px] items-center"
+        class="absolute -right-[22px] -top-[50%] text-[11px] italic tracking-normal text-gray-500 dark:text-slate-400 opacity-70 group-hover:opacity-100 transition-opacity flex gap-[2px] items-center"
       >
         <Icon name="material-symbols:info-outline" />
         {answer}
@@ -45,23 +45,30 @@ const { name, answer, title, description, location } = Astro.props;
   </div>
 </div>
 
-<div id={aboutMeIds.modalId} class="hidden fixed inset-0 z-[100]">
+<div
+  id={aboutMeIds.modalId}
+  class="hidden fixed inset-0 z-[10000]"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="about-me-title"
+>
   <div
     class="absolute inset-0 bg-black/50 backdrop-blur-sm select-none pointer-events-auto"
     data-backdrop
   >
   </div>
 
-  <div class="flex items-center justify-center min-h-full p-4">
+  <div class="relative z-10 flex items-center justify-center min-h-full p-4">
     <div
-      class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 w-11/12 md:max-w-full md:max-h-full max-w-md relative"
+      class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 w-11/12 max-w-4xl max-h-[86dvh] overflow-y-auto relative"
     >
       <button
         id={aboutMeIds.closeModalBtnId}
         type="button"
+        aria-label="Close about me modal"
         class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full transition-colors z-50"
       >
-        ✕
+        <span aria-hidden="true">&times;</span>
       </button>
       <div
         class="md:max-w-full max-w-4xl mx-auto pt-6 grid grid-cols-1 items-start md:grid-cols-[1fr_300px] gap-6"
@@ -74,7 +81,10 @@ const { name, answer, title, description, location } = Astro.props;
 
           <div class="space-y-3 text-center md:text-left">
             <div>
-              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+              <h2
+                id="about-me-title"
+                class="text-2xl font-semibold text-gray-900 dark:text-white"
+              >
                 {title}
               </h2>
 
@@ -89,7 +99,7 @@ const { name, answer, title, description, location } = Astro.props;
             </div>
 
             <div
-              class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed space-y-4 max-md:overflow-y-scroll max-md:max-h-60 h-full pr-2"
+              class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed space-y-4 h-full pr-2"
             >
               {
                 description &&
@@ -132,25 +142,32 @@ const { name, answer, title, description, location } = Astro.props;
         const modal = $(modalModalConfig.modalId);
         modal.classList.add("hidden");
         document.body.style.overflow = "";
-        document.body.classList.remove("modal-about-me-open");
         isOpen = false;
       },
       keydown: (e) => e.key === "Escape" && isOpen && actions.close(),
     };
 
+    const moveModalToBody = () => {
+      const modal = $(modalModalConfig.modalId);
+
+      if (modal?.parentElement !== document.body) {
+        document.body.appendChild(modal);
+      }
+
+      return modal;
+    };
+
     const actions = {
       open: () => {
-        const modal = $(modalModalConfig.modalId);
+        const modal = moveModalToBody();
         modal.classList.remove("hidden");
         document.body.style.overflow = "hidden";
-        document.body.classList.add("modal-about-me-open");
         isOpen = true;
       },
       close: () => {
         const modal = $(modalModalConfig.modalId);
         modal.classList.add("hidden");
         document.body.style.overflow = "";
-        document.body.classList.remove("modal-about-me-open");
         isOpen = false;
       },
     };
@@ -158,19 +175,23 @@ const { name, answer, title, description, location } = Astro.props;
     const bindEvents = () => {
       const modalTrigger = $(modalModalConfig.modalTriggerId);
       const modal = $(modalModalConfig.modalId);
+      if (modal.dataset.bound === "true") return;
+
       const backdrop = modal.querySelector("[data-backdrop]");
       const closeBtn = $(modalModalConfig.closeModalBtnId);
       modalTrigger?.addEventListener("click", handlers.open);
-      modalTrigger?.addEventListener("touchend", handlers.open);
       closeBtn?.addEventListener("click", handlers.close);
       backdrop?.addEventListener("click", handlers.close);
       document.addEventListener("keydown", handlers.keydown);
+      modal.dataset.bound = "true";
     };
 
     const init = () => {
       if (!$(modalModalConfig.modalTriggerId) || !$(modalModalConfig.modalId)) {
         return;
       }
+
+      moveModalToBody();
       bindEvents();
     };
 
@@ -180,4 +201,6 @@ const { name, answer, title, description, location } = Astro.props;
   document.readyState === "loading"
     ? document.addEventListener("DOMContentLoaded", modalSetup.init)
     : modalSetup.init();
+
+  document.addEventListener("astro:after-swap", modalSetup.init);
 </script>
