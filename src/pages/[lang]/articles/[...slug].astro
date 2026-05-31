@@ -1,32 +1,37 @@
 ---
-import ButtonArticle from '@/components/astro/ButtonArticle.astro';
-import { formatDate } from '@/utils/format-date';
-import Footer from '@components/astro/Footer.astro';
-import ThemeToggle from '@components/astro/ThemeToggle.astro';
-import Layout from '@layouts/Layout.astro';
-import { getEntry } from 'astro:content';
+import ButtonArticle from "@/components/astro/ButtonArticle.astro";
+import { formatDate } from "@/utils/format-date";
+import Footer from "@components/astro/Footer.astro";
+import ThemeToggle from "@components/astro/ThemeToggle.astro";
+import Layout from "@layouts/Layout.astro";
+import { render } from "astro:content";
+import { getEntry } from "astro:content";
 
-const { slug, lang } = Astro.params;
-const article = await getEntry('articles', slug);
+const lang = Astro.params.lang ?? "pt-br";
+const slug = Astro.params.slug;
+
+if (!slug) {
+  throw new Error("Not Found: missing article slug");
+}
+
+const article = await getEntry("articles", slug);
 
 if (!article) {
   throw new Error(`Not Found: ${slug}`);
 }
-
-const { Content } = await article.render();
-
+const { Content } = await render(article);
 function formatReadingTime(wordCount: number, lang: string) {
   const wordsPerMinute = 200;
   const minutes = Math.ceil(wordCount / wordsPerMinute);
 
-  if (lang?.toLowerCase() === 'pt-br') {
+  if (lang?.toLowerCase() === "pt-br") {
     return `${minutes} min de leitura`;
   }
 
   return `${minutes} min read`;
 }
 
-const textContent = article.body || '';
+const textContent = article.body || "";
 const wordCount = textContent.split(/\s+/).length;
 const readingTime = formatReadingTime(wordCount, lang);
 ---
@@ -140,8 +145,8 @@ const readingTime = formatReadingTime(wordCount, lang);
         </div>
       </article>
     </main>
-    <Footer lang={lang} />
   </div>
+  <Footer lang={lang} />
 </Layout>
 
 <style>
