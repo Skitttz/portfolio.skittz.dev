@@ -6,7 +6,7 @@
   :root {
     --font-roboto: "Roboto", sans-serif;
     --font-sans: "Inter", "sans-serif";
-    --font-wind: "Trade Winds", "system-ui";
+    --font-mono: "JetBrains Mono", "Fira Code", "Consolas", monospace;
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -162,31 +162,7 @@
 }
 
 @layer components {
-  body.modal-open [class*="fixed"]:not(#mobile-modal):not(#mobile-modal *),
-  body.modal-open footer {
-    @apply opacity-20 pointer-events-none transition-opacity duration-200 ease-in-out bg-black/50 backdrop-blur-sm;
-  }
-
-  body.modal-open
-    [class*="main-header"]:not(#mobile-modal):not(#mobile-modal *) {
-    @apply pt-0;
-  }
-
-  #mobile-modal {
-    @apply isolate;
-  }
-
-  body.modal-about-me-open
-    [class*="fixed"]:not(#about-me-modal):not(#about-me-modal *),
-  body.modal-about-me-open footer {
-    @apply opacity-20 pointer-events-none transition-opacity duration-200 ease-in-out bg-black/50 backdrop-blur-sm;
-  }
-
-  body.modal-about-me-open
-    [class*="main-header"]:not(#about-me-modal):not(#about-me-modal *) {
-    @apply pt-0;
-  }
-
+  #mobile-modal,
   #about-me-modal {
     @apply isolate;
   }
