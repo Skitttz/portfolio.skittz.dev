@@ -163,6 +163,16 @@ const terminalCueText =
             customClassName="w-[152px] sm:w-auto"
           />
         </div>
+
+        <button
+          type="button"
+          data-scroll-terminal
+          class="terminal-cue mt-1 inline-flex items-center gap-2 rounded-full border border-slate-300/70 bg-white/55 px-3 py-2 font-mono text-xs text-slate-600 shadow-sm backdrop-blur-sm transition-colors hover:border-emerald-500/50 hover:text-emerald-700 dark:border-slate-700/70 dark:bg-slate-950/35 dark:text-slate-400 dark:hover:border-emerald-400/50 dark:hover:text-emerald-300 sm:hidden"
+        >
+          <span aria-hidden="true">$</span>
+          <span>{terminalCueText}</span>
+          <span class="terminal-cue-mark" aria-hidden="true"></span>
+        </button>
       </section>
     </div>
   </main>
@@ -170,7 +180,7 @@ const terminalCueText =
   <button
     type="button"
     data-scroll-terminal
-    class="terminal-cue absolute bottom-5 left-1/2 z-50 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-slate-300/70 bg-white/55 px-3 py-2 font-mono text-xs text-slate-600 shadow-sm backdrop-blur-sm transition-colors hover:border-emerald-500/50 hover:text-emerald-700 dark:border-slate-700/70 dark:bg-slate-950/35 dark:text-slate-400 dark:hover:border-emerald-400/50 dark:hover:text-emerald-300"
+    class="terminal-cue absolute bottom-5 left-1/2 z-50 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-slate-300/70 bg-white/55 px-3 py-2 font-mono text-xs text-slate-600 shadow-sm backdrop-blur-sm transition-colors hover:border-emerald-500/50 hover:text-emerald-700 dark:border-slate-700/70 dark:bg-slate-950/35 dark:text-slate-400 dark:hover:border-emerald-400/50 dark:hover:text-emerald-300 sm:inline-flex"
   >
     <span aria-hidden="true">$</span>
     <span>{terminalCueText}</span>
