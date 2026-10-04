@@ -131,10 +131,10 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
     projects: [
       {
         slug: "fates",
-        name: "Fates v2",
+        name: "Fates",
         category: "Vitrine streetwear · Front-end",
         summary:
-          "Vitrine de streetwear com catálogo, fluxo de pedido simulado e uma história de origem que o visitante pode jogar.",
+          "Vitrine de streetwear da marca fictícia Fates, com catálogo, pedidos simulados e um minijogo que conta sua origem.",
         challenge:
           "Apresentar produtos e simular o fluxo de pedido sem acoplar a interface ao formato da API.",
         solution:
@@ -143,7 +143,7 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
           "Catálogo, carrinho, login e pedido simulado em modo demo; sem compra real nem pagamento.",
         details: [
           "A vitrine funciona em modo demo com os mesmos contratos dos casos de uso usados pela integração com a API: é possível percorrer catálogo, produto, carrinho e checkout simulado sem backend. Os pedidos do mock não são persistidos e não existe pagamento.",
-          "A página Sobre transforma a origem da marca em uma história interativa. O ollie e a escolha do primeiro adesivo alteram cenas e falas; há alternativa em texto para quem não usa o canvas.",
+          "A página Sobre conta a origem fictícia da marca em uma história interativa. O ollie e a escolha do primeiro adesivo alteram cenas e falas; há alternativa em texto para quem não usa o canvas.",
           "A separação entre domínio, aplicação, infraestrutura e apresentação ajuda a testar regras sem renderizar a interface. Vitest cobre unidades e integrações; Cypress percorre os fluxos no navegador.",
         ],
         stack: ["Next.js", "React", "TypeScript", "Clean Architecture", "Vitest", "Cypress"],
@@ -151,11 +151,11 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         featured: true,
         feature: {
           label: "Além da vitrine",
-          title: "O Sobre é um minijogo",
+          title: "Um minijogo conta a origem da marca",
           description:
-            "A origem da Fates começa numa pista em Aracaju. O visitante tenta um ollie, atravessa um cenário em pixel art e escolhe onde colar o primeiro adesivo da marca. Falas e desfecho respondem às escolhas; há controles de toque, áudio e versão em texto.",
-          href: "https://github.com/Skitttz/fates-v2/tree/main/src/presentation/components/story",
-          linkLabel: "Explorar a implementação do jogo",
+            "A origem fictícia da Fates começa numa pista em Aracaju. O visitante tenta um ollie, atravessa um cenário em pixel art e escolhe onde colar o primeiro adesivo da marca. Falas e desfecho respondem às escolhas; há controles de toque, áudio e versão em texto.",
+          href: "https://fates-v2.vercel.app/about",
+          linkLabel: "Jogar o minijogo",
         },
       },
       {
@@ -339,10 +339,10 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
     projects: [
       {
         slug: "fates",
-        name: "Fates v2",
+        name: "Fates",
         category: "Streetwear showcase · Front-end",
         summary:
-          "A streetwear showcase with a catalog, simulated order flow, and an origin story visitors can play.",
+          "A streetwear showcase for the fictional Fates brand, with a catalog, simulated orders, and a mini-game about its origins.",
         challenge:
           "Present products and simulate an order flow without coupling the interface to the API response shape.",
         solution:
@@ -351,7 +351,7 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
           "Catalog, cart, login, and simulated orders in demo mode; no real purchase or payment.",
         details: [
           "The showcase runs in demo mode using the same use-case contracts as the API integration, so visitors can explore the catalog, product, cart, and simulated checkout without a backend. Mock orders are not persisted and there is no payment.",
-          "The About page turns the brand's origin into an interactive story. The ollie and first sticker placement change scenes and dialogue; a text alternative is available outside the canvas.",
+          "The About page tells the fictional brand's origin as an interactive story. The ollie and first sticker placement change scenes and dialogue; a text alternative is available outside the canvas.",
           "Separating domain, application, infrastructure, and presentation makes rules testable without rendering the UI. Vitest covers units and integration; Cypress covers browser flows.",
         ],
         stack: ["Next.js", "React", "TypeScript", "Clean Architecture", "Vitest", "Cypress"],
@@ -359,11 +359,11 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         featured: true,
         feature: {
           label: "Beyond the showcase",
-          title: "The About page is a game",
+          title: "A mini-game tells the brand's origin",
           description:
-            "Fates starts at a skate spot in Aracaju. Visitors try an ollie, move through a pixel-art scene, and choose where to place the brand's first sticker. Dialogue and ending change with those choices; touch controls, audio, and a text version are available.",
-          href: "https://github.com/Skitttz/fates-v2/tree/main/src/presentation/components/story",
-          linkLabel: "Explore the game implementation",
+            "The fictional Fates brand begins at a skate spot in Aracaju. Visitors try an ollie, move through a pixel-art scene, and choose where to place its first sticker. Dialogue and ending change with those choices; touch controls, audio, and a text version are available.",
+          href: "https://fates-v2.vercel.app/about",
+          linkLabel: "Play the mini-game",
         },
       },
       {
