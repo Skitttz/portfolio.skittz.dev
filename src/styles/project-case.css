@@ -1,0 +1,51 @@
+  .case-page { min-height: 100dvh; color: #e9f0f5; background: #07111d; }
+  .case-shell { width: min(100% - 3rem, 72rem); margin-inline: auto; padding-block: 2rem 6rem; }
+  .case-nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: #98aab6; font: 600 .76rem var(--font-mono); }
+  .case-nav a { display: inline-flex; align-items: center; gap: .4rem; color: #a5ecd6; text-decoration: none; }
+  .case-nav a:hover { color: #fff; }
+  .case-nav svg { width: 1rem; height: 1rem; }
+  .case-header { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); padding-block: clamp(3rem, 8vw, 6rem); }
+  .case-eyebrow { margin: 0 0 1rem; color: var(--case-accent); font: 700 .73rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
+  .case-heading h1 { margin: 0; font-size: clamp(3.2rem, 8vw, 6.5rem); line-height: .95; letter-spacing: -.06em; }
+  .case-lead { max-width: 36rem; margin: 1.5rem 0 0; color: #c1d2d8; font-size: clamp(1.05rem, 2vw, 1.28rem); line-height: 1.65; }
+  .case-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 2rem; }
+  .case-action { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; padding: .6rem .9rem; border: 1px solid rgba(166, 212, 213, .4); border-radius: .6rem; color: #d8f2e9; font-weight: 700; text-decoration: none; }
+  .case-action:hover { border-color: var(--case-accent); }
+  .case-action--primary { border-color: var(--case-accent); background: var(--case-accent); color: #07111d; }
+  .case-action--primary:hover { filter: brightness(1.12); }
+  .case-action svg { width: 1.05rem; height: 1.05rem; }
+  .case-visual { position: relative; display: flex; flex-direction: column; justify-content: end; gap: 1.2rem; min-height: 25rem; overflow: hidden; padding: 2.5rem; border: 1px solid color-mix(in srgb, var(--case-accent), transparent 65%); border-radius: 1.4rem; background: radial-gradient(circle at 85% 12%, color-mix(in srgb, var(--case-accent), transparent 70%), transparent 52%), #11212e; }
+  .case-visual::after { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: radial-gradient(rgba(255,255,255,.1) 1px, transparent 1px); background-size: 23px 23px; mask-image: linear-gradient(90deg, transparent, black); }
+  .case-visual > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .case-visual--passai > img { object-position: center 30%; }
+  .case-visual--cats > img { object-position: center 35%; }
+  .case-visual--cats::after { background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.55)); mask-image: none; }
+  .cats-case-brand { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: .6rem; width: max-content; max-width: 100%; padding: .6rem 1rem; border-radius: .55rem; background: #fff; color: #161616; box-shadow: 0 12px 28px rgba(0,0,0,.28); }
+  .cats-case-brand img { width: 3rem; height: 2rem; object-fit: contain; }
+  .case-visual .cats-case-brand strong { color: #161616; font-size: 1.8rem; letter-spacing: -.05em; }
+  .case-visual svg { position: relative; z-index: 1; width: 4rem; height: 4rem; color: var(--case-accent); }
+  .case-visual strong { position: relative; z-index: 1; max-width: 100%; color: var(--case-accent); font-size: clamp(2.8rem, 6vw, 5.5rem); line-height: 1; letter-spacing: -.055em; overflow-wrap: anywhere; }
+  .case-body { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(16rem, .7fr); gap: clamp(2rem, 6vw, 6rem); padding-top: 2.5rem; border-top: 1px solid rgba(148,163,184,.23); }
+  .case-main { display: grid; gap: 2.5rem; }
+  .case-section-heading { display: flex; align-items: center; gap: .7rem; }
+  .case-section-heading span { display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border: 1px solid color-mix(in srgb, var(--case-accent), transparent 50%); border-radius: .55rem; color: var(--case-accent); }
+  .case-section-heading svg { width: 1.35rem; height: 1.35rem; }
+  .case-section h2, .case-feature h2 { margin: 0; font-size: 1.55rem; letter-spacing: -.035em; }
+  .case-section p, .case-feature p { margin: 1rem 0 0; max-width: 43rem; color: #b2c3cb; line-height: 1.75; }
+  .case-feature { padding: 1.5rem; border: 1px solid color-mix(in srgb, var(--case-accent), transparent 60%); border-radius: 1rem; background: color-mix(in srgb, var(--case-accent), transparent 95%); }
+  .case-feature > span { display: block; margin-bottom: .55rem; color: var(--case-accent); font: 700 .68rem var(--font-mono); text-transform: uppercase; letter-spacing: .12em; }
+  .case-feature a { display: inline-flex; align-items: center; gap: .3rem; margin-top: 1rem; color: var(--case-accent); font-weight: 700; text-underline-offset: .25rem; }
+  .case-feature svg { width: 1rem; height: 1rem; }
+  .case-aside { align-self: start; display: grid; gap: 1.7rem; padding: 1.5rem; border: 1px solid rgba(148,163,184,.2); border-radius: 1rem; background: rgba(255,255,255,.025); }
+  .case-fact > span { display: flex; align-items: center; gap: .5rem; color: var(--case-accent); font: 700 .69rem var(--font-mono); letter-spacing: .07em; text-transform: uppercase; }
+  .case-fact svg { width: 1.1rem; height: 1.1rem; }
+  .case-fact p { margin: .7rem 0 0; color: #b2c3cb; font-size: .89rem; line-height: 1.6; }
+  .case-fact ul { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; padding: 0; margin: .9rem 0 0; }
+  .case-fact li { padding: .35rem .55rem; border: 1px solid rgba(153,193,197,.25); border-radius: 99px; color: #c6dadb; font: 600 .68rem var(--font-mono); }
+  .case-next { display: grid; grid-template-columns: 1fr auto; gap: .35rem 1rem; align-items: center; margin-top: 5rem; padding: 1.5rem 0; border-top: 1px solid rgba(148,163,184,.25); color: #e9f0f5; text-decoration: none; }
+  .case-next span { grid-column: 1; color: #8eaaa8; font: 700 .7rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+  .case-next strong { grid-column: 1; font-size: 1.8rem; letter-spacing: -.04em; }
+  .case-next svg { grid-column: 2; grid-row: 1 / span 2; width: 1.6rem; height: 1.6rem; color: var(--case-accent); transition: transform .2s; }
+  .case-next:hover svg { transform: translateX(.3rem); }
+  @media (max-width: 800px) { .case-header, .case-body { grid-template-columns: 1fr; } .case-header { gap: 2rem; } .case-visual { min-height: 19rem; } .case-aside { max-width: none; } }
+  @media (prefers-reduced-motion: reduce) { .case-next svg { transition: none; } }

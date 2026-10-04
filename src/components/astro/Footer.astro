@@ -1,6 +1,7 @@
 ---
 import en from "@locales/en.json";
 import pt from "@locales/pt-br.json";
+import { Icon } from "astro-icon/components";
 export interface Props {
   lang: string;
 }
@@ -22,6 +23,11 @@ const currentYear = new Date().getFullYear();
         &copy; {currentYear} Skittz. {translations.footerText}
       </div>
       <div class="flex items-center space-x-6">
+        <a
+          href="mailto:skittz.dev@gmail.com"
+          class="inline-flex items-center gap-1.5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+          aria-label={lang === "pt-br" ? "Enviar e-mail" : "Send email"}
+        ><Icon name="mdi:email-outline" class="w-5 h-5" /><span class="text-sm">E-mail</span></a>
         <a
           href="https://github.com/skitttz"
           target="_blank"

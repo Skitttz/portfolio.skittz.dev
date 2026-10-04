@@ -1,0 +1,92 @@
+---
+import Footer from "@components/astro/Footer.astro";
+import Layout from "@layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+import { projectContent, projectPath, type Project } from "@/constants/projects";
+import "@/styles/project-case.css";
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return (["pt-br", "en"] as const).flatMap((lang) =>
+    [...projectContent[lang].projects, ...projectContent[lang].otherProjects].map((project) => ({
+      params: { lang, slug: project.slug },
+      props: { lang, project },
+    })),
+  );
+}
+
+interface Props {
+  lang: "pt-br" | "en";
+  project: Project;
+}
+
+const { lang, project } = Astro.props;
+const content = projectContent[lang];
+const allProjects = [...content.projects, ...content.otherProjects];
+const nextProject = allProjects[(allProjects.findIndex((item) => item.slug === project.slug) + 1) % allProjects.length];
+const isPt = lang === "pt-br";
+const palette: Record<string, { accent: string; icon: string }> = {
+  fates: { accent: "#e3ef78", icon: "mdi:skateboard" },
+  athow: { accent: "#8de1ce", icon: "mdi:chart-donut-variant" },
+  quertc: { accent: "#bca9ff", icon: "mdi:chat-processing-outline" },
+  passai: { accent: "#a9d5ff", icon: "mdi:file-send-outline" },
+  cats: { accent: "#f4762b", icon: "mdi:cat" },
+  nights4films: { accent: "#e9bcf7", icon: "mdi:movie-open-outline" },
+  surfcurse: { accent: "#9ce4ea", icon: "mdi:surfing" },
+};
+const visual = palette[project.slug];
+---
+
+<Layout
+  lang={lang}
+  title={`${project.name} | Carlos Vinicius`}
+  description={project.summary}
+  canonical={`https://portfolio.skittz.dev${projectPath(lang, project.slug)}`}
+>
+  <main class="case-page" style={`--case-accent: ${visual.accent}`}>
+    <div class="case-shell">
+      <nav class="case-nav" aria-label={isPt ? "Navegação do projeto" : "Project navigation"}>
+        <a href={`/${lang}/#projects`}><Icon name="mdi:arrow-left" aria-hidden="true" /> {isPt ? "Todos os projetos" : "All projects"}</a>
+        <span>{allProjects.findIndex((item) => item.slug === project.slug) + 1} / {allProjects.length}</span>
+      </nav>
+
+      <header class="case-header">
+        <div class="case-heading">
+          <p class="case-eyebrow">{project.category}</p>
+          <h1>{project.name}</h1>
+          <p class="case-lead">{project.summary}</p>
+          <div class="case-actions">
+            {project.live && !project.livePaused && <a class="case-action case-action--primary" href={project.live} target="_blank" rel="noopener noreferrer"><Icon name="mdi:open-in-new" aria-hidden="true" /> {content.demoLabel}</a>}
+            {project.href && <a class="case-action" href={project.href} target="_blank" rel="noopener noreferrer"><Icon name="mdi:github" aria-hidden="true" /> {content.sourceLabel}</a>}
+          </div>
+        </div>
+        <div class={`case-visual case-visual--${project.slug}`} aria-hidden="true">
+          {project.slug === "fates" ? <img src="/projects/fates-hero.webp" alt="" /> : project.slug === "passai" ? <img src="/projects/passai-demo.png" alt="" /> : project.slug === "cats" ? <><img src="/projects/cats-rocky.jpg" alt="" /><span class="cats-case-brand"><img src="/projects/cats-logo.svg" alt="" /> <strong>Cats</strong></span></> : <><Icon name={visual.icon} /><strong>{project.name}</strong></>}
+        </div>
+      </header>
+
+      <div class="case-body">
+        <div class="case-main">
+          <section class="case-section" aria-labelledby="challenge-title">
+            <div class="case-section-heading"><span><Icon name="mdi:target" aria-hidden="true" /></span><h2 id="challenge-title">{content.challengeLabel}</h2></div>
+            <p>{project.challenge}</p>
+          </section>
+          <section class="case-section" aria-labelledby="solution-title">
+            <div class="case-section-heading"><span><Icon name="mdi:lightbulb-outline" aria-hidden="true" /></span><h2 id="solution-title">{content.solutionLabel}</h2></div>
+            <p>{project.solution}</p>
+            {project.details?.map((detail) => <p>{detail}</p>)}
+          </section>
+          {project.feature && <section class="case-feature" aria-labelledby="feature-title"><span>{project.feature.label}</span><h2 id="feature-title">{project.feature.title}</h2><p>{project.feature.description}</p><a href={project.feature.href} target="_blank" rel="noopener noreferrer">{project.feature.linkLabel} <Icon name="mdi:arrow-top-right" aria-hidden="true" /></a></section>}
+        </div>
+        <aside class="case-aside" aria-label={isPt ? "Ficha do projeto" : "Project facts"}>
+          <div class="case-fact"><span><Icon name="mdi:check-circle-outline" aria-hidden="true" /> {content.evidenceLabel}</span><p>{project.evidence}</p></div>
+          <div class="case-fact"><span><Icon name="mdi:code-tags" aria-hidden="true" /> Stack</span><ul>{project.stack.map((technology) => <li>{technology}</li>)}</ul></div>
+        </aside>
+      </div>
+
+      <a class="case-next" href={projectPath(lang, nextProject.slug)}><span>{isPt ? "Próximo projeto" : "Next project"}</span><strong>{nextProject.name}</strong><Icon name="mdi:arrow-right" aria-hidden="true" /></a>
+    </div>
+  </main>
+  <Footer lang={lang} />
+</Layout>

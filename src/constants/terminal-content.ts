@@ -1,3 +1,21 @@
+import { projectContent, projectPath } from "@/constants/projects";
+
+const projectLines = (lang: "en" | "pt-br"): string[] => {
+  const content = projectContent[lang];
+  return [
+    ...[...content.projects, ...content.otherProjects].flatMap((project) => [
+      project.name,
+      `  ${project.summary}`,
+      ...(project.stack.length ? [`  stack: ${project.stack.join(", ")}`] : []),
+      `  case: https://portfolio.skittz.dev${projectPath(lang, project.slug)}`,
+      ...(project.href ? [`  repo: ${project.href}`] : []),
+      ...(project.live && !project.livePaused ? [`  demo: ${project.live}`] : []),
+      ...(project.livePaused ? [`  ${content.pausedLabel}`] : []),
+      "",
+    ]),
+  ];
+};
+
 export type TerminalCommand = {
   name: string;
   description: string;
@@ -19,9 +37,9 @@ export type TerminalContent = {
 
 export const terminalContent = {
   en: {
-    label: "interactive terminal",
-    title: "Inspect portfolio from terminal.",
-    hint: "Type a command and press Enter.",
+    label: "Extra / interactive terminal",
+    title: "Portfolio terminal.",
+    hint: "Try `projects`, `stack`, or `contact`.",
     closedHint: "Terminal closed. Press the button below to boot a new session.",
     restoreLabel: "boot terminal",
     prompt: "skittz@portfolio:~$",
@@ -57,26 +75,7 @@ export const terminalContent = {
       {
         name: "projects",
         description: "featured work",
-        output: [
-          "cats",
-          "  live: https://cats.skittz.dev/",
-          "  repo: https://github.com/Skitttz/cats",
-          "  context: social platform for cat lovers, focused on photo sharing and real-time interaction.",
-          "  highlights: photo feed, authentication, likes, comments, infinite scroll and real-time chat.",
-          "  stack: React, Vite, WordPress Headless, Node.js, Socket.io, TensorFlow.js and COCO-SSD.",
-          "",
-          "nights4films",
-          "  live: https://nights4films.vercel.app/",
-          "  repo: https://github.com/Skitttz/nights4films",
-          "  context: movie catalog built with React, Strapi Headless CMS and Tailwind.",
-          "  highlights: content management, search filters, pagination and user account flows.",
-          "",
-          "SurfCurse",
-          "  live: https://skitttz.github.io/SurfCurse/",
-          "  repo: https://github.com/Skitttz/SurfCurse",
-          "  context: landing page for custom surfboards, with product selection, insurance plans and contact sections.",
-          "  highlights: product storytelling, responsive layout and clear navigation between commercial sections.",
-        ],
+        output: projectLines("en"),
       },
       {
         name: "stack",
@@ -100,9 +99,9 @@ export const terminalContent = {
     ],
   },
   "pt-br": {
-    label: "terminal interativo",
-    title: "Inspecione o portfólio via terminal.",
-    hint: "Digite um comando e pressione Enter.",
+    label: "Extra / terminal interativo",
+    title: "Terminal do portfólio.",
+    hint: "Experimente `projects`, `stack` ou `contact`.",
     closedHint: "Terminal fechado. Pressione o botão abaixo para iniciar uma nova sessão.",
     restoreLabel: "iniciar terminal",
     prompt: "skittz@portfolio:~$",
@@ -138,26 +137,7 @@ export const terminalContent = {
       {
         name: "projects",
         description: "destaques",
-        output: [
-          "cats",
-          "  live: https://cats.skittz.dev/",
-          "  repo: https://github.com/Skitttz/cats",
-          "  contexto: rede social para amantes de gatos, focada em compartilhamento de fotos e interação em tempo real.",
-          "  destaques: feed de fotos, autenticação, curtidas, comentários, infinite scroll e chat em tempo real.",
-          "  stack: React, Vite, WordPress Headless, Node.js, Socket.io, TensorFlow.js e COCO-SSD.",
-          "",
-          "nights4films",
-          "  live: https://nights4films.vercel.app/",
-          "  repo: https://github.com/Skitttz/nights4films",
-          "  contexto: catálogo de filmes construído com React, Strapi Headless CMS e Tailwind.",
-          "  destaques: gestão de conteúdo, filtros de busca, paginação e fluxos de conta do usuário.",
-          "",
-          "SurfCurse",
-          "  live: https://skitttz.github.io/SurfCurse/",
-          "  repo: https://github.com/Skitttz/SurfCurse",
-          "  contexto: landing page para pranchas de surf personalizadas, com seleção de produtos, planos de seguro e contato.",
-          "  destaques: apresentação de produto, layout responsivo e navegação clara entre seções comerciais.",
-        ],
+        output: projectLines("pt-br"),
       },
       {
         name: "stack",

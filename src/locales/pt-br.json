@@ -17,9 +17,10 @@
   "nickname": "Skittz",
   "fileName": "curriculo-carlos-vinicius",
   "linkedInText": "Estou também no",
+  "seoDescription": "Carlos Vinicius é desenvolvedor front-end. Conheça projetos em Next.js, React, arquitetura de aplicações e experiências reais de produto.",
   "githubPreview": {
-    "actionText": "Passe o mouse!",
-    "actionTextMobile": "Clique aqui!",
+    "actionText": "Passe o mouse",
+    "actionTextMobile": "Toque aqui",
     "createdAtText": "Entrou em",
     "country": "Brasil",
     "seniorityLevel": "Desenvolvedor Pleno"

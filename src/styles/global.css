@@ -162,7 +162,6 @@
 }
 
 @layer components {
-  #mobile-modal,
   #about-me-modal {
     @apply isolate;
   }
