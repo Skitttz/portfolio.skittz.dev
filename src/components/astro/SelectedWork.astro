@@ -99,16 +99,20 @@ const more = content.projects.filter((project) => !project.featured);
             <div class={`more-art more-art--${project.slug}`} aria-hidden="true">
               {project.slug === "cats" ? (
                 <div class="cats-art">
-                  <div class="cats-art-header"><span><Icon name="mdi:cat" /> cats</span><span>♡</span></div>
-                  <div class="cats-art-post">
-                    <div class="cats-art-author"><span class="cats-art-avatar">m</span><strong>mimi</strong><span>•••</span></div>
-                    <div class="cats-art-photo"><Icon name="mdi:cat" /></div>
-                    <div class="cats-art-actions"><span>♡</span><span>◯</span><span>↗</span></div>
+                  <div class="cats-art-header"><img src="/projects/cats-logo.svg" alt="" loading="lazy" /><span>{lang === "pt-br" ? "Criar conta" : "Sign up"}</span></div>
+                  <div class="cats-art-body">
+                    <div class="cats-art-photo"><img src="/projects/cats-photo.jpeg" alt="" loading="lazy" /></div>
+                    <div class="cats-art-post">
+                      <span class="cats-art-label">CATS / FEED</span>
+                      <strong>jojo</strong>
+                      <span class="cats-art-actions">♡ &nbsp; ◯ &nbsp; ↗</span>
+                      <span class="cats-art-chat"><Icon name="mdi:chat-processing-outline" /> {lang === "pt-br" ? "Chat ao vivo" : "Live chat"}</span>
+                    </div>
                   </div>
                 </div>
               ) : <img class="passai-demo" src="/projects/passai-demo.png" alt="" loading="lazy" />}
             </div>
-            <span class="more-art-caption">{project.slug === "passai" ? (lang === "pt-br" ? "Imagem da demo" : "Demo image") : content.visualLabel}</span>
+            <span class="more-art-caption">{project.slug === "passai" ? (lang === "pt-br" ? "Imagem da demo" : "Demo image") : lang === "pt-br" ? "Visual do projeto" : "Project visual"}</span>
             <h3 id={`${project.slug}-title`} class="more-title">{project.name}</h3>
             <p class="more-summary">{project.summary}</p>
             <ul class="stack-list" aria-label={lang === "pt-br" ? "Tecnologias" : "Technologies"}>
@@ -243,18 +247,20 @@ const more = content.projects.filter((project) => !project.featured);
   .more-card { display: flex; flex-direction: column; align-items: start; min-width: 0; padding: 1.65rem; border: 1px solid rgba(148, 163, 184, .22); border-radius: 1.4rem; background: #101d2b; }
   .more-card-top { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; }
   .more-art { width: 100%; height: 14rem; margin-top: 1.2rem; overflow: hidden; border-radius: .9rem; }
-  .more-art--cats { background: radial-gradient(circle at 80% 15%, #c56d84, transparent 55%), #442739; }
-  .cats-art { width: min(78%, 18rem); margin: 1.2rem auto 0; overflow: hidden; border-radius: .85rem .85rem 0 0; background: #fff9fa; color: #31232c; box-shadow: 0 14px 38px #180d195e; transform: rotate(-3deg); }
-  .cats-art-header { display: flex; justify-content: space-between; align-items: center; padding: .55rem .85rem; border-bottom: 1px solid #f1e2e7; font-weight: 800; }
-  .cats-art-header span:first-child { display: inline-flex; align-items: center; gap: .3rem; }
-  .cats-art-header :global(svg) { width: 1rem; height: 1rem; color: #bb6b80; }
-  .cats-art-post { padding: .6rem .8rem; }
-  .cats-art-author { display: flex; align-items: center; gap: .4rem; margin-bottom: .55rem; font-size: .7rem; }
-  .cats-art-author > span:last-child { margin-left: auto; letter-spacing: .1em; }
-  .cats-art-avatar { display: grid; place-items: center; width: 1.2rem; height: 1.2rem; border-radius: 50%; background: #e7aac0; color: #542d3d; font-weight: 800; }
-  .cats-art-photo { display: grid; place-items: center; height: 8rem; border-radius: .45rem; background: radial-gradient(circle at 28% 18%, #f7d6b1, transparent 45%), linear-gradient(145deg, #d79485, #8d5d7d); }
-  .cats-art-photo :global(svg) { width: 5rem; height: 5rem; color: #fff2eb; filter: drop-shadow(0 7px 9px #673c4d66); }
-  .cats-art-actions { display: flex; gap: .65rem; padding-top: .45rem; color: #a65371; font-size: .9rem; line-height: 1; }
+  .more-art--cats { display: flex; align-items: flex-end; justify-content: center; padding: 1.2rem 1.2rem 0; background: radial-gradient(circle at 78% 8%, #ffbd75, transparent 55%), #f4762b; }
+  .cats-art { width: min(100%, 25rem); height: 12.5rem; overflow: hidden; border-radius: .8rem .8rem 0 0; background: #fff; color: #262626; box-shadow: 0 18px 40px #6c290e66; transform: rotate(-2deg); }
+  .cats-art-header { display: flex; justify-content: space-between; align-items: center; height: 2.2rem; padding: .35rem .7rem; border-bottom: 1px solid #e9e9e9; }
+  .cats-art-header img { width: 2.7rem; height: 1.5rem; object-fit: contain; }
+  .cats-art-header span { padding: .25rem .45rem; border-radius: .25rem; background: #f4762b; color: #fff; font: 700 .55rem var(--font-sans); }
+  .cats-art-body { display: grid; grid-template-columns: 48% minmax(0, 1fr); gap: .65rem; padding: .65rem; }
+  .cats-art-photo { height: 10rem; overflow: hidden; border-radius: .4rem; }
+  .cats-art-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; }
+  .cats-art-post { display: flex; flex-direction: column; align-items: start; min-width: 0; padding-top: .15rem; }
+  .cats-art-label { color: #ed742c; font: 700 .53rem var(--font-mono); letter-spacing: .12em; }
+  .cats-art-post strong { margin-top: .55rem; font-size: 1.25rem; line-height: 1; }
+  .cats-art-actions { margin-top: .65rem; color: #2e2e2e; font-size: .95rem; line-height: 1; white-space: nowrap; }
+  .cats-art-chat { display: inline-flex; align-items: center; gap: .25rem; margin-top: auto; padding: .3rem .4rem; border: 1px solid #f7b288; border-radius: .3rem; color: #b7591d; font: 700 .54rem var(--font-sans); }
+  .cats-art-chat :global(svg) { width: .7rem; height: .7rem; }
   .more-art--passai { background: #0b0b0c; }
   .passai-demo { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 31%; }
   .more-art-caption { margin-top: .55rem; color: #8195a5; font: 600 .63rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }

@@ -30,7 +30,7 @@ const palette: Record<string, { accent: string; icon: string }> = {
   athow: { accent: "#8de1ce", icon: "mdi:chart-donut-variant" },
   quertc: { accent: "#bca9ff", icon: "mdi:chat-processing-outline" },
   passai: { accent: "#a9d5ff", icon: "mdi:file-send-outline" },
-  cats: { accent: "#f2bdbe", icon: "mdi:cat" },
+  cats: { accent: "#f4762b", icon: "mdi:cat" },
   nights4films: { accent: "#e9bcf7", icon: "mdi:movie-open-outline" },
   surfcurse: { accent: "#9ce4ea", icon: "mdi:surfing" },
 };
@@ -61,7 +61,7 @@ const visual = palette[project.slug];
           </div>
         </div>
         <div class={`case-visual case-visual--${project.slug}`} aria-hidden="true">
-          {project.slug === "fates" ? <img src="/projects/fates-hero.webp" alt="" /> : project.slug === "passai" ? <img src="/projects/passai-demo.png" alt="" /> : <><Icon name={visual.icon} /><strong>{project.name}</strong></>}
+          {project.slug === "fates" ? <img src="/projects/fates-hero.webp" alt="" /> : project.slug === "passai" ? <img src="/projects/passai-demo.png" alt="" /> : project.slug === "cats" ? <><img src="/projects/cats-photo.jpeg" alt="" /><span class="cats-case-brand"><img src="/projects/cats-logo.svg" alt="" /> <strong>Cats</strong></span></> : <><Icon name={visual.icon} /><strong>{project.name}</strong></>}
         </div>
       </header>
 
@@ -109,8 +109,13 @@ const visual = palette[project.slug];
   .case-action :global(svg) { width: 1.05rem; height: 1.05rem; }
   .case-visual { position: relative; display: flex; flex-direction: column; justify-content: end; gap: 1.2rem; min-height: 25rem; overflow: hidden; padding: 2.5rem; border: 1px solid color-mix(in srgb, var(--case-accent), transparent 65%); border-radius: 1.4rem; background: radial-gradient(circle at 85% 12%, color-mix(in srgb, var(--case-accent), transparent 70%), transparent 52%), #11212e; }
   .case-visual::after { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: radial-gradient(rgba(255,255,255,.1) 1px, transparent 1px); background-size: 23px 23px; mask-image: linear-gradient(90deg, transparent, black); }
-  .case-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .case-visual--passai img { object-position: center 30%; }
+  .case-visual > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .case-visual--passai > img { object-position: center 30%; }
+  .case-visual--cats > img { object-position: center 35%; }
+  .case-visual--cats::after { background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.55)); mask-image: none; }
+  .cats-case-brand { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: .6rem; width: max-content; max-width: 100%; padding: .6rem 1rem; border-radius: .55rem; background: #fff; color: #161616; box-shadow: 0 12px 28px rgba(0,0,0,.28); }
+  .cats-case-brand img { width: 3rem; height: 2rem; object-fit: contain; }
+  .case-visual .cats-case-brand strong { color: #161616; font-size: 1.8rem; letter-spacing: -.05em; }
   .case-visual :global(svg) { position: relative; z-index: 1; width: 4rem; height: 4rem; color: var(--case-accent); }
   .case-visual strong { position: relative; z-index: 1; max-width: 100%; color: var(--case-accent); font-size: clamp(2.8rem, 6vw, 5.5rem); line-height: 1; letter-spacing: -.055em; overflow-wrap: anywhere; }
   .case-body { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(16rem, .7fr); gap: clamp(2rem, 6vw, 6rem); padding-top: 2.5rem; border-top: 1px solid rgba(148,163,184,.23); }
