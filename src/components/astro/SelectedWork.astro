@@ -179,7 +179,7 @@ const more = content.projects.filter((project) => !project.featured);
           </li>
         ))}
       </ol>
-      <a class="resume-link" href={`/${resumeFile}.pdf`} download>{content.resumeLabel} <span aria-hidden="true">↗</span></a>
+      <a class="resume-link" href={`/${resumeFile}.pdf`} download>{content.resumeLabel} <Icon name="mdi:download-outline" aria-hidden="true" /></a>
     </div>
   </section>
 
@@ -236,8 +236,9 @@ const more = content.projects.filter((project) => !project.featured);
   .project-link, .resume-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.6rem; color: #9df5d7; font-weight: 700; transition: color .2s, background .2s, border-color .2s; }
   .project-link { padding: .35rem .85rem; border: 1px solid rgba(146,239,210,.48); border-radius: .55rem; text-decoration: none; }
   .project-link:hover { color: #fff; border-color: #b6ffe5; background: rgba(146,239,210,.09); }
-  .resume-link { padding: .55rem .85rem; border: 1px solid rgba(146,239,210,.48); border-radius: .6rem; text-decoration: none; }
-  .resume-link:hover { color: #fff; border-color: #b6ffe5; background: rgba(146,239,210,.09); gap: .8rem; }
+  .resume-link { padding: 0; color: rgba(157,245,215,.72); opacity: .82; text-decoration: none; transition: color .2s, opacity .2s, gap .2s; }
+  .resume-link:hover { color: #caffec; opacity: 1; gap: .65rem; }
+  .resume-link :global(svg) { width: 1.05rem; height: 1.05rem; }
   .project-link :global(svg) { width: 1.1rem; height: 1.1rem; }
   .project-link--primary { color: #071b1b; border-color: #92efd2; background: #92efd2; }
   .project-link--primary:hover { color: #071b1b; border-color: #bbffe8; background: #bbffe8; }
