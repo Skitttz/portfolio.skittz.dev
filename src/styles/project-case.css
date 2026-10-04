@@ -24,6 +24,7 @@
   .cats-case-brand { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: .6rem; width: max-content; max-width: 100%; padding: .6rem 1rem; border-radius: .55rem; background: #fff; color: #161616; box-shadow: 0 12px 28px rgba(0,0,0,.28); }
   .cats-case-brand img { width: 3rem; height: 2rem; object-fit: contain; }
   .case-visual .cats-case-brand strong { color: #161616; font-size: 1.8rem; letter-spacing: -.05em; }
+  .case-visual--nights4films strong { font-size: clamp(1.5rem, 4.2vw, 3.2rem); white-space: nowrap; overflow-wrap: normal; }
   .case-visual svg { position: relative; z-index: 1; width: 4rem; height: 4rem; color: var(--case-accent); }
   .case-visual strong { position: relative; z-index: 1; max-width: 100%; color: var(--case-accent); font-size: clamp(2.8rem, 6vw, 5.5rem); line-height: 1; letter-spacing: -.055em; overflow-wrap: anywhere; }
   .nights-case-gallery { margin: 0 0 3rem; padding: clamp(1rem, 3vw, 2rem); border: 1px solid rgba(233,188,247,.22); border-radius: 1.25rem; background: radial-gradient(ellipse at 50% 0, rgba(107,66,178,.19), transparent 65%), #0d1625; }
