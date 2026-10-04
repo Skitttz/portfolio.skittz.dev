@@ -25,6 +25,16 @@
   .case-visual .cats-case-brand strong { color: #161616; font-size: 1.8rem; letter-spacing: -.05em; }
   .case-visual svg { position: relative; z-index: 1; width: 4rem; height: 4rem; color: var(--case-accent); }
   .case-visual strong { position: relative; z-index: 1; max-width: 100%; color: var(--case-accent); font-size: clamp(2.8rem, 6vw, 5.5rem); line-height: 1; letter-spacing: -.055em; overflow-wrap: anywhere; }
+  .nights-case-gallery { margin: 0 0 3rem; padding: clamp(1rem, 3vw, 2rem); border: 1px solid rgba(233,188,247,.22); border-radius: 1.25rem; background: radial-gradient(ellipse at 50% 0, rgba(107,66,178,.19), transparent 65%), #0d1625; }
+  .nights-case-gallery-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .nights-case-gallery-heading span { color: #d8b4e8; font: 700 .68rem var(--font-mono); letter-spacing: .13em; }
+  .nights-case-gallery-heading h2 { margin: .45rem 0 0; font-size: clamp(1.3rem, 3vw, 1.8rem); letter-spacing: -.035em; }
+  .nights-case-gallery-heading > img { width: 2.7rem; height: 2.7rem; filter: brightness(0) invert(1); opacity: .86; }
+  .nights-case-posters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(.6rem, 2vw, 1.2rem); margin-top: 1.4rem; }
+  .nights-case-posters figure { min-width: 0; margin: 0; }
+  .nights-case-posters img { display: block; width: 100%; aspect-ratio: 2 / 3; border: 1px solid rgba(255,255,255,.16); border-radius: .55rem; object-fit: cover; box-shadow: 0 12px 28px rgba(0,0,0,.25); }
+  .nights-case-posters figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .25rem .5rem; margin-top: .55rem; color: #e9e2ef; font-size: .78rem; font-weight: 600; }
+  .nights-case-posters figcaption span { color: #b6a9c5; font: 600 .68rem var(--font-mono); }
   .case-body { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(16rem, .7fr); gap: clamp(2rem, 6vw, 6rem); padding-top: 2.5rem; border-top: 1px solid rgba(148,163,184,.23); }
   .case-main { display: grid; gap: 2.5rem; }
   .case-section-heading { display: flex; align-items: center; gap: .7rem; }
@@ -48,4 +58,5 @@
   .case-next svg { grid-column: 2; grid-row: 1 / span 2; width: 1.6rem; height: 1.6rem; color: var(--case-accent); transition: transform .2s; }
   .case-next:hover svg { transform: translateX(.3rem); }
   @media (max-width: 800px) { .case-header, .case-body { grid-template-columns: 1fr; } .case-header { gap: 2rem; } .case-visual { min-height: 19rem; } .case-aside { max-width: none; } }
+  @media (max-width: 560px) { .nights-case-posters { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1rem; } }
   @media (prefers-reduced-motion: reduce) { .case-next svg { transition: none; } }

@@ -141,22 +141,7 @@ const more = content.projects.filter((project) => !project.featured);
         <h3>{content.otherLabel}</h3>
         <div class="other-grid">
           {content.otherProjects.map((project) => (
-            <article class={`other-card other-card--${project.slug}`} data-reveal>
-              {project.slug === "nights4films" && (
-                <div class="nights-preview" aria-hidden="true">
-                  <div class="nights-preview-heading">
-                    <span>{lang === "pt-br" ? "FILMES EM DESTAQUE" : "FEATURED FILMS"}</span>
-                    <img src="/projects/nights4films/logo.svg" alt="" loading="lazy" />
-                  </div>
-                  <div class="nights-poster-row">
-                    <img src="/projects/nights4films/house-of-wax.jpg" alt="" loading="lazy" />
-                    <img src="/projects/nights4films/blade-runner.jpg" alt="" loading="lazy" />
-                    <img src="/projects/nights4films/gone-girl.jpg" alt="" loading="lazy" />
-                    <img src="/projects/nights4films/la-la-land.jpg" alt="" loading="lazy" />
-                  </div>
-                  <span class="nights-preview-index">NIGHTS / 4 FILMS</span>
-                </div>
-              )}
+            <article class="other-card" data-reveal>
               <h4><Icon name={project.slug === "quertc" ? "mdi:chat-processing-outline" : project.slug === "nights4films" ? "mdi:movie-open-outline" : "mdi:surfing"} aria-hidden="true" /> {project.name}</h4>
               <p>{project.summary}</p>
               <div class="other-links">
@@ -282,17 +267,6 @@ const more = content.projects.filter((project) => !project.featured);
   .other-projects h3 { margin: 0 0 1.2rem; color: #d7e4e9; font-size: 1.25rem; font-weight: 700; }
   .other-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
   .other-card { display: flex; flex-direction: column; align-items: start; padding: 1.25rem; border: 1px solid rgba(148,163,184,.2); border-radius: 1rem; background: rgba(255,255,255,.025); }
-  .nights-preview { position: relative; isolation: isolate; width: 100%; height: 11rem; margin-bottom: 1.15rem; overflow: hidden; border: 1px solid rgba(185,170,255,.24); border-radius: .75rem; background: radial-gradient(ellipse at 50% 100%, rgba(107,66,178,.45), transparent 68%), linear-gradient(135deg, #090d1e, #17122a 58%, #0b1427); }
-  .nights-preview::after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(180deg, rgba(5,8,20,.2), transparent 46%, rgba(5,8,20,.6)); pointer-events: none; }
-  .nights-preview-heading { position: absolute; z-index: 2; top: .75rem; left: .85rem; right: .85rem; display: flex; align-items: center; justify-content: space-between; color: #e7e1ff; font: 700 .58rem var(--font-mono); letter-spacing: .14em; }
-  .nights-preview-heading img { width: 1.45rem; height: 1.45rem; object-fit: contain; filter: brightness(0) invert(1); opacity: .86; }
-  .nights-poster-row { position: absolute; inset: auto .8rem -.8rem; display: flex; align-items: flex-end; justify-content: center; gap: .45rem; }
-  .nights-poster-row img { display: block; width: 22%; max-width: 4.2rem; height: 8.1rem; border: 1px solid rgba(255,255,255,.38); border-bottom: 0; border-radius: .32rem .32rem 0 0; object-fit: cover; box-shadow: 0 8px 22px rgba(0,0,0,.45); }
-  .nights-poster-row img:nth-child(1) { transform: rotate(-8deg) translateY(.75rem); }
-  .nights-poster-row img:nth-child(2) { transform: rotate(-3deg) translateY(.2rem); }
-  .nights-poster-row img:nth-child(3) { transform: rotate(3deg) translateY(.2rem); }
-  .nights-poster-row img:nth-child(4) { transform: rotate(8deg) translateY(.75rem); }
-  .nights-preview-index { position: absolute; z-index: 2; right: .8rem; bottom: .65rem; color: rgba(238,232,255,.76); font: 600 .52rem var(--font-mono); letter-spacing: .12em; }
   .other-card h4 { display: flex; align-items: center; gap: .55rem; margin: 0 0 .6rem; font-size: 1.05rem; font-weight: 700; }
   .other-card h4 :global(svg) { width: 1.35rem; height: 1.35rem; color: #83e3c5; }
   .other-card p { margin: 0 0 1.25rem; color: #a9bdc7; font-size: .84rem; line-height: 1.55; }
@@ -400,8 +374,6 @@ const more = content.projects.filter((project) => !project.featured);
     .more-art { height: clamp(12rem, 58vw, 14rem); }
     .more-title { margin-top: 1.1rem; }
     .other-projects { margin-top: 2.75rem; }
-    .nights-preview { height: 12rem; }
-    .nights-poster-row img { height: 8.8rem; }
     .other-links { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .other-link { justify-content: center; white-space: nowrap; }
     .timeline-item { grid-template-columns: 1rem minmax(0, 1fr); gap: .35rem .75rem; }

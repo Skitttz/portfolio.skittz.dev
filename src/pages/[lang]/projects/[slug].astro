@@ -66,6 +66,24 @@ const visual = palette[project.slug];
         </div>
       </header>
 
+      {project.slug === "nights4films" && (
+        <section class="nights-case-gallery" aria-labelledby="nights-gallery-title">
+          <div class="nights-case-gallery-heading">
+            <div>
+              <span>{isPt ? "DO CATÁLOGO" : "FROM THE CATALOG"}</span>
+              <h2 id="nights-gallery-title">{isPt ? "Uma seleção de filmes" : "A selection of films"}</h2>
+            </div>
+            <img src="/projects/nights4films/logo.svg" alt="" />
+          </div>
+          <div class="nights-case-posters">
+            <figure><img src="/projects/nights4films/house-of-wax.jpg" alt="House of Wax, 2005" loading="lazy" /><figcaption>House of Wax <span>2005</span></figcaption></figure>
+            <figure><img src="/projects/nights4films/blade-runner.jpg" alt="Blade Runner 2049, 2017" loading="lazy" /><figcaption>Blade Runner 2049 <span>2017</span></figcaption></figure>
+            <figure><img src="/projects/nights4films/gone-girl.jpg" alt="Gone Girl, 2014" loading="lazy" /><figcaption>Gone Girl <span>2014</span></figcaption></figure>
+            <figure><img src="/projects/nights4films/la-la-land.jpg" alt="La La Land, 2016" loading="lazy" /><figcaption>La La Land <span>2016</span></figcaption></figure>
+          </div>
+        </section>
+      )}
+
       <div class="case-body">
         <div class="case-main">
           <section class="case-section" aria-labelledby="challenge-title">
