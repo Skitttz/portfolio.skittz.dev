@@ -63,14 +63,23 @@ const alternateEn = canonical?.replace(/\/(?:pt-br|en)(?=\/|$)/, "/en");
 <ClientRouter />
 
 <script>
-  document.addEventListener('astro:after-swap', () => {
+  const syncTheme = (root: HTMLElement) => {
     const theme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia(
       '(prefers-color-scheme: dark)',
     ).matches;
     const isDark = theme === 'dark' || (!theme && prefersDark);
 
-    document.documentElement.classList.toggle('dark', isDark);
+    root.classList.toggle('dark', isDark);
+  };
+
+  document.addEventListener('astro:before-swap', (event) => {
+    const newDocument = (event as CustomEvent<{ newDocument: Document }>).detail.newDocument;
+    syncTheme(newDocument.documentElement);
+  });
+
+  document.addEventListener('astro:after-swap', () => {
+    syncTheme(document.documentElement);
   });
 </script>
 
