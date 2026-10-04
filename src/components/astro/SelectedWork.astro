@@ -173,7 +173,7 @@ const more = content.projects.filter((project) => !project.featured);
               <p class="timeline-location">{job.location}</p>
               <p class="timeline-description">{job.description}</p>
               <ul>{job.contributions.map((contribution) => <li>{contribution}</li>)}</ul>
-              <div class="timeline-impact"><span class="timeline-impact-label">{lang === "pt-br" ? "Resultado" : "Outcome"}</span><strong>{job.impact}</strong><span class="timeline-impact-detail">{job.impactLabel}</span></div>
+              {job.impact && job.impactLabel && <div class="timeline-impact"><span class="timeline-impact-label">{lang === "pt-br" ? "Resultado" : "Outcome"}</span><strong>{job.impact}</strong><span class="timeline-impact-detail">{job.impactLabel}</span></div>}
               <p class="timeline-stack">{job.stack}</p>
             </article>
           </li>
@@ -236,8 +236,8 @@ const more = content.projects.filter((project) => !project.featured);
   .project-link, .resume-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.6rem; color: #9df5d7; font-weight: 700; transition: color .2s, background .2s, border-color .2s; }
   .project-link { padding: .35rem .85rem; border: 1px solid rgba(146,239,210,.48); border-radius: .55rem; text-decoration: none; }
   .project-link:hover { color: #fff; border-color: #b6ffe5; background: rgba(146,239,210,.09); }
-  .resume-link { text-decoration: underline; text-underline-offset: .35rem; }
-  .resume-link:hover { color: #fff; gap: .8rem; }
+  .resume-link { padding: .55rem .85rem; border: 1px solid rgba(146,239,210,.48); border-radius: .6rem; text-decoration: none; }
+  .resume-link:hover { color: #fff; border-color: #b6ffe5; background: rgba(146,239,210,.09); gap: .8rem; }
   .project-link :global(svg) { width: 1.1rem; height: 1.1rem; }
   .project-link--primary { color: #071b1b; border-color: #92efd2; background: #92efd2; }
   .project-link--primary:hover { color: #071b1b; border-color: #bbffe8; background: #bbffe8; }

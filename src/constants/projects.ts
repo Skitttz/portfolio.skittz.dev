@@ -32,8 +32,8 @@ export type Experience = {
   contributions: string[];
   stack: string;
   icon: string;
-  impact: string;
-  impactLabel: string;
+  impact?: string;
+  impactLabel?: string;
 };
 
 export type ProjectContent = {
@@ -93,8 +93,6 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         ],
         stack: "React · Next.js · TypeScript · Playwright · Storybook",
         icon: "mdi:layers-triple-outline",
-        impact: "4h → 1h20",
-        impactLabel: "ciclo de validação QA",
       },
       {
         period: "Out 2023 — Out 2024",
@@ -127,7 +125,7 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         impactLabel: "páginas entregues a clientes",
       },
     ],
-    resumeLabel: "Ver currículo completo",
+    resumeLabel: "Baixar currículo",
     projects: [
       {
         slug: "fates",
@@ -301,8 +299,6 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         ],
         stack: "React · Next.js · TypeScript · Playwright · Storybook",
         icon: "mdi:layers-triple-outline",
-        impact: "4h → 1h20",
-        impactLabel: "QA validation cycle",
       },
       {
         period: "Oct 2023 — Oct 2024",
@@ -335,7 +331,7 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         impactLabel: "client pages delivered",
       },
     ],
-    resumeLabel: "Read full resume",
+    resumeLabel: "Download resume",
     projects: [
       {
         slug: "fates",
