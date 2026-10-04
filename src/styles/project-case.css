@@ -7,6 +7,7 @@
   .case-header { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); padding-block: clamp(3rem, 8vw, 6rem); }
   .case-eyebrow { margin: 0 0 1rem; color: var(--case-accent); font: 700 .73rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
   .case-heading h1 { margin: 0; font-size: clamp(3.2rem, 8vw, 6.5rem); line-height: .95; letter-spacing: -.06em; }
+  .case-page--nights4films .case-heading h1 { font-size: clamp(2.1rem, 4.5vw, 3.8rem); white-space: nowrap; }
   .case-lead { max-width: 36rem; margin: 1.5rem 0 0; color: #c1d2d8; font-size: clamp(1.05rem, 2vw, 1.28rem); line-height: 1.65; }
   .case-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 2rem; }
   .case-action { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; padding: .6rem .9rem; border: 1px solid rgba(166, 212, 213, .4); border-radius: .6rem; color: #d8f2e9; font-weight: 700; text-decoration: none; }

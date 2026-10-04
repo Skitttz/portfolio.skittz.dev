@@ -44,7 +44,7 @@ const visual = palette[project.slug];
   description={project.summary}
   canonical={`https://portfolio.skittz.dev${projectPath(lang, project.slug)}`}
 >
-  <main class="case-page" style={`--case-accent: ${visual.accent}`}>
+  <main class={`case-page case-page--${project.slug}`} style={`--case-accent: ${visual.accent}`}>
     <div class="case-shell">
       <nav class="case-nav" aria-label={isPt ? "Navegação do projeto" : "Project navigation"}>
         <a href={`/${lang}/#projects`}><Icon name="mdi:arrow-left" aria-hidden="true" /> {isPt ? "Todos os projetos" : "All projects"}</a>
