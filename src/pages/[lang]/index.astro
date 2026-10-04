@@ -2,6 +2,7 @@
 import Hero from "@components/astro/Hero.astro";
 import Footer from "@components/astro/Footer.astro";
 import TerminalSections from "@components/astro/TerminalSections.astro";
+import SelectedWork from "@components/astro/SelectedWork.astro";
 import Layout from "@layouts/Layout.astro";
 import en from "@locales/en.json";
 import pt from "@locales/pt-br.json";
@@ -11,7 +12,12 @@ const locales: Record<string, typeof pt> = { en, pt };
 const translations = locales[lang as keyof typeof locales] || pt;
 ---
 
-<Layout lang={lang} title="Portfolio {Carlos Vinicius}" class:list={"h-dvh"}>
+<Layout
+  lang={lang}
+  title={lang === "pt-br" ? "Carlos Vinicius | Desenvolvedor Front-end" : "Carlos Vinicius | Front-end Developer"}
+  description={translations.seoDescription}
+  canonical={`https://portfolio.skittz.dev/${lang}`}
+>
   <Hero
     lang={lang}
     button={{
@@ -33,6 +39,8 @@ const translations = locales[lang as keyof typeof locales] || pt;
       role: translations.about.role,
     }}
   />
+
+  <SelectedWork lang={lang} resumeFile={translations.fileName} />
 
   <TerminalSections lang={lang} />
 

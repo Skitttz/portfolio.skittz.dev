@@ -17,9 +17,10 @@
   "nickname": "Skittz",
   "fileName": "resume-carlos-vinicius",
   "linkedInText": "Hit me up at",
+  "seoDescription": "Carlos Vinicius is a front-end developer. Explore work in Next.js, React, application architecture, and real product experiences.",
   "githubPreview": {
-    "actionText": "Hover it!",
-    "actionTextMobile": "Touch me!",
+    "actionText": "Hover here",
+    "actionTextMobile": "Tap here",
     "createdAtText": "Joined",
     "country": "Brazil",
     "seniorityLevel": "Mid-level Developer"

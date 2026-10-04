@@ -2,7 +2,6 @@
 import Button from "@components/astro/Button.astro";
 import DynamicText from "@components/astro/DynamicText.astro";
 import GithubPreview from "@components/astro/GithubPreview.astro";
-import GithubPreviewLoading from "@components/astro/GithubPreviewLoading.astro";
 import StatusIndicator from "@components/astro/StatusIndicator.astro";
 import ThemeToggle from "@components/astro/ThemeToggle.astro";
 import LangToggle from "./LangToggle.astro";
@@ -58,10 +57,10 @@ const textsToDynamicText: string[] =
   textsProfissional[lang as keyof typeof textsProfissional] ||
   textsProfissional.en;
 const articlesMobileText = textSecondary.replace(/\s+posts$/i, "");
-const terminalCueText =
+const projectsCueText =
   lang === "pt-br"
-    ? "terminal interativo abaixo"
-    : "interactive terminal below";
+    ? "explorar projetos"
+    : "explore projects";
 ---
 
 <div class="fixed top-6 right-20 z-[9999]">
@@ -94,9 +93,7 @@ const terminalCueText =
             >
               {textIntro}
             </h1>
-            <GithubPreview lang={lang} server:defer>
-              <GithubPreviewLoading textslot="fallback" />
-            </GithubPreview>
+            <GithubPreview lang={lang} />
             <ModalAboutMe
               name={name}
               answer={answer}
@@ -168,11 +165,11 @@ const terminalCueText =
 
         <button
           type="button"
-          data-scroll-terminal
+          data-scroll-projects
           class="terminal-cue mt-1 inline-flex items-center gap-2 rounded-full border border-slate-300/70 bg-white/55 px-3 py-2 font-mono text-xs text-slate-600 shadow-sm backdrop-blur-sm transition-colors hover:border-emerald-500/50 hover:text-emerald-700 dark:border-slate-700/70 dark:bg-slate-950/35 dark:text-slate-400 dark:hover:border-emerald-400/50 dark:hover:text-emerald-300 sm:hidden"
         >
           <span aria-hidden="true">$</span>
-          <span>{terminalCueText}</span>
+          <span>{projectsCueText}</span>
           <span class="terminal-cue-mark" aria-hidden="true"></span>
         </button>
       </section>
@@ -180,24 +177,24 @@ const terminalCueText =
 
     <button
       type="button"
-      data-scroll-terminal
+      data-scroll-projects
       class="terminal-cue absolute bottom-5 left-1/2 z-10 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-slate-300/70 bg-white/55 px-3 py-2 font-mono text-xs text-slate-600 shadow-sm backdrop-blur-sm transition-colors hover:border-emerald-500/50 hover:text-emerald-700 dark:border-slate-700/70 dark:bg-slate-950/35 dark:text-slate-400 dark:hover:border-emerald-400/50 dark:hover:text-emerald-300 sm:inline-flex"
     >
       <span aria-hidden="true">$</span>
-      <span>{terminalCueText}</span>
+      <span>{projectsCueText}</span>
       <span class="terminal-cue-mark" aria-hidden="true"></span>
     </button>
   </main>
 </div>
 
 <script is:inline>
-  const initTerminalScrollCue = () => {
-    document.querySelectorAll("[data-scroll-terminal]").forEach((button) => {
+  const initProjectScrollCue = () => {
+    document.querySelectorAll("[data-scroll-projects]").forEach((button) => {
       if (button.dataset.bound === "true") return;
       button.dataset.bound = "true";
 
       button.addEventListener("click", () => {
-        document.querySelector("[data-terminal-section]")?.scrollIntoView({
+        document.querySelector("#projects")?.scrollIntoView({
           behavior: "smooth",
           block: "start",
         });
@@ -206,12 +203,12 @@ const terminalCueText =
   };
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initTerminalScrollCue);
+    document.addEventListener("DOMContentLoaded", initProjectScrollCue);
   } else {
-    initTerminalScrollCue();
+    initProjectScrollCue();
   }
 
-  document.addEventListener("astro:after-swap", initTerminalScrollCue);
+  document.addEventListener("astro:after-swap", initProjectScrollCue);
 </script>
 
 <style>

@@ -6,9 +6,13 @@ import { SnowfallController } from '@/components/react/SnowfallController';
 export interface Props {
   title: string;
   lang: string;
+  description?: string;
+  canonical?: string;
 }
 
-const { title, lang } = Astro.props;
+const { title, lang, description = "Carlos Vinicius — front-end developer building accessible, maintainable web products.", canonical } = Astro.props;
+const alternatePt = canonical?.replace(/\/(?:pt-br|en)(?=\/|$)/, "/pt-br");
+const alternateEn = canonical?.replace(/\/(?:pt-br|en)(?=\/|$)/, "/en");
 ---
 
 <!doctype html>
@@ -29,7 +33,15 @@ const { title, lang } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="description" content="Front-end Developer Portfolio" />
+    <meta name="description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content={lang === "pt-br" ? "pt_BR" : "en_US"} />
+    <meta name="twitter:card" content="summary" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {alternatePt && <link rel="alternate" hreflang="pt-BR" href={alternatePt} />}
+    {alternateEn && <link rel="alternate" hreflang="en" href={alternateEn} />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -60,6 +72,33 @@ const { title, lang } = Astro.props;
 
     document.documentElement.classList.toggle('dark', isDark);
   });
+</script>
+
+<script>
+  const projectNavigationWindow = window as Window & { __projectNavigationReady?: boolean };
+  if (!projectNavigationWindow.__projectNavigationReady) {
+    projectNavigationWindow.__projectNavigationReady = true;
+    const returnKey = 'portfolio:return-to-projects';
+
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Element)) return;
+      if (event instanceof MouseEvent && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) return;
+      if (event.target.closest('a[data-return-projects]')) sessionStorage.setItem(returnKey, '1');
+    }, true);
+
+    const restoreProjectsPosition = () => {
+      if (sessionStorage.getItem(returnKey) !== '1') return;
+      const projects = document.getElementById('projects');
+      if (!projects) return;
+      sessionStorage.removeItem(returnKey);
+      requestAnimationFrame(() => projects.scrollIntoView({ behavior: 'auto', block: 'start' }));
+    };
+
+    document.addEventListener('astro:page-load', restoreProjectsPosition);
+    window.addEventListener('pageshow', restoreProjectsPosition);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', restoreProjectsPosition, { once: true });
+    else restoreProjectsPosition();
+  }
 </script>
 
 <style>

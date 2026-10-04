@@ -1,0 +1,339 @@
+---
+import { projectContent, projectPath } from "@/constants/projects";
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+  lang: string;
+  resumeFile: string;
+}
+
+const { lang, resumeFile } = Astro.props;
+const content = projectContent[lang as keyof typeof projectContent] || projectContent["pt-br"];
+const featured = content.projects.filter((project) => project.featured);
+const more = content.projects.filter((project) => !project.featured);
+---
+
+<div class="work-area">
+  <section id="projects" class="work-section scroll-mt-8 px-6 py-20 md:py-28" data-page-section>
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-10 max-w-3xl md:mb-14">
+        <p class="section-eyebrow">{content.eyebrow}</p>
+        <h2 class="section-title">{content.title}</h2>
+        <p class="section-intro">{content.intro}</p>
+      </div>
+
+      <div class="space-y-6">
+        {featured.map((project, index) => (
+          <article class="featured-card" aria-labelledby={`${project.slug}-title`} data-reveal>
+            <div class={`project-art project-art--${project.slug}`} aria-hidden="true">
+              {project.slug === "fates" ? (
+                <div class="fates-art">
+                  <img class="fates-photo" src="/projects/fates-hero.webp" alt="" loading="lazy" />
+                  <div class="fates-top"><span>FATES®</span><span>ARACAJU / BR</span></div>
+                  <div class="fates-bottom"><strong>FATES</strong><span>{lang === "pt-br" ? "STREETWEAR + HISTÓRIA JOGÁVEL" : "STREETWEAR + PLAYABLE STORY"}</span></div>
+                </div>
+              ) : (
+                <div class="athow-art">
+                  <div class="athow-top"><span class="athow-mark">a<span>.</span> athow</span><span>{lang === "pt-br" ? "VISÃO GERAL" : "OVERVIEW"}</span></div>
+                  <div class="athow-panel">
+                    <div class="athow-panel-head"><span>{lang === "pt-br" ? "Seu mês, com clareza" : "Your month, made clear"}</span><span>↗</span></div>
+                    <div class="athow-amount">R$ 4.280<span>,00</span></div>
+                    <div class="athow-caption">{lang === "pt-br" ? "disponível para este mês" : "available this month"}</div>
+                    <div class="athow-chart"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <div class="athow-panel-bottom"><span>{lang === "pt-br" ? "GASTOS POR CATEGORIA" : "SPENDING BY CATEGORY"}</span><span>↗ 12.4%</span></div>
+                  </div>
+                </div>
+              )}
+              <span class="art-caption">{String(index + 1).padStart(2, "0")} / {project.slug === "fates" ? (lang === "pt-br" ? "Imagem do projeto" : "Project image") : content.visualLabel}</span>
+            </div>
+
+            <div class="featured-copy">
+              <div class="flex flex-wrap items-center gap-3">
+                <span class="project-index">{String(index + 1).padStart(2, "0")}</span>
+                <span class="project-category">{project.category}</span>
+              </div>
+              <h3 id={`${project.slug}-title`} class="project-title">{project.name}</h3>
+              <p class="project-summary">{project.summary}</p>
+              <dl class="project-story">
+                <div><dt>{content.challengeLabel}</dt><dd>{project.challenge}</dd></div>
+                <div><dt>{content.evidenceLabel}</dt><dd>{project.evidence}</dd></div>
+              </dl>
+              {project.feature && (
+                <aside class="project-feature">
+                  <span>{project.feature.label}</span>
+                  <h4>{project.feature.title}</h4>
+                  <p>{project.feature.description}</p>
+                  <a href={project.feature.href} target="_blank" rel="noopener noreferrer">{project.feature.linkLabel} ↗</a>
+                </aside>
+              )}
+              <ul class="stack-list" aria-label={lang === "pt-br" ? "Tecnologias" : "Technologies"}>
+                {project.stack.map((technology) => <li>{technology}</li>)}
+              </ul>
+              <div class="project-actions">
+                <a class="project-link project-link--primary" href={projectPath(lang, project.slug)}>
+                  {content.caseLabel} <Icon name="mdi:arrow-right" aria-hidden="true" />
+                </a>
+                {project.href && (
+                  <a class="project-link" href={project.href} target="_blank" rel="noopener noreferrer">
+                    {content.sourceLabel} <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+                {project.live && !project.livePaused && (
+                  <a class="project-link" href={project.live} target="_blank" rel="noopener noreferrer">
+                    {content.demoLabel} <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="more-grid">
+        {more.map((project, index) => (
+          <article class={`more-card more-card--${project.slug}`} aria-labelledby={`${project.slug}-title`} data-reveal>
+            <div class="more-card-top">
+              <span class="project-index">{String(index + featured.length + 1).padStart(2, "0")}</span>
+              <span class="project-category">{project.category}</span>
+            </div>
+            <div class={`more-art more-art--${project.slug}`} aria-hidden="true">
+              {project.slug === "quertc" ? (
+                <div class="chat-art">
+                  <span class="chat-title">Quertc <span>● online</span></span>
+                  <div class="chat-bubble chat-bubble--left">{lang === "pt-br" ? "Ei! Você viu a novidade?" : "Hey! Did you see the news?"}</div>
+                  <div class="chat-bubble chat-bubble--right">{lang === "pt-br" ? "Vi agora. Bora conversar!" : "Just saw it. Let's chat!"}</div>
+                  <div class="chat-input">{lang === "pt-br" ? "Mensagem..." : "Message..."} <span>↗</span></div>
+                </div>
+              ) : <img class="passai-demo" src="/projects/passai-demo.png" alt="" loading="lazy" />}
+            </div>
+            <span class="more-art-caption">{project.slug === "passai" ? (lang === "pt-br" ? "Imagem da demo" : "Demo image") : content.visualLabel}</span>
+            <h3 id={`${project.slug}-title`} class="more-title">{project.name}</h3>
+            <p class="more-summary">{project.summary}</p>
+            <ul class="stack-list" aria-label={lang === "pt-br" ? "Tecnologias" : "Technologies"}>
+              {project.stack.map((technology) => <li>{technology}</li>)}
+            </ul>
+            <div class="project-actions">
+              <a class="project-link project-link--primary" href={projectPath(lang, project.slug)}>
+                {content.caseLabel} <Icon name="mdi:arrow-right" aria-hidden="true" />
+              </a>
+              {project.href && (
+                <a class="project-link" href={project.href} target="_blank" rel="noopener noreferrer">
+                  {content.sourceLabel} <span aria-hidden="true">↗</span>
+                </a>
+              )}
+              {project.live && !project.livePaused && (
+                <a class="project-link" href={project.live} target="_blank" rel="noopener noreferrer">
+                  {content.demoLabel} <span aria-hidden="true">↗</span>
+                </a>
+              )}
+              {project.livePaused && <span class="private-note">{content.pausedLabel}</span>}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="other-projects">
+        <h3>{content.otherLabel}</h3>
+        <div class="other-grid">
+          {content.otherProjects.map((project) => (
+            <article class="other-card" data-reveal>
+              <h4><Icon name={project.slug === "cats" ? "mdi:cat" : project.slug === "nights4films" ? "mdi:movie-open-outline" : "mdi:surfing"} aria-hidden="true" /> {project.name}</h4>
+              <p>{project.summary}</p>
+              <div class="other-links">
+                <a class="other-link other-link--primary" href={projectPath(lang, project.slug)}>{content.caseLabel} →</a>
+                {project.live && <a class="other-link" href={project.live} target="_blank" rel="noopener noreferrer">{content.demoLabel} ↗</a>}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience" class="experience-section px-6 py-20 md:py-24" data-page-section>
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-10 max-w-3xl">
+        <p class="section-eyebrow">{content.experienceEyebrow}</p>
+        <h2 class="section-title">{content.experienceTitle}</h2>
+        <p class="section-intro">{content.experienceIntro}</p>
+      </div>
+      <ol class="timeline">
+        {content.experience.map((job) => (
+          <li class="timeline-item" data-reveal>
+            <span class="timeline-date">{job.period}</span>
+            <span class="timeline-marker" aria-hidden="true"></span>
+            <article class="timeline-content">
+              <div class="timeline-heading"><div class="timeline-role"><span class="timeline-icon"><Icon name={job.icon} aria-hidden="true" /></span><h3>{job.role}</h3></div><strong>{job.company}</strong></div>
+              <p class="timeline-location">{job.location}</p>
+              <p class="timeline-description">{job.description}</p>
+              <ul>{job.contributions.map((contribution) => <li>{contribution}</li>)}</ul>
+              <div class="timeline-impact"><span class="timeline-impact-label">{lang === "pt-br" ? "Resultado" : "Outcome"}</span><strong>{job.impact}</strong><span class="timeline-impact-detail">{job.impactLabel}</span></div>
+              <p class="timeline-stack">{job.stack}</p>
+            </article>
+          </li>
+        ))}
+      </ol>
+      <a class="resume-link" href={`/${resumeFile}.pdf`} download>{content.resumeLabel} <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+</div>
+
+<style>
+  .work-area { color: #e9f0f5; background: #07111d; }
+  .work-section { background: radial-gradient(circle at 88% 6%, rgba(29, 128, 111, .16), transparent 28rem), #07111d; }
+  .section-eyebrow { margin: 0 0 1rem; color: #67e8c7; font: 600 .75rem/1.4 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
+  .section-title { margin: 0; font-size: clamp(2.2rem, 5vw, 4.35rem); line-height: 1.08; letter-spacing: -.045em; font-weight: 700; }
+  .section-intro { margin: 1.2rem 0 0; max-width: 48rem; color: #a6b7c6; font-size: 1.06rem; line-height: 1.7; }
+  .featured-card { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); overflow: hidden; border: 1px solid rgba(148, 163, 184, .22); border-radius: 1.4rem; background: #101d2b; box-shadow: 0 25px 65px rgba(0, 0, 0, .18); }
+  .project-art { min-height: 34rem; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  .project-art--fates { background: #111; }
+  .project-art--athow { background: radial-gradient(circle at 70% 15%, #2c6981 0, transparent 58%), linear-gradient(145deg, #102b41, #0d1c2b); }
+  .art-caption { position: absolute; bottom: 1.2rem; left: 2rem; z-index: 2; color: rgba(255,255,255,.75); font: 600 .67rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+  .fates-art { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 2rem; color: #f3ffba; isolation: isolate; }
+  .fates-art::after { content: ""; position: absolute; z-index: -1; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.55), transparent 30%, rgba(0,0,0,.05) 50%, rgba(0,0,0,.9)); }
+  .fates-photo { position: absolute; z-index: -2; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  .fates-top { display: flex; justify-content: space-between; gap: 1rem; font: 800 .65rem var(--font-mono); letter-spacing: .12em; }
+  .fates-bottom { display: grid; gap: .3rem; padding-bottom: 2.2rem; }
+  .fates-bottom strong { color: #f0f87c; font: 900 clamp(4rem, 8vw, 6.8rem)/.85 Impact, "Arial Narrow", sans-serif; letter-spacing: -.06em; }
+  .fates-bottom span { color: #f0f87c; font: 700 .68rem var(--font-mono); letter-spacing: .12em; }
+  .athow-art { width: min(100%, 28rem); transform: rotate(3deg); }
+  .athow-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.3rem; color: #b9e5e5; font: 600 .64rem var(--font-mono); letter-spacing: .1em; }
+  .athow-mark { font: 700 1.35rem var(--font-sans); letter-spacing: -.04em; color: #fff; }
+  .athow-mark span { color: #55e4b5; }
+  .athow-panel { min-height: 22rem; border: 1px solid rgba(194,240,239,.35); border-radius: 1.4rem; background: linear-gradient(145deg, #f6f8f6, #dbe7e3); padding: 1.7rem; color: #142c38; box-shadow: 20px 24px 0 rgba(1,10,20,.28), 0 28px 65px rgba(0,0,0,.3); }
+  .athow-panel-head, .athow-panel-bottom { display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
+  .athow-panel-head { font-weight: 700; font-size: .88rem; }
+  .athow-amount { margin-top: 1.7rem; font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 700; letter-spacing: -.06em; }
+  .athow-amount span { color: #6b8d8c; }
+  .athow-caption { color: #53706f; font-size: .75rem; }
+  .athow-chart { display: flex; align-items: end; gap: 8%; height: 6.2rem; margin-top: 1.5rem; border-bottom: 1px solid #b9cbc7; }
+  .athow-chart i { display: block; flex: 1; height: 28%; border-radius: .25rem .25rem 0 0; background: #237e78; }
+  .athow-chart i:nth-child(2) { height: 48%; } .athow-chart i:nth-child(3) { height: 37%; } .athow-chart i:nth-child(4) { height: 66%; } .athow-chart i:nth-child(5) { height: 55%; } .athow-chart i:nth-child(6) { height: 78%; } .athow-chart i:nth-child(7) { height: 60%; } .athow-chart i:nth-child(8) { height: 90%; background: #35ba98; }
+  .athow-panel-bottom { margin-top: .9rem; font: 700 .59rem var(--font-mono); letter-spacing: .06em; }
+  .featured-copy { padding: clamp(1.6rem, 3.5vw, 3.3rem); display: flex; flex-direction: column; align-items: start; }
+  .project-index { color: #70e5c4; font: 600 .76rem var(--font-mono); }
+  .project-category { color: #94aabd; font: 600 .7rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+  .project-title { margin: 1.1rem 0 .7rem; font-size: clamp(2.2rem, 4vw, 3.7rem); line-height: 1; letter-spacing: -.045em; font-weight: 700; }
+  .project-summary { margin: 0; max-width: 39rem; font-size: 1.1rem; line-height: 1.6; color: #d9e8eb; }
+  .project-story { display: grid; gap: 1.2rem; margin: 2rem 0; }
+  .project-story div { padding-left: 1rem; border-left: 2px solid #388d82; }
+  .project-story dt { font: 700 .67rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: #80e2c8; }
+  .project-story dd { margin: .4rem 0 0; color: #a9bdc7; line-height: 1.55; font-size: .91rem; }
+  .project-feature { margin: 0 0 1.6rem; padding: 1.2rem 1.3rem; border: 1px solid rgba(221,234,89,.45); border-radius: .75rem; background: rgba(211,231,75,.055); }
+  .project-feature > span { color: #e4ed7c; font: 700 .65rem var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+  .project-feature h4 { margin: .45rem 0; font-size: 1.18rem; font-weight: 700; }
+  .project-feature p { margin: 0 0 .8rem; color: #b8c9c9; font-size: .87rem; line-height: 1.55; }
+  .project-feature a { color: #e4ed7c; font-size: .78rem; font-weight: 700; text-decoration: underline; text-underline-offset: .25rem; }
+  .stack-list { display: flex; flex-wrap: wrap; gap: .45rem; list-style: none; margin: auto 0 1.6rem; padding: 0; }
+  .stack-list li { padding: .4rem .65rem; border: 1px solid rgba(153,193,197,.25); border-radius: 99px; color: #b7d1d1; background: rgba(118,190,185,.07); font: 600 .7rem var(--font-mono); }
+  .project-link, .resume-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.6rem; color: #9df5d7; font-weight: 700; transition: color .2s, background .2s, border-color .2s; }
+  .project-link { padding: .35rem .85rem; border: 1px solid rgba(146,239,210,.48); border-radius: .55rem; text-decoration: none; }
+  .project-link:hover { color: #fff; border-color: #b6ffe5; background: rgba(146,239,210,.09); }
+  .resume-link { text-decoration: underline; text-underline-offset: .35rem; }
+  .resume-link:hover { color: #fff; gap: .8rem; }
+  .project-link :global(svg) { width: 1.1rem; height: 1.1rem; }
+  .project-link--primary { color: #071b1b; border-color: #92efd2; background: #92efd2; }
+  .project-link--primary:hover { color: #071b1b; border-color: #bbffe8; background: #bbffe8; }
+  .project-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; }
+  .private-note { color: #a9bdc7; font: 600 .78rem var(--font-mono); }
+  .more-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+  .more-card { display: flex; flex-direction: column; align-items: start; min-width: 0; padding: 1.65rem; border: 1px solid rgba(148, 163, 184, .22); border-radius: 1.4rem; background: #101d2b; }
+  .more-card-top { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; }
+  .more-art { width: 100%; height: 14rem; margin-top: 1.2rem; overflow: hidden; border-radius: .9rem; }
+  .more-art--quertc { background: radial-gradient(circle at 80% 20%, #6557a8, transparent 60%), #271f4e; }
+  .chat-art { width: min(100%, 21rem); margin: 1.2rem auto 0; padding: .8rem 1rem; border-radius: .9rem .9rem 0 0; background: #f5f2ff; color: #2b2450; box-shadow: 0 12px 35px #19103477; transform: rotate(-3deg); }
+  .chat-title { display: flex; justify-content: space-between; font-weight: 800; font-size: .95rem; }
+  .chat-title span { color: #438a76; font: 600 .65rem var(--font-mono); }
+  .chat-bubble { width: fit-content; max-width: 80%; margin-top: .65rem; padding: .45rem .7rem; border-radius: .6rem; font-size: .66rem; }
+  .chat-bubble--left { background: #e5dff9; } .chat-bubble--right { margin-left: auto; background: #674fc1; color: #fff; }
+  .chat-input { display: flex; justify-content: space-between; margin-top: .75rem; padding: .45rem .7rem; border: 1px solid #ded8ec; border-radius: .4rem; color: #9a90b5; font-size: .65rem; }
+  .more-art--passai { background: #0b0b0c; }
+  .passai-demo { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 31%; }
+  .more-art-caption { margin-top: .55rem; color: #8195a5; font: 600 .63rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
+  .more-title { margin: 1.5rem 0 .5rem; font-size: 1.9rem; line-height: 1.1; font-weight: 700; letter-spacing: -.035em; }
+  .more-summary { margin: 0 0 1.1rem; color: #a9bdc7; line-height: 1.6; font-size: .92rem; }
+  .more-card .stack-list { margin-top: auto; }
+  .other-projects { margin-top: 4rem; }
+  .other-projects h3 { margin: 0 0 1.2rem; color: #d7e4e9; font-size: 1.25rem; font-weight: 700; }
+  .other-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .other-card { display: flex; flex-direction: column; align-items: start; padding: 1.25rem; border: 1px solid rgba(148,163,184,.2); border-radius: 1rem; background: rgba(255,255,255,.025); }
+  .other-card h4 { display: flex; align-items: center; gap: .55rem; margin: 0 0 .6rem; font-size: 1.05rem; font-weight: 700; }
+  .other-card h4 :global(svg) { width: 1.35rem; height: 1.35rem; color: #83e3c5; }
+  .other-card p { margin: 0 0 1.25rem; color: #a9bdc7; font-size: .84rem; line-height: 1.55; }
+  .other-links { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; }
+  .other-link { display: inline-flex; align-items: center; min-height: 2.2rem; padding: .35rem .65rem; border: 1px solid rgba(146,239,210,.48); border-radius: .5rem; color: #9df5d7; font-size: .76rem; font-weight: 700; text-decoration: none; }
+  .other-link:hover { color: #fff; border-color: #b6ffe5; background: rgba(146,239,210,.09); }
+  .other-link--primary { border-color: #92efd2; background: #92efd2; color: #071b1b; }
+  .other-link--primary:hover { color: #071b1b; background: #bbffe8; }
+  .experience-section { border-top: 1px solid rgba(148,163,184,.15); background: #0a1723; }
+  .timeline { display: grid; gap: 1.4rem; list-style: none; margin: 0; padding: 0; }
+  .timeline-item { display: grid; grid-template-columns: 10rem 1.5rem minmax(0, 1fr); gap: 1rem; }
+  .timeline-date { padding-top: 1.5rem; color: #8eaaaf; font: 600 .75rem/1.5 var(--font-mono); }
+  .timeline-marker { position: relative; }
+  .timeline-marker::before { content: ""; position: absolute; top: 1.65rem; left: 50%; width: .7rem; height: .7rem; transform: translateX(-50%); border: 2px solid #74e3c5; border-radius: 50%; background: #0a1723; z-index: 1; }
+  .timeline-item:not(:last-child) .timeline-marker::after { content: ""; position: absolute; top: 2.35rem; bottom: -1.4rem; left: 50%; width: 1px; background: rgba(116,227,197,.4); }
+  .timeline-content { min-width: 0; padding: 1.35rem 1.6rem 1.5rem; border: 1px solid rgba(148,163,184,.22); border-radius: 1rem; background: rgba(255,255,255,.025); }
+  .timeline-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem 1rem; }
+  .timeline-role { display: flex; align-items: center; gap: .75rem; }
+  .timeline-icon { display: grid; flex: none; width: 2.2rem; height: 2.2rem; place-items: center; border: 1px solid rgba(116,227,197,.4); border-radius: .55rem; color: #9cf2d5; background: rgba(116,227,197,.08); }
+  .timeline-icon :global(svg) { width: 1.2rem; height: 1.2rem; }
+  .timeline-heading h3 { margin: 0; font-size: 1.28rem; font-weight: 700; letter-spacing: -.025em; }
+  .timeline-heading strong { color: #92efd2; font-size: .85rem; font-weight: 700; }
+  .timeline-location { margin: .35rem 0 0; color: #8ea4b2; font: 600 .7rem var(--font-mono); }
+  .timeline-description { margin: 1rem 0; color: #d4e2e6; line-height: 1.65; }
+  .timeline-content ul { display: grid; gap: .45rem; margin: 0; padding-left: 1.1rem; color: #a9bdc7; font-size: .88rem; line-height: 1.55; }
+  .timeline-content li::marker { color: #72d8ba; }
+  .timeline-impact { display: grid; justify-items: start; gap: .3rem; margin-top: 1.65rem; padding: 1rem 1.15rem; border-left: 2px solid #70dcbd; background: rgba(116,227,197,.065); }
+  .timeline-impact-label { color: #82dabb; font: 700 .64rem/1.4 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
+  .timeline-impact strong { display: block; margin-top: .15rem; color: #a6f4dc; font: 700 1.5rem/1.2 var(--font-mono); letter-spacing: -.045em; }
+  .timeline-impact-detail { display: block; color: #b2c4cc; font-size: .82rem; line-height: 1.45; }
+  .timeline-stack { margin: 1rem 0 0; color: #8ea4b2; font: 600 .7rem/1.6 var(--font-mono); }
+  .resume-link { margin: 1.5rem 0 0 12.5rem; }
+  :global(.portfolio-motion-ready) [data-reveal] { opacity: 0; transform: translateY(1.25rem); transition: opacity .55s ease, transform .55s cubic-bezier(.2,.75,.25,1); }
+  :global(.portfolio-motion-ready) [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
+  :global(.portfolio-motion-ready) .timeline-item.is-visible .timeline-icon { animation: icon-arrive .55s ease both; }
+  @keyframes icon-arrive { from { transform: scale(.8) rotate(-12deg); } to { transform: scale(1) rotate(0); } }
+  @media (max-width: 760px) {
+    .featured-card { grid-template-columns: 1fr; }
+    .project-art { min-height: 20rem; padding: 2rem; }
+    .fates-bottom strong { font-size: 4.5rem; }
+    .athow-art { width: min(76%, 20rem); }
+    .athow-panel { min-height: 15rem; padding: 1rem; }
+    .athow-amount { margin-top: .8rem; }
+    .athow-chart { height: 3.8rem; margin-top: .8rem; }
+    .featured-copy { padding: 1.6rem; }
+    .more-grid, .other-grid { grid-template-columns: 1fr; }
+    .timeline-item { grid-template-columns: 1rem minmax(0, 1fr); gap: .35rem .75rem; }
+    .timeline-date { grid-column: 2; grid-row: 1; padding-top: 0; }
+    .timeline-marker { grid-column: 1; grid-row: 1 / span 2; }
+    .timeline-marker::before { top: .3rem; }
+    .timeline-item:not(:last-child) .timeline-marker::after { top: 1rem; bottom: -1.4rem; }
+    .timeline-content { grid-column: 2; grid-row: 2; padding: 1.2rem; }
+    .resume-link { margin-left: 1.75rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .project-link, .resume-link { transition: none; }
+    :global(.portfolio-motion-ready) [data-reveal] { opacity: 1; transform: none; transition: none; }
+    :global(.portfolio-motion-ready) .timeline-item.is-visible .timeline-icon { animation: none; }
+  }
+</style>
+
+<script>
+  const initWorkReveals = () => {
+    const items = document.querySelectorAll<HTMLElement>("[data-reveal]");
+    if (!items.length || !('IntersectionObserver' in window)) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: .08 });
+    items.forEach((item) => observer.observe(item));
+    document.documentElement.classList.add('portfolio-motion-ready');
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initWorkReveals, { once: true });
+  else initWorkReveals();
+  document.addEventListener('astro:after-swap', initWorkReveals);
+</script>
