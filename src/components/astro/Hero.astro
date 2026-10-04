@@ -252,8 +252,13 @@ const projectsCueText =
     content: "";
     position: absolute;
     inset: auto 0 0;
-    height: 28%;
-    background: linear-gradient(180deg, transparent, rgb(226, 232, 240));
+    height: 36%;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(226, 232, 240, 0.58) 48%,
+      #e2e8f0 100%
+    );
     pointer-events: none;
     z-index: 1;
   }
@@ -279,7 +284,12 @@ const projectsCueText =
   }
 
   :global(.dark) .hero-background::after {
-    background: linear-gradient(180deg, transparent, rgb(8, 13, 27));
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(7, 17, 29, 0.48) 48%,
+      #07111d 100%
+    );
   }
 
   .hero-grid {

@@ -4,10 +4,9 @@ import { Icon } from "astro-icon/components";
 
 export interface Props {
   lang: string;
-  resumeFile: string;
 }
 
-const { lang, resumeFile } = Astro.props;
+const { lang } = Astro.props;
 const content = projectContent[lang as keyof typeof projectContent] || projectContent["pt-br"];
 const featured = content.projects.filter((project) => project.featured);
 const more = content.projects.filter((project) => !project.featured);
@@ -69,7 +68,7 @@ const more = content.projects.filter((project) => !project.featured);
               <ul class="stack-list" aria-label={lang === "pt-br" ? "Tecnologias" : "Technologies"}>
                 {project.stack.map((technology) => <li>{technology}</li>)}
               </ul>
-              <div class="project-actions">
+              <div class={`project-actions${1 + Number(Boolean(project.href)) + Number(Boolean(project.live && !project.livePaused)) === 3 ? " project-actions--three" : ""}`}>
                 <a class="project-link project-link--primary" href={projectPath(lang, project.slug)}>
                   {content.caseLabel} <Icon name="mdi:arrow-right" aria-hidden="true" />
                 </a>
@@ -118,7 +117,7 @@ const more = content.projects.filter((project) => !project.featured);
             <ul class="stack-list" aria-label={lang === "pt-br" ? "Tecnologias" : "Technologies"}>
               {project.stack.map((technology) => <li>{technology}</li>)}
             </ul>
-            <div class="project-actions">
+            <div class={`project-actions${1 + Number(Boolean(project.href)) + Number(Boolean(project.live && !project.livePaused)) === 3 ? " project-actions--three" : ""}`}>
               <a class="project-link project-link--primary" href={projectPath(lang, project.slug)}>
                 {content.caseLabel} <Icon name="mdi:arrow-right" aria-hidden="true" />
               </a>
@@ -164,8 +163,8 @@ const more = content.projects.filter((project) => !project.featured);
         <p class="section-intro">{content.experienceIntro}</p>
       </div>
       <ol class="timeline">
-        {content.experience.map((job) => (
-          <li class="timeline-item" data-reveal>
+        {content.experience.map((job, index) => (
+          <li class="timeline-item" data-reveal data-current={index === 0 ? "true" : undefined}>
             <span class="timeline-date">{job.period}</span>
             <span class="timeline-marker" aria-hidden="true"></span>
             <article class="timeline-content">
@@ -179,7 +178,6 @@ const more = content.projects.filter((project) => !project.featured);
           </li>
         ))}
       </ol>
-      <a class="resume-link" href={`/${resumeFile}.pdf`} download>{content.resumeLabel} <Icon name="mdi:download-outline" aria-hidden="true" /></a>
     </div>
   </section>
 
@@ -187,7 +185,7 @@ const more = content.projects.filter((project) => !project.featured);
 
 <style>
   .work-area { color: #e9f0f5; background: #07111d; }
-  .work-section { background: radial-gradient(circle at 88% 6%, rgba(29, 128, 111, .16), transparent 28rem), #07111d; }
+  .work-section { background: #07111d; }
   .section-eyebrow { margin: 0 0 1rem; color: #67e8c7; font: 600 .75rem/1.4 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
   .section-title { margin: 0; font-size: clamp(2.2rem, 5vw, 4.35rem); line-height: 1.08; letter-spacing: -.045em; font-weight: 700; }
   .section-intro { margin: 1.2rem 0 0; max-width: 48rem; color: #a6b7c6; font-size: 1.06rem; line-height: 1.7; }
@@ -233,12 +231,9 @@ const more = content.projects.filter((project) => !project.featured);
   .project-feature a { color: #e4ed7c; font-size: .78rem; font-weight: 700; text-decoration: underline; text-underline-offset: .25rem; }
   .stack-list { display: flex; flex-wrap: wrap; gap: .45rem; list-style: none; margin: auto 0 1.6rem; padding: 0; }
   .stack-list li { padding: .4rem .65rem; border: 1px solid rgba(153,193,197,.25); border-radius: 99px; color: #b7d1d1; background: rgba(118,190,185,.07); font: 600 .7rem var(--font-mono); }
-  .project-link, .resume-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.6rem; color: #9df5d7; font-weight: 700; transition: color .2s, background .2s, border-color .2s; }
+  .project-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.6rem; color: #9df5d7; font-weight: 700; transition: color .2s, background .2s, border-color .2s; }
   .project-link { padding: .35rem .85rem; border: 1px solid rgba(146,239,210,.48); border-radius: .55rem; text-decoration: none; }
   .project-link:hover { color: #fff; border-color: #b6ffe5; background: rgba(146,239,210,.09); }
-  .resume-link { padding: 0; color: rgba(157,245,215,.72); opacity: .82; text-decoration: none; transition: color .2s, opacity .2s, gap .2s; }
-  .resume-link:hover { color: #caffec; opacity: 1; gap: .65rem; }
-  .resume-link :global(svg) { width: 1.05rem; height: 1.05rem; }
   .project-link :global(svg) { width: 1.1rem; height: 1.1rem; }
   .project-link--primary { color: #071b1b; border-color: #92efd2; background: #92efd2; }
   .project-link--primary:hover { color: #071b1b; border-color: #bbffe8; background: #bbffe8; }
@@ -280,13 +275,14 @@ const more = content.projects.filter((project) => !project.featured);
   .other-link:hover { color: #fff; border-color: #b6ffe5; background: rgba(146,239,210,.09); }
   .other-link--primary { border-color: #92efd2; background: #92efd2; color: #071b1b; }
   .other-link--primary:hover { color: #071b1b; background: #bbffe8; }
-  .experience-section { border-top: 1px solid rgba(148,163,184,.15); background: #0a1723; }
+  .experience-section { position: relative; background: linear-gradient(180deg, #07111d 0%, #0a1723 15rem, #0a1723 100%); }
   .timeline { display: grid; gap: 1.4rem; list-style: none; margin: 0; padding: 0; }
   .timeline-item { display: grid; grid-template-columns: 10rem 1.5rem minmax(0, 1fr); gap: 1rem; }
   .timeline-date { padding-top: 1.5rem; color: #8eaaaf; font: 600 .75rem/1.5 var(--font-mono); }
   .timeline-marker { position: relative; }
-  .timeline-marker::before { content: ""; position: absolute; top: 1.65rem; left: 50%; width: .7rem; height: .7rem; transform: translateX(-50%); border: 2px solid #74e3c5; border-radius: 50%; background: #0a1723; z-index: 1; }
-  .timeline-item:not(:last-child) .timeline-marker::after { content: ""; position: absolute; top: 2.35rem; bottom: -1.4rem; left: 50%; width: 1px; background: rgba(116,227,197,.4); }
+  .timeline-marker::before { content: ""; position: absolute; top: 1.55rem; left: 50%; width: .9rem; height: .9rem; transform: translateX(-50%); border: 2px solid #6fb9aa; border-radius: 50%; background: #0a1723; box-shadow: 0 0 0 4px #0a1723; z-index: 1; transition: border-color .25s, box-shadow .25s, background .25s; }
+  .timeline-item[data-current="true"] .timeline-marker::before { border-color: #baffeb; background: radial-gradient(circle, #eafff7 0 2px, #46d5ac 3px 100%); box-shadow: 0 0 0 4px #0a1723, 0 0 0 6px rgba(116,227,197,.24), 0 0 22px rgba(116,227,197,.8); animation: current-marker-pulse 2.6s ease-in-out infinite; }
+  .timeline-item:not(:last-child) .timeline-marker::after { content: ""; position: absolute; top: 2.35rem; bottom: -1.4rem; left: 50%; width: 1px; background: linear-gradient(rgba(116,227,197,.45), rgba(116,227,197,.12)); }
   .timeline-content { min-width: 0; padding: 1.35rem 1.6rem 1.5rem; border: 1px solid rgba(148,163,184,.22); border-radius: 1rem; background: rgba(255,255,255,.025); }
   .timeline-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem 1rem; }
   .timeline-role { display: flex; align-items: center; gap: .75rem; }
@@ -303,33 +299,95 @@ const more = content.projects.filter((project) => !project.featured);
   .timeline-impact strong { display: block; margin-top: .15rem; color: #a6f4dc; font: 700 1.5rem/1.2 var(--font-mono); letter-spacing: -.045em; }
   .timeline-impact-detail { display: block; color: #b2c4cc; font-size: .82rem; line-height: 1.45; }
   .timeline-stack { margin: 1rem 0 0; color: #8ea4b2; font: 600 .7rem/1.6 var(--font-mono); }
-  .resume-link { margin: 1.5rem 0 0 13.5rem; }
   :global(.portfolio-motion-ready) [data-reveal] { opacity: 0; transform: translateY(1.25rem); transition: opacity .55s ease, transform .55s cubic-bezier(.2,.75,.25,1); }
   :global(.portfolio-motion-ready) [data-reveal].is-visible { opacity: 1; transform: translateY(0); }
   :global(.portfolio-motion-ready) .timeline-item.is-visible .timeline-icon { animation: icon-arrive .55s ease both; }
   @keyframes icon-arrive { from { transform: scale(.8) rotate(-12deg); } to { transform: scale(1) rotate(0); } }
+  @keyframes current-marker-pulse { 0%, 100% { box-shadow: 0 0 0 4px #0a1723, 0 0 0 6px rgba(116,227,197,.2), 0 0 16px rgba(116,227,197,.55); } 50% { box-shadow: 0 0 0 4px #0a1723, 0 0 0 8px rgba(116,227,197,.28), 0 0 26px rgba(116,227,197,.9); } }
+  :global(html:not(.dark)) .work-area { color: #1e293b; background: #f8fafc; }
+  :global(html:not(.dark)) .work-section { background: linear-gradient(180deg, #e2e8f0 0, #f8fafc 13rem); }
+  :global(html:not(.dark)) .experience-section { background: linear-gradient(180deg, #f8fafc 0, #eef2f7 15rem, #eef2f7 100%); }
+  :global(html:not(.dark)) .section-eyebrow { color: #0f766e; }
+  :global(html:not(.dark)) .section-title,
+  :global(html:not(.dark)) .other-projects h3 { color: #0f172a; }
+  :global(html:not(.dark)) .section-intro { color: #475569; }
+  :global(html:not(.dark)) .featured-card,
+  :global(html:not(.dark)) .more-card { border-color: #d5dee8; background: #fff; box-shadow: 0 18px 48px rgba(15, 23, 42, .08); }
+  :global(html:not(.dark)) .project-index,
+  :global(html:not(.dark)) .project-story dt { color: #0f766e; }
+  :global(html:not(.dark)) .project-category,
+  :global(html:not(.dark)) .more-art-caption,
+  :global(html:not(.dark)) .private-note { color: #526173; }
+  :global(html:not(.dark)) .project-title,
+  :global(html:not(.dark)) .more-title { color: #0f172a; }
+  :global(html:not(.dark)) .project-summary { color: #334155; }
+  :global(html:not(.dark)) .project-story dd,
+  :global(html:not(.dark)) .more-summary { color: #475569; }
+  :global(html:not(.dark)) .project-feature { border-color: #d8dca0; background: #fbfbe9; }
+  :global(html:not(.dark)) .project-feature > span,
+  :global(html:not(.dark)) .project-feature a { color: #68751c; }
+  :global(html:not(.dark)) .project-feature h4 { color: #26320b; }
+  :global(html:not(.dark)) .project-feature p { color: #4f542a; }
+  :global(html:not(.dark)) .stack-list li { border-color: #d7e3e4; color: #475569; background: #f1f7f6; }
+  :global(html:not(.dark)) .project-link { border-color: #8ebdb1; color: #11634f; }
+  :global(html:not(.dark)) .project-link--primary { border-color: #92efd2; color: #071b1b; }
+  :global(html:not(.dark)) .other-card { border-color: #d5dee8; background: rgba(255,255,255,.72); }
+  :global(html:not(.dark)) .other-card h4 { color: #0f172a; }
+  :global(html:not(.dark)) .other-card h4 :global(svg) { color: #0f766e; }
+  :global(html:not(.dark)) .other-card p { color: #475569; }
+  :global(html:not(.dark)) .other-link { border-color: #8ebdb1; color: #11634f; }
+  :global(html:not(.dark)) .other-link--primary { border-color: #92efd2; color: #071b1b; }
+  :global(html:not(.dark)) .timeline-date,
+  :global(html:not(.dark)) .timeline-location,
+  :global(html:not(.dark)) .timeline-stack { color: #64748b; }
+  :global(html:not(.dark)) .timeline-marker::before { border-color: #4d9d8a; background: #fff; box-shadow: 0 0 0 4px #eef2f7; }
+  :global(html:not(.dark)) .timeline-item[data-current="true"] .timeline-marker::before { box-shadow: 0 0 0 4px #eef2f7, 0 0 0 6px rgba(15,118,110,.18), 0 0 18px rgba(15,118,110,.35); animation-name: current-marker-pulse-light; }
+  :global(html:not(.dark)) .timeline-item:not(:last-child) .timeline-marker::after { background: linear-gradient(rgba(15,118,110,.45), rgba(15,118,110,.12)); }
+  :global(html:not(.dark)) .timeline-content { border-color: #d5dee8; background: rgba(255,255,255,.78); box-shadow: 0 12px 36px rgba(15,23,42,.045); }
+  :global(html:not(.dark)) .timeline-heading h3 { color: #0f172a; }
+  :global(html:not(.dark)) .timeline-heading strong { color: #0f766e; }
+  :global(html:not(.dark)) .timeline-icon { border-color: #b7d9d1; color: #0f766e; background: #eff9f6; }
+  :global(html:not(.dark)) .timeline-description { color: #334155; }
+  :global(html:not(.dark)) .timeline-content ul { color: #475569; }
+  :global(html:not(.dark)) .timeline-content li::marker { color: #0f766e; }
+  :global(html:not(.dark)) .timeline-impact { border-color: #0f766e; background: #eaf6f2; }
+  :global(html:not(.dark)) .timeline-impact-label { color: #0f766e; }
+  :global(html:not(.dark)) .timeline-impact strong { color: #115e50; }
+  :global(html:not(.dark)) .timeline-impact-detail { color: #475569; }
+  @keyframes current-marker-pulse-light { 0%, 100% { box-shadow: 0 0 0 4px #eef2f7, 0 0 0 6px rgba(15,118,110,.16), 0 0 14px rgba(15,118,110,.28); } 50% { box-shadow: 0 0 0 4px #eef2f7, 0 0 0 8px rgba(15,118,110,.22), 0 0 22px rgba(15,118,110,.45); } }
   @media (max-width: 760px) {
     .featured-card { grid-template-columns: 1fr; }
-    .project-art { min-height: 20rem; padding: 2rem; }
+    .project-art { min-height: clamp(16rem, 68vw, 20rem); padding: 1.5rem; }
     .fates-bottom strong { font-size: 4.5rem; }
     .athow-art { width: min(76%, 20rem); }
     .athow-panel { min-height: 15rem; padding: 1rem; }
     .athow-amount { margin-top: .8rem; }
     .athow-chart { height: 3.8rem; margin-top: .8rem; }
-    .featured-copy { padding: 1.6rem; }
+    .featured-copy { padding: 1.35rem; }
+    .project-story { gap: 1rem; margin: 1.5rem 0; }
+    .project-actions { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+    .project-actions .project-link { justify-content: center; width: 100%; min-width: 0; padding-inline: .45rem; font-size: .84rem; white-space: nowrap; }
+    .project-actions--three .project-link--primary { grid-column: 1 / -1; }
     .more-grid, .other-grid { grid-template-columns: 1fr; }
+    .more-grid { gap: 1rem; margin-top: 1rem; }
+    .more-card { padding: 1.25rem; }
+    .more-art { height: clamp(12rem, 58vw, 14rem); }
+    .more-title { margin-top: 1.1rem; }
+    .other-projects { margin-top: 2.75rem; }
+    .other-links { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .other-link { justify-content: center; white-space: nowrap; }
     .timeline-item { grid-template-columns: 1rem minmax(0, 1fr); gap: .35rem .75rem; }
     .timeline-date { grid-column: 2; grid-row: 1; padding-top: 0; }
     .timeline-marker { grid-column: 1; grid-row: 1 / span 2; }
     .timeline-marker::before { top: .3rem; }
     .timeline-item:not(:last-child) .timeline-marker::after { top: 1rem; bottom: -1.4rem; }
     .timeline-content { grid-column: 2; grid-row: 2; padding: 1.2rem; }
-    .resume-link { margin-left: 1.75rem; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .project-link, .resume-link { transition: none; }
+    .project-link { transition: none; }
     :global(.portfolio-motion-ready) [data-reveal] { opacity: 1; transform: none; transition: none; }
     :global(.portfolio-motion-ready) .timeline-item.is-visible .timeline-icon { animation: none; }
+    .timeline-item[data-current="true"] .timeline-marker::before { animation: none; }
   }
 </style>
 
