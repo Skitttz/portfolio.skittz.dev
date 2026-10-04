@@ -211,7 +211,7 @@ const initialHistory = terminal.welcome.join("\n");
       };
 
       const setHint = (text) => {
-        hint.textContent = text;
+        hint.textContent = text ?? "";
       };
 
       const bootTerminal = () => {
@@ -363,17 +363,16 @@ const initialHistory = terminal.welcome.join("\n");
 <style>
   .terminal-section {
     --terminal-page-bg:
-      radial-gradient(circle at 82% 15%, rgba(32, 147, 128, .09), transparent 30rem),
-      linear-gradient(180deg, #0a1723, #06101b);
+      linear-gradient(180deg, #eef2f7, #f8fafc);
     --terminal-window-bg: rgb(2, 6, 23);
     --terminal-bar-bg: rgb(15, 23, 42);
     --terminal-screen-bg: rgb(2, 6, 23);
     --terminal-border: rgba(71, 85, 105, 0.82);
-    --terminal-text: rgb(226, 232, 240);
-    --terminal-muted: rgb(148, 163, 184);
-    --terminal-command: rgb(116, 227, 197);
-    --terminal-accent: rgb(125, 211, 252);
-    --terminal-chip-bg: rgba(15, 23, 42, 0.72);
+    --terminal-text: rgb(15, 23, 42);
+    --terminal-muted: rgb(71, 85, 105);
+    --terminal-command: rgb(15, 118, 110);
+    --terminal-accent: rgb(14, 116, 144);
+    --terminal-chip-bg: rgb(255, 255, 255);
     --terminal-screen-text: rgb(226, 232, 240);
     --terminal-screen-muted: rgb(148, 163, 184);
     --terminal-screen-command: rgb(74, 222, 128);
@@ -389,7 +388,7 @@ const initialHistory = terminal.welcome.join("\n");
     position: absolute;
     inset: 0 0 auto;
     height: 7rem;
-    background: linear-gradient(180deg, #0a1723, rgba(10, 23, 35, 0));
+    background: linear-gradient(180deg, #eef2f7, rgba(238, 242, 247, 0));
     pointer-events: none;
   }
 
@@ -402,7 +401,7 @@ const initialHistory = terminal.welcome.join("\n");
       ),
       linear-gradient(
         180deg,
-        rgb(8, 13, 27) 0%,
+        rgb(10, 23, 35) 0%,
         rgb(8, 13, 27) 26%,
         rgb(5, 10, 22) 62%,
         rgb(3, 7, 18) 100%
@@ -422,8 +421,12 @@ const initialHistory = terminal.welcome.join("\n");
     --terminal-link: rgb(96, 165, 250);
   }
 
+  :global(html:not(.dark)) .terminal-topbar strong {
+    color: rgb(148, 163, 184);
+  }
+
   :global(.dark) .terminal-section::before {
-    background: linear-gradient(180deg, rgb(8, 13, 27), rgba(8, 13, 27, 0));
+    background: linear-gradient(180deg, rgb(10, 23, 35), rgba(10, 23, 35, 0));
   }
 
   .terminal-window {

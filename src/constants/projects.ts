@@ -54,7 +54,6 @@ export type ProjectContent = {
   experienceTitle: string;
   experienceIntro: string;
   experience: Experience[];
-  resumeLabel: string;
   projects: Project[];
   otherProjects: OtherProject[];
 };
@@ -78,7 +77,7 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
     experienceEyebrow: "Experiência profissional / 02",
     experienceTitle: "Trajetória profissional.",
     experienceIntro:
-      "De entregas diretas para clientes a produtos desenvolvidos em equipe. Cada etapa ampliou o escopo do meu trabalho no front-end.",
+      "De entregas diretas para clientes a produtos desenvolvidos em equipe. Cada etapa ampliou o escopo do meu trabalho.",
     experience: [
       {
         period: "Nov 2024 — atual",
@@ -121,11 +120,10 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         ],
         stack: "React · JavaScript · HTML · CSS · Figma",
         icon: "mdi:briefcase-outline",
-        impact: "8+",
-        impactLabel: "páginas entregues a clientes",
+        impact: "10+",
+        impactLabel: "projetos entregues a clientes",
       },
     ],
-    resumeLabel: "Baixar currículo",
     projects: [
       {
         slug: "fates",
@@ -284,7 +282,7 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
     experienceEyebrow: "Professional experience / 02",
     experienceTitle: "Professional experience.",
     experienceIntro:
-      "From direct client work to products built with a team. Each role expanded the scope of my front-end work.",
+      "From direct client work to products built with a team. Each role expanded the scope of my work.",
     experience: [
       {
         period: "Nov 2024 — present",
@@ -327,11 +325,10 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         ],
         stack: "React · JavaScript · HTML · CSS · Figma",
         icon: "mdi:briefcase-outline",
-        impact: "8+",
-        impactLabel: "client pages delivered",
+        impact: "10+",
+        impactLabel: "projects delivered to clients",
       },
     ],
-    resumeLabel: "Download resume",
     projects: [
       {
         slug: "fates",

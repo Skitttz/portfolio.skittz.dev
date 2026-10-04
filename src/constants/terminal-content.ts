@@ -25,7 +25,6 @@ export type TerminalCommand = {
 export type TerminalContent = {
   label: string;
   title: string;
-  hint: string;
   closedHint: string;
   restoreLabel: string;
   prompt: string;
@@ -39,7 +38,6 @@ export const terminalContent = {
   en: {
     label: "Extra / interactive terminal",
     title: "Portfolio terminal.",
-    hint: "Try `projects`, `stack`, or `contact`.",
     closedHint: "Terminal closed. Press the button below to boot a new session.",
     restoreLabel: "boot terminal",
     prompt: "skittz@portfolio:~$",
@@ -101,7 +99,6 @@ export const terminalContent = {
   "pt-br": {
     label: "Extra / terminal interativo",
     title: "Terminal do portfólio.",
-    hint: "Experimente `projects`, `stack` ou `contact`.",
     closedHint: "Terminal fechado. Pressione o botão abaixo para iniciar uma nova sessão.",
     restoreLabel: "iniciar terminal",
     prompt: "skittz@portfolio:~$",
