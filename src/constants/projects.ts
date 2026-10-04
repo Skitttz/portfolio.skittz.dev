@@ -180,23 +180,20 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         featured: true,
       },
       {
-        slug: "quertc",
-        name: "Quertc",
-        category: "Chat · Tempo real",
-        summary:
-          "Uma aplicação de chat no navegador com salas e mensagens atualizadas em tempo real.",
-        challenge:
-          "Fazer a experiência de conversa responder imediatamente e manter acesso por usuário às salas.",
-        solution:
-          "Integrei Socket.io ao servidor Next.js, autenticação no handshake e persistência com MongoDB.",
-        evidence:
-          "Salas públicas e privadas, mensagens em tempo real e interface responsiva.",
+        slug: "cats",
+        name: "Cats",
+        category: "Rede social · Tempo real",
+        summary: "Rede social para compartilhar fotos de gatos, com feed e chat em tempo real.",
+        challenge: "Reunir publicação de imagens, descoberta de conteúdo e conversa em uma experiência social contínua.",
+        solution: "Separei o feed e a interface React dos recursos em tempo real do chat; o conteúdo é servido por WordPress headless.",
+        evidence: "Feed de fotos, autenticação, curtidas, comentários, rolagem contínua e chat ao vivo.",
         details: [
-          "A comunicação via Socket.io atualiza a conversa sem recarregar a página, enquanto o MongoDB guarda o histórico das salas.",
-          "A autenticação é validada na conexão em tempo real para associar mensagens e permissões ao usuário.",
+          "O feed combina fotos, interações e carregamento contínuo para que a navegação não dependa de mudanças de página.",
+          "O chat usa Socket.io para trazer conversas em tempo real para a mesma experiência.",
         ],
-        stack: ["Next.js", "React", "Socket.io", "Clerk", "MongoDB"],
-        href: "https://github.com/Skitttz/quertc",
+        stack: ["React", "Vite", "WordPress Headless", "Node.js", "Socket.io"],
+        href: "https://github.com/Skitttz/cats",
+        live: "https://cats.skittz.dev/",
       },
       {
         slug: "passai",
@@ -217,22 +214,6 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
     ],
     otherProjects: [
       {
-        slug: "cats",
-        name: "Cats",
-        category: "Rede social · Tempo real",
-        summary: "Rede social para compartilhar fotos de gatos, com feed e chat em tempo real.",
-        challenge: "Reunir publicação de imagens, descoberta de conteúdo e conversa em uma experiência social contínua.",
-        solution: "Separei o feed e a interface React dos recursos em tempo real do chat; o conteúdo é servido por WordPress headless.",
-        evidence: "Feed de fotos, autenticação, curtidas, comentários, rolagem contínua e chat ao vivo.",
-        details: [
-          "O feed combina fotos, interações e carregamento contínuo para que a navegação não dependa de mudanças de página.",
-          "O chat usa Socket.io para trazer conversas em tempo real para a mesma experiência.",
-        ],
-        stack: ["React", "Vite", "WordPress Headless", "Node.js", "Socket.io"],
-        href: "https://github.com/Skitttz/cats",
-        live: "https://cats.skittz.dev/",
-      },
-      {
         slug: "nights4films",
         name: "Nights4Films",
         category: "Catálogo · Conteúdo",
@@ -247,6 +228,25 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         stack: ["React", "Strapi", "Tailwind CSS"],
         href: "https://github.com/Skitttz/nights4films",
         live: "https://nights4films.vercel.app/",
+      },
+      {
+        slug: "quertc",
+        name: "Quertc",
+        category: "Chat · Tempo real",
+        summary:
+          "Uma aplicação de chat no navegador com salas e mensagens atualizadas em tempo real.",
+        challenge:
+          "Fazer a experiência de conversa responder imediatamente e manter acesso por usuário às salas.",
+        solution:
+          "Integrei Socket.io ao servidor Next.js, autenticação no handshake e persistência com MongoDB.",
+        evidence:
+          "Salas públicas e privadas, mensagens em tempo real e interface responsiva.",
+        details: [
+          "A comunicação via Socket.io atualiza a conversa sem recarregar a página, enquanto o MongoDB guarda o histórico das salas.",
+          "A autenticação é validada na conexão em tempo real para associar mensagens e permissões ao usuário.",
+        ],
+        stack: ["Next.js", "React", "Socket.io", "Clerk", "MongoDB"],
+        href: "https://github.com/Skitttz/quertc",
       },
       {
         slug: "surfcurse",
@@ -333,7 +333,7 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         impactLabel: "client pages delivered",
       },
     ],
-    resumeLabel: "Read full résumé",
+    resumeLabel: "Read full resume",
     projects: [
       {
         slug: "fates",
@@ -386,23 +386,20 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         featured: true,
       },
       {
-        slug: "quertc",
-        name: "Quertc",
-        category: "Chat · Real time",
-        summary:
-          "A browser chat app with rooms and messages delivered in real time.",
-        challenge:
-          "Make conversations feel immediate while keeping access to rooms tied to each user.",
-        solution:
-          "I integrated Socket.io with the Next.js server, authentication at the handshake, and MongoDB persistence.",
-        evidence:
-          "Public and private rooms, live messages, and a responsive interface.",
+        slug: "cats",
+        name: "Cats",
+        category: "Social network · Real time",
+        summary: "A social platform for cat photos, with a feed and real-time chat.",
+        challenge: "Bring image posting, content discovery, and conversation into a continuous social experience.",
+        solution: "I separated the React feed from real-time chat capabilities and served content through headless WordPress.",
+        evidence: "Photo feed, authentication, likes, comments, continuous scrolling, and live chat.",
         details: [
-          "Socket.io updates the conversation without a page reload, while MongoDB stores room history.",
-          "Authentication is checked during the real-time connection to associate messages and permissions with the user.",
+          "The feed combines photos, interactions, and continuous loading so browsing does not depend on page changes.",
+          "Socket.io brings real-time conversations into the same experience.",
         ],
-        stack: ["Next.js", "React", "Socket.io", "Clerk", "MongoDB"],
-        href: "https://github.com/Skitttz/quertc",
+        stack: ["React", "Vite", "WordPress Headless", "Node.js", "Socket.io"],
+        href: "https://github.com/Skitttz/cats",
+        live: "https://cats.skittz.dev/",
       },
       {
         slug: "passai",
@@ -423,22 +420,6 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
     ],
     otherProjects: [
       {
-        slug: "cats",
-        name: "Cats",
-        category: "Social network · Real time",
-        summary: "A social platform for cat photos, with a feed and real-time chat.",
-        challenge: "Bring image posting, content discovery, and conversation into a continuous social experience.",
-        solution: "I separated the React feed from real-time chat capabilities and served content through headless WordPress.",
-        evidence: "Photo feed, authentication, likes, comments, continuous scrolling, and live chat.",
-        details: [
-          "The feed combines photos, interactions, and continuous loading so browsing does not depend on page changes.",
-          "Socket.io brings real-time conversations into the same experience.",
-        ],
-        stack: ["React", "Vite", "WordPress Headless", "Node.js", "Socket.io"],
-        href: "https://github.com/Skitttz/cats",
-        live: "https://cats.skittz.dev/",
-      },
-      {
         slug: "nights4films",
         name: "Nights4Films",
         category: "Catalog · Content",
@@ -453,6 +434,25 @@ export const projectContent: Record<"pt-br" | "en", ProjectContent> = {
         stack: ["React", "Strapi", "Tailwind CSS"],
         href: "https://github.com/Skitttz/nights4films",
         live: "https://nights4films.vercel.app/",
+      },
+      {
+        slug: "quertc",
+        name: "Quertc",
+        category: "Chat · Real time",
+        summary:
+          "A browser chat app with rooms and messages delivered in real time.",
+        challenge:
+          "Make conversations feel immediate while keeping access to rooms tied to each user.",
+        solution:
+          "I integrated Socket.io with the Next.js server, authentication at the handshake, and MongoDB persistence.",
+        evidence:
+          "Public and private rooms, live messages, and a responsive interface.",
+        details: [
+          "Socket.io updates the conversation without a page reload, while MongoDB stores room history.",
+          "Authentication is checked during the real-time connection to associate messages and permissions with the user.",
+        ],
+        stack: ["Next.js", "React", "Socket.io", "Clerk", "MongoDB"],
+        href: "https://github.com/Skitttz/quertc",
       },
       {
         slug: "surfcurse",

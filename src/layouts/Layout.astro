@@ -78,20 +78,19 @@ const alternateEn = canonical?.replace(/\/(?:pt-br|en)(?=\/|$)/, "/en");
   const projectNavigationWindow = window as Window & { __projectNavigationReady?: boolean };
   if (!projectNavigationWindow.__projectNavigationReady) {
     projectNavigationWindow.__projectNavigationReady = true;
-    const returnKey = 'portfolio:return-to-projects';
-
-    document.addEventListener('click', (event) => {
-      if (!(event.target instanceof Element)) return;
-      if (event instanceof MouseEvent && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) return;
-      if (event.target.closest('a[data-return-projects]')) sessionStorage.setItem(returnKey, '1');
-    }, true);
 
     const restoreProjectsPosition = () => {
-      if (sessionStorage.getItem(returnKey) !== '1') return;
+      if (window.location.hash !== '#projects') return;
       const projects = document.getElementById('projects');
       if (!projects) return;
-      sessionStorage.removeItem(returnKey);
-      requestAnimationFrame(() => projects.scrollIntoView({ behavior: 'auto', block: 'start' }));
+      requestAnimationFrame(() => {
+        projects.scrollIntoView({ behavior: 'auto', block: 'start' });
+        history.replaceState(
+          { ...history.state, scrollX: window.scrollX, scrollY: window.scrollY },
+          '',
+          window.location.pathname + window.location.search,
+        );
+      });
     };
 
     document.addEventListener('astro:page-load', restoreProjectsPosition);

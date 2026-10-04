@@ -46,7 +46,7 @@ const visual = palette[project.slug];
   <main class="case-page" style={`--case-accent: ${visual.accent}`}>
     <div class="case-shell">
       <nav class="case-nav" aria-label={isPt ? "Navegação do projeto" : "Project navigation"}>
-        <a href={`/${lang}`} data-return-projects><Icon name="mdi:arrow-left" aria-hidden="true" /> {isPt ? "Todos os projetos" : "All projects"}</a>
+        <a href={`/${lang}/#projects`}><Icon name="mdi:arrow-left" aria-hidden="true" /> {isPt ? "Todos os projetos" : "All projects"}</a>
         <span>{allProjects.findIndex((item) => item.slug === project.slug) + 1} / {allProjects.length}</span>
       </nav>
 

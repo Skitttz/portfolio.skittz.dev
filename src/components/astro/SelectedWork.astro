@@ -97,12 +97,14 @@ const more = content.projects.filter((project) => !project.featured);
               <span class="project-category">{project.category}</span>
             </div>
             <div class={`more-art more-art--${project.slug}`} aria-hidden="true">
-              {project.slug === "quertc" ? (
-                <div class="chat-art">
-                  <span class="chat-title">Quertc <span>● online</span></span>
-                  <div class="chat-bubble chat-bubble--left">{lang === "pt-br" ? "Ei! Você viu a novidade?" : "Hey! Did you see the news?"}</div>
-                  <div class="chat-bubble chat-bubble--right">{lang === "pt-br" ? "Vi agora. Bora conversar!" : "Just saw it. Let's chat!"}</div>
-                  <div class="chat-input">{lang === "pt-br" ? "Mensagem..." : "Message..."} <span>↗</span></div>
+              {project.slug === "cats" ? (
+                <div class="cats-art">
+                  <div class="cats-art-header"><span><Icon name="mdi:cat" /> cats</span><span>♡</span></div>
+                  <div class="cats-art-post">
+                    <div class="cats-art-author"><span class="cats-art-avatar">m</span><strong>mimi</strong><span>•••</span></div>
+                    <div class="cats-art-photo"><Icon name="mdi:cat" /></div>
+                    <div class="cats-art-actions"><span>♡</span><span>◯</span><span>↗</span></div>
+                  </div>
                 </div>
               ) : <img class="passai-demo" src="/projects/passai-demo.png" alt="" loading="lazy" />}
             </div>
@@ -137,7 +139,7 @@ const more = content.projects.filter((project) => !project.featured);
         <div class="other-grid">
           {content.otherProjects.map((project) => (
             <article class="other-card" data-reveal>
-              <h4><Icon name={project.slug === "cats" ? "mdi:cat" : project.slug === "nights4films" ? "mdi:movie-open-outline" : "mdi:surfing"} aria-hidden="true" /> {project.name}</h4>
+              <h4><Icon name={project.slug === "quertc" ? "mdi:chat-processing-outline" : project.slug === "nights4films" ? "mdi:movie-open-outline" : "mdi:surfing"} aria-hidden="true" /> {project.name}</h4>
               <p>{project.summary}</p>
               <div class="other-links">
                 <a class="other-link other-link--primary" href={projectPath(lang, project.slug)}>{content.caseLabel} →</a>
@@ -241,13 +243,18 @@ const more = content.projects.filter((project) => !project.featured);
   .more-card { display: flex; flex-direction: column; align-items: start; min-width: 0; padding: 1.65rem; border: 1px solid rgba(148, 163, 184, .22); border-radius: 1.4rem; background: #101d2b; }
   .more-card-top { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; }
   .more-art { width: 100%; height: 14rem; margin-top: 1.2rem; overflow: hidden; border-radius: .9rem; }
-  .more-art--quertc { background: radial-gradient(circle at 80% 20%, #6557a8, transparent 60%), #271f4e; }
-  .chat-art { width: min(100%, 21rem); margin: 1.2rem auto 0; padding: .8rem 1rem; border-radius: .9rem .9rem 0 0; background: #f5f2ff; color: #2b2450; box-shadow: 0 12px 35px #19103477; transform: rotate(-3deg); }
-  .chat-title { display: flex; justify-content: space-between; font-weight: 800; font-size: .95rem; }
-  .chat-title span { color: #438a76; font: 600 .65rem var(--font-mono); }
-  .chat-bubble { width: fit-content; max-width: 80%; margin-top: .65rem; padding: .45rem .7rem; border-radius: .6rem; font-size: .66rem; }
-  .chat-bubble--left { background: #e5dff9; } .chat-bubble--right { margin-left: auto; background: #674fc1; color: #fff; }
-  .chat-input { display: flex; justify-content: space-between; margin-top: .75rem; padding: .45rem .7rem; border: 1px solid #ded8ec; border-radius: .4rem; color: #9a90b5; font-size: .65rem; }
+  .more-art--cats { background: radial-gradient(circle at 80% 15%, #c56d84, transparent 55%), #442739; }
+  .cats-art { width: min(78%, 18rem); margin: 1.2rem auto 0; overflow: hidden; border-radius: .85rem .85rem 0 0; background: #fff9fa; color: #31232c; box-shadow: 0 14px 38px #180d195e; transform: rotate(-3deg); }
+  .cats-art-header { display: flex; justify-content: space-between; align-items: center; padding: .55rem .85rem; border-bottom: 1px solid #f1e2e7; font-weight: 800; }
+  .cats-art-header span:first-child { display: inline-flex; align-items: center; gap: .3rem; }
+  .cats-art-header :global(svg) { width: 1rem; height: 1rem; color: #bb6b80; }
+  .cats-art-post { padding: .6rem .8rem; }
+  .cats-art-author { display: flex; align-items: center; gap: .4rem; margin-bottom: .55rem; font-size: .7rem; }
+  .cats-art-author > span:last-child { margin-left: auto; letter-spacing: .1em; }
+  .cats-art-avatar { display: grid; place-items: center; width: 1.2rem; height: 1.2rem; border-radius: 50%; background: #e7aac0; color: #542d3d; font-weight: 800; }
+  .cats-art-photo { display: grid; place-items: center; height: 8rem; border-radius: .45rem; background: radial-gradient(circle at 28% 18%, #f7d6b1, transparent 45%), linear-gradient(145deg, #d79485, #8d5d7d); }
+  .cats-art-photo :global(svg) { width: 5rem; height: 5rem; color: #fff2eb; filter: drop-shadow(0 7px 9px #673c4d66); }
+  .cats-art-actions { display: flex; gap: .65rem; padding-top: .45rem; color: #a65371; font-size: .9rem; line-height: 1; }
   .more-art--passai { background: #0b0b0c; }
   .passai-demo { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 31%; }
   .more-art-caption { margin-top: .55rem; color: #8195a5; font: 600 .63rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
