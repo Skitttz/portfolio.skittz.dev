@@ -7,6 +7,7 @@
   .case-header { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); padding-block: clamp(3rem, 8vw, 6rem); }
   .case-eyebrow { margin: 0 0 1rem; color: var(--case-accent); font: 700 .73rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
   .case-heading h1 { margin: 0; font-size: clamp(3.2rem, 8vw, 6.5rem); line-height: .95; letter-spacing: -.06em; }
+  .case-page--nights4films .case-heading h1 { font-size: clamp(2.1rem, 4.5vw, 3.8rem); white-space: nowrap; }
   .case-lead { max-width: 36rem; margin: 1.5rem 0 0; color: #c1d2d8; font-size: clamp(1.05rem, 2vw, 1.28rem); line-height: 1.65; }
   .case-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 2rem; }
   .case-action { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; padding: .6rem .9rem; border: 1px solid rgba(166, 212, 213, .4); border-radius: .6rem; color: #d8f2e9; font-weight: 700; text-decoration: none; }
@@ -23,8 +24,19 @@
   .cats-case-brand { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: .6rem; width: max-content; max-width: 100%; padding: .6rem 1rem; border-radius: .55rem; background: #fff; color: #161616; box-shadow: 0 12px 28px rgba(0,0,0,.28); }
   .cats-case-brand img { width: 3rem; height: 2rem; object-fit: contain; }
   .case-visual .cats-case-brand strong { color: #161616; font-size: 1.8rem; letter-spacing: -.05em; }
+  .case-visual--nights4films strong { font-size: clamp(1.5rem, 4.2vw, 3.2rem); white-space: nowrap; overflow-wrap: normal; }
   .case-visual svg { position: relative; z-index: 1; width: 4rem; height: 4rem; color: var(--case-accent); }
   .case-visual strong { position: relative; z-index: 1; max-width: 100%; color: var(--case-accent); font-size: clamp(2.8rem, 6vw, 5.5rem); line-height: 1; letter-spacing: -.055em; overflow-wrap: anywhere; }
+  .nights-case-gallery { margin: 0 0 3rem; padding: clamp(1rem, 3vw, 2rem); border: 1px solid rgba(233,188,247,.22); border-radius: 1.25rem; background: radial-gradient(ellipse at 50% 0, rgba(107,66,178,.19), transparent 65%), #0d1625; }
+  .nights-case-gallery-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .nights-case-gallery-heading span { color: #d8b4e8; font: 700 .68rem var(--font-mono); letter-spacing: .13em; }
+  .nights-case-gallery-heading h2 { margin: .45rem 0 0; font-size: clamp(1.3rem, 3vw, 1.8rem); letter-spacing: -.035em; }
+  .nights-case-gallery-heading > img { width: 2.7rem; height: 2.7rem; filter: brightness(0) invert(1); opacity: .86; }
+  .nights-case-posters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(.6rem, 2vw, 1.2rem); margin-top: 1.4rem; }
+  .nights-case-posters figure { min-width: 0; margin: 0; }
+  .nights-case-posters img { display: block; width: 100%; aspect-ratio: 2 / 3; border: 1px solid rgba(255,255,255,.16); border-radius: .55rem; object-fit: cover; box-shadow: 0 12px 28px rgba(0,0,0,.25); }
+  .nights-case-posters figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .25rem .5rem; margin-top: .55rem; color: #e9e2ef; font-size: .78rem; font-weight: 600; }
+  .nights-case-posters figcaption span { color: #b6a9c5; font: 600 .68rem var(--font-mono); }
   .case-body { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(16rem, .7fr); gap: clamp(2rem, 6vw, 6rem); padding-top: 2.5rem; border-top: 1px solid rgba(148,163,184,.23); }
   .case-main { display: grid; gap: 2.5rem; }
   .case-section-heading { display: flex; align-items: center; gap: .7rem; }
@@ -48,4 +60,5 @@
   .case-next svg { grid-column: 2; grid-row: 1 / span 2; width: 1.6rem; height: 1.6rem; color: var(--case-accent); transition: transform .2s; }
   .case-next:hover svg { transform: translateX(.3rem); }
   @media (max-width: 800px) { .case-header, .case-body { grid-template-columns: 1fr; } .case-header { gap: 2rem; } .case-visual { min-height: 19rem; } .case-aside { max-width: none; } }
+  @media (max-width: 560px) { .nights-case-posters { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1rem; } }
   @media (prefers-reduced-motion: reduce) { .case-next svg { transition: none; } }
