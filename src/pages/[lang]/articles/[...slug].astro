@@ -29,6 +29,18 @@ const articlePath = `/${lang}/articles/${slug}`;
 const translatedPath = translation
   ? `/${translation.data.lang}/articles/${translation.id}`
   : undefined;
+const canonical = `https://portfolio.skittz.dev${articlePath}`;
+const translatedUrl = translatedPath
+  ? `https://portfolio.skittz.dev${translatedPath}`
+  : undefined;
+const pageMetadata = {
+  lang,
+  title: `${article.data.title} | Carlos Vinicius`,
+  description: article.data.description,
+  canonical,
+  alternatePt: lang === 'pt-br' ? canonical : translatedUrl,
+  alternateEn: lang === 'en' ? canonical : translatedUrl,
+};
 const { Content } = await render(article);
 function formatReadingTime(wordCount: number, lang: string) {
   const wordsPerMinute = 200;
@@ -46,14 +58,7 @@ const wordCount = textContent.split(/\s+/).length;
 const readingTime = formatReadingTime(wordCount, lang);
 ---
 
-<Layout
-  lang={lang}
-  title={`${article.data.title} | Carlos Vinicius`}
-  description={article.data.description}
-  canonical={`https://portfolio.skittz.dev${articlePath}`}
-  alternatePt={lang === 'pt-br' ? `https://portfolio.skittz.dev${articlePath}` : translatedPath ? `https://portfolio.skittz.dev${translatedPath}` : undefined}
-  alternateEn={lang === 'en' ? `https://portfolio.skittz.dev${articlePath}` : translatedPath ? `https://portfolio.skittz.dev${translatedPath}` : undefined}
->
+<Layout {...pageMetadata}>
   <div class="fixed top-6 right-20 z-[9999]">
     <ThemeToggle />
   </div>
