@@ -1,6 +1,7 @@
 ---
 title: "Minha jornada com AstroJS: performance e frustração"
 slug: "experiencia-astro-js"
+translationKey: "astro-journey"
 date: 2025-06-19
 author: "Skittz"
 description: "Uma análise sobre o desenvolvimento com AstroJS"

@@ -1,11 +1,16 @@
 ---
-if (import.meta.env.MODE === 'static') {
-  const browserLang = navigator.language.toLowerCase();
-  const lang = browserLang.startsWith('pt') ? 'pt-br' : 'en';
-  window.location.href = `/${lang}`;
-}
----
+const acceptedLanguages = Astro.request.headers.get('accept-language')?.toLowerCase() ?? '';
+const preferredLanguage = acceptedLanguages
+  .split(',')
+  .map((entry) => {
+    const [language, quality = 'q=1'] = entry.trim().split(';');
+    return { language, quality: Number(quality.replace(/^q=/, '')) || 0 };
+  })
+  .sort((first, second) => second.quality - first.quality)
+  .find(({ language, quality }) => quality > 0 && (language.startsWith('pt') || language.startsWith('en')))
+  ?.language;
+const lang = preferredLanguage?.startsWith('pt') ? 'pt-br' : 'en';
 
-<noscript>
-  <meta http-equiv="refresh" content="0;url=/en" />
-</noscript>
+Astro.response.headers.set('Vary', 'Accept-Language');
+return Astro.redirect(`/${lang}`, 302);
+---

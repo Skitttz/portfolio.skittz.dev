@@ -10,6 +10,18 @@ import pt from "@locales/pt-br.json";
 const lang = Astro.params.lang ?? "pt-br";
 const locales: Record<string, typeof pt> = { en, pt };
 const translations = locales[lang as keyof typeof locales] || pt;
+const profileSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Carlos Vinicius',
+  url: `https://portfolio.skittz.dev/${lang}`,
+  jobTitle: lang === 'pt-br' ? 'Desenvolvedor Front-end' : 'Front-end Developer',
+  sameAs: [
+    'https://github.com/skitttz',
+    'https://www.linkedin.com/in/carlos-vinicius-dev/',
+  ],
+  knowsAbout: ['Front-end development', 'React', 'Next.js', 'TypeScript', 'Web accessibility'],
+};
 ---
 
 <Layout
@@ -45,4 +57,5 @@ const translations = locales[lang as keyof typeof locales] || pt;
   <TerminalSections lang={lang} />
 
   <Footer lang={lang} />
+  <script type="application/ld+json" set:html={JSON.stringify(profileSchema)} />
 </Layout>

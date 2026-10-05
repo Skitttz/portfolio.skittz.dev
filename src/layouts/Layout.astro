@@ -8,11 +8,20 @@ export interface Props {
   lang: string;
   description?: string;
   canonical?: string;
+  alternatePt?: string;
+  alternateEn?: string;
 }
 
-const { title, lang, description = "Carlos Vinicius — front-end developer building accessible, maintainable web products.", canonical } = Astro.props;
-const alternatePt = canonical?.replace(/\/(?:pt-br|en)(?=\/|$)/, "/pt-br");
-const alternateEn = canonical?.replace(/\/(?:pt-br|en)(?=\/|$)/, "/en");
+const {
+  title,
+  lang,
+  description = "Carlos Vinicius — front-end developer building accessible, maintainable web products.",
+  canonical,
+  alternatePt: alternatePtProp,
+  alternateEn: alternateEnProp,
+} = Astro.props;
+const alternatePt = alternatePtProp ?? canonical?.replace(/\/(?:pt-br|en)(?=\/|$)/, "/pt-br");
+const alternateEn = alternateEnProp ?? canonical?.replace(/\/(?:pt-br|en)(?=\/|$)/, "/en");
 ---
 
 <!doctype html>
@@ -38,10 +47,15 @@ const alternateEn = canonical?.replace(/\/(?:pt-br|en)(?=\/|$)/, "/en");
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content={lang === "pt-br" ? "pt_BR" : "en_US"} />
+    <meta property="og:site_name" content="Carlos Vinicius" />
     <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="theme-color" content="#0f172a" />
     {canonical && <link rel="canonical" href={canonical} />}
     {alternatePt && <link rel="alternate" hreflang="pt-BR" href={alternatePt} />}
     {alternateEn && <link rel="alternate" hreflang="en" href={alternateEn} />}
+    {canonical && <link rel="alternate" hreflang="x-default" href={alternateEn ?? canonical} />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
