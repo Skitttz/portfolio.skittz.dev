@@ -6,6 +6,7 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 
 export default defineConfig({
+  site: 'https://portfolio.skittz.dev',
   integrations: [mdx(), icon(), react()],
   output: 'server',
   adapter: vercel({webAnalytics: true}),

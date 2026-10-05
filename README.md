@@ -17,9 +17,9 @@ Built with **AstroJS** and styled using **Tailwind CSS**, this landing page show
 - [Astro](https://astro.build/)
 - [Tailwind CSS](https://tailwindcss.com/)
 
-### Featured work
+### ✨ Featured Work
 
-Project stories live in `src/constants/projects.ts`, with Portuguese and English copy side by side. Every project has a page at `/{lang}/projects/{slug}`; the home page, the three-demo avatar preview, and the interactive terminal use the same data. Add `live` for a public demo and `href` for source code when available. Set `livePaused` if a demo is temporarily unavailable.
+Explore selected projects, the challenges behind them, and the work that brought each one to life.
 
 ### 🆚 What's New in V2
 

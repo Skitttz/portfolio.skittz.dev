@@ -5,7 +5,7 @@ import Footer from '@components/astro/Footer.astro';
 import SnowfallToggle from '@components/astro/SnowfallToggle.astro';
 import ThemeToggle from '@components/astro/ThemeToggle.astro';
 import Layout from '@layouts/Layout.astro';
-import { getEntry, render } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 
 const lang = Astro.params.lang ?? 'pt-br';
 const slug = Astro.params.slug;
@@ -19,6 +19,28 @@ const article = await getEntry('articles', slug);
 if (!article) {
   throw new Error(`Not Found: ${slug}`);
 }
+const siblingArticles = await getCollection('articles');
+const translation = siblingArticles.find((entry) =>
+  entry.data.lang !== article.data.lang &&
+  article.data.translationKey &&
+  entry.data.translationKey === article.data.translationKey,
+);
+const articlePath = `/${lang}/articles/${slug}`;
+const translatedPath = translation
+  ? `/${translation.data.lang}/articles/${translation.id}`
+  : undefined;
+const canonical = `https://portfolio.skittz.dev${articlePath}`;
+const translatedUrl = translatedPath
+  ? `https://portfolio.skittz.dev${translatedPath}`
+  : undefined;
+const pageMetadata = {
+  lang,
+  title: `${article.data.title} | Carlos Vinicius`,
+  description: article.data.description,
+  canonical,
+  alternatePt: lang === 'pt-br' ? canonical : translatedUrl,
+  alternateEn: lang === 'en' ? canonical : translatedUrl,
+};
 const { Content } = await render(article);
 function formatReadingTime(wordCount: number, lang: string) {
   const wordsPerMinute = 200;
@@ -36,7 +58,7 @@ const wordCount = textContent.split(/\s+/).length;
 const readingTime = formatReadingTime(wordCount, lang);
 ---
 
-<Layout lang={lang} title={article.data.title}>
+<Layout {...pageMetadata}>
   <div class="fixed top-6 right-20 z-[9999]">
     <ThemeToggle />
   </div>
