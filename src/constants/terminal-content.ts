@@ -25,6 +25,7 @@ export type TerminalCommand = {
 export type TerminalContent = {
   label: string;
   title: string;
+  hint?: string;
   closedHint: string;
   restoreLabel: string;
   prompt: string;

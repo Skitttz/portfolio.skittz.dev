@@ -27,17 +27,7 @@ const alternateEn = alternateEnProp ?? canonical?.replace(/\/(?:pt-br|en)(?=\/|$
 <!doctype html>
 <html lang={lang}>
   <head>
-    <script is:inline>
-      const theme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark)',
-      ).matches;
-      const isDark = theme === 'dark' || (!theme && prefersDark);
-
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-      }
-    </script>
+    <script is:inline src="/scripts/theme.js"></script>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -77,6 +67,8 @@ const alternateEn = alternateEnProp ?? canonical?.replace(/\/(?:pt-br|en)(?=\/|$
 <ClientRouter />
 
 <script>
+  import type { TransitionBeforeSwapEvent } from 'astro:transitions/client';
+
   const syncTheme = (root: HTMLElement) => {
     const theme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia(
@@ -88,7 +80,7 @@ const alternateEn = alternateEnProp ?? canonical?.replace(/\/(?:pt-br|en)(?=\/|$
   };
 
   document.addEventListener('astro:before-swap', (event) => {
-    const newDocument = (event as CustomEvent<{ newDocument: Document }>).detail.newDocument;
+    const newDocument = (event as TransitionBeforeSwapEvent).newDocument;
     syncTheme(newDocument.documentElement);
   });
 
