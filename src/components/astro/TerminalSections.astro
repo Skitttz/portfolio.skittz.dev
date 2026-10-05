@@ -38,6 +38,7 @@ const initialHistory = terminal.welcome.join("\n");
     <div
       class="terminal-window relative z-[1] overflow-hidden rounded-[0.85rem] border bg-[var(--terminal-window-bg)] font-mono shadow-[0_24px_70px_rgba(15,23,42,0.16)] dark:shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
       data-terminal-root
+      data-terminal-content={JSON.stringify(terminal)}
     >
       <div
         class="terminal-topbar flex items-center justify-between gap-3 border-b bg-[var(--terminal-bar-bg)] px-3 py-2 pl-4"
@@ -117,18 +118,22 @@ const initialHistory = terminal.welcome.join("\n");
   </div>
 </section>
 
-<script is:inline define:vars={{ terminal }}>
+<script>
+  import type { TerminalContent } from '@/constants/terminal-content';
+
   const initPortfolioTerminal = () => {
-    document.querySelectorAll("[data-terminal-root]").forEach((root) => {
+    document.querySelectorAll<HTMLElement>("[data-terminal-root]").forEach((root) => {
       if (root.dataset.ready === "true") return;
       root.dataset.ready = "true";
 
-      const screen = root.querySelector("[data-terminal-screen]");
-      const history = root.querySelector("[data-terminal-history]");
-      const form = root.querySelector("[data-terminal-form]");
-      const input = root.querySelector("[data-terminal-input]");
-      const hint = root.parentElement.querySelector("[data-terminal-hint]");
-      const restoreButton = root.parentElement.querySelector(
+      const terminal: TerminalContent = JSON.parse(root.dataset.terminalContent!);
+
+      const screen = root.querySelector<HTMLElement>("[data-terminal-screen]");
+      const history = root.querySelector<HTMLPreElement>("[data-terminal-history]");
+      const form = root.querySelector<HTMLFormElement>("[data-terminal-form]");
+      const input = root.querySelector<HTMLInputElement>("[data-terminal-input]");
+      const hint = root.parentElement.querySelector<HTMLElement>("[data-terminal-hint]");
+      const restoreButton = root.parentElement.querySelector<HTMLButtonElement>(
         "[data-terminal-restore]",
       );
       const prompt = terminal.prompt;
@@ -263,14 +268,14 @@ const initialHistory = terminal.welcome.join("\n");
         input.value = "";
       };
 
-      root.querySelectorAll("[data-terminal-trigger]").forEach((button) => {
+      root.querySelectorAll<HTMLButtonElement>("[data-terminal-trigger]").forEach((button) => {
         button.addEventListener("click", () => {
           runCommand(button.dataset.terminalTrigger);
           input.focus();
         });
       });
 
-      root.querySelectorAll("[data-terminal-action]").forEach((button) => {
+      root.querySelectorAll<HTMLButtonElement>("[data-terminal-action]").forEach((button) => {
         button.addEventListener("click", () => {
           const action = button.dataset.terminalAction;
 
@@ -333,7 +338,7 @@ const initialHistory = terminal.welcome.join("\n");
       root
         .querySelector(".terminal-topbar")
         .addEventListener("click", (event) => {
-          if (event.target.closest("[data-terminal-action]")) return;
+          if ((event.target as Element).closest("[data-terminal-action]")) return;
           if (!root.classList.contains("is-minimized")) return;
 
           root.classList.remove("is-minimized");

@@ -2,11 +2,6 @@
 import { aboutMeIds } from "@/constants/about-me";
 import { Icon } from "astro-icon/components";
 
-const modalModalConfig = {
-  modalTriggerId: aboutMeIds.modalTriggerId,
-  closeModalBtnId: aboutMeIds.closeModalBtnId,
-  modalId: aboutMeIds.modalId,
-};
 export interface Props {
   name: string;
   answer: string;
@@ -124,12 +119,14 @@ const { name, answer, title, description, location } = Astro.props;
   </div>
 </div>
 
-<script is:inline define:vars={{ modalModalConfig }}>
+<script>
+  import { aboutMeIds as modalModalConfig } from '@/constants/about-me';
+
   const modalSetup = (() => {
-    let elements = {};
+    let elements: Record<string, HTMLElement | null> = {};
     let isOpen = false;
 
-    const $ = (id) =>
+    const $ = (id: string) =>
       elements[id] || (elements[id] = document.getElementById(id));
 
     const handlers = {
@@ -187,6 +184,8 @@ const { name, answer, title, description, location } = Astro.props;
     };
 
     const init = () => {
+      elements = {};
+      isOpen = false;
       if (!$(modalModalConfig.modalTriggerId) || !$(modalModalConfig.modalId)) {
         return;
       }

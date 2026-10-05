@@ -187,9 +187,9 @@ const projectsCueText =
   </main>
 </div>
 
-<script is:inline>
+<script>
   const initProjectScrollCue = () => {
-    document.querySelectorAll("[data-scroll-projects]").forEach((button) => {
+    document.querySelectorAll<HTMLButtonElement>("[data-scroll-projects]").forEach((button) => {
       if (button.dataset.bound === "true") return;
       button.dataset.bound = "true";
 

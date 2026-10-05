@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { SnowfallElement } from './SnowfallElement';
-
-export const SNOWFALL_STORAGE_KEY = 'snowfall';
+import { SNOWFALL_STORAGE_KEY } from '@/constants/snowfall';
 
 function getInitialValue() {
   if (typeof window === 'undefined') return true;
