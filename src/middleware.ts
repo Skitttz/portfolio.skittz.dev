@@ -63,7 +63,7 @@ const languageDetection = async ({ request, redirect, cookies }, next) => {
   cookies.set(COOKIE_NAME, userLang, {
     path: '/',
     maxAge: 60 * 60 * 24 * 365, // 1 ano
-    httpOnly: false,
+    httpOnly: true,
     secure: url.protocol === 'https:',
     sameSite: 'lax'
   });
