@@ -22,7 +22,7 @@ After that I started studying specs and AI architecture, getting to know framewo
 
 ## From 0 to 90: the missing 10
 
-I want to make it clear that I don't agree with some of the things Fabio Akita, a well-known Brazilian developer, stands for. Still, I see him as that strict kung fu master, you know? He's tough, but he's the kind you learn from. One of my favorite quotes of his from this period, one he repeats a lot, is this:
+Someone who talks a lot about AI is Fabio Akita, a Brazilian programmer well known in Brazil's dev community for his blog AkitaOnRails and his YouTube channel Akitando. I want to make it clear that I don't agree with some of the things he stands for. Still, I see him as that strict kung fu master, you know? He's tough, but he's the kind you learn from. One of my favorite quotes of his from this period, one he repeats a lot, is this:
 
 > "Your excitement about AI is inversely proportional to your knowledge of AI."
 >

@@ -22,7 +22,7 @@ Depois comecei a estudar spec e arquitetura de IA, a conhecer frameworks como La
 
 ## Do 0 ao 90: os 10 que faltam
 
-Quero deixar claro que não concordo com algumas coisas que o Akita defende. Ainda assim, tenho a visão de que ele é aquele mestre de kung fu rígido, sabe? É durão, mas é daqueles com quem se aprende. Uma das minhas citações preferidas dele nessa época, e que ele repete bastante, é esta:
+Quem fala bastante sobre IA é o Fabio Akita, programador brasileiro bastante conhecido na comunidade pelo blog AkitaOnRails e pelo canal Akitando, no YouTube. Quero deixar claro que não concordo com algumas coisas que ele defende. Ainda assim, tenho a visão de que ele é aquele mestre de kung fu rígido, sabe? É durão, mas é daqueles com quem se aprende. Uma das minhas citações preferidas dele nessa época, e que ele repete bastante, é esta:
 
 > "Sua empolgação com IA é inversamente proporcional ao seu conhecimento sobre IA."
 >
