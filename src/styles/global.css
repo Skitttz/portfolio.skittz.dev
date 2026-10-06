@@ -130,7 +130,15 @@
   }
 
   .prose blockquote {
-    @apply border-l-4 border-blue-500 pl-6 italic text-gray-600 dark:text-gray-400 bg-blue-50/50 dark:bg-blue-900/10 py-4 rounded-r-lg;
+    @apply border-l-4 border-blue-500 px-6 italic text-gray-600 dark:text-gray-400 bg-blue-50/50 dark:bg-blue-900/10 py-4 mb-6 rounded-r-lg;
+  }
+
+  .prose blockquote p {
+    @apply mb-3;
+  }
+
+  .prose blockquote p:last-child {
+    @apply mb-0;
   }
 
   .prose ul,
