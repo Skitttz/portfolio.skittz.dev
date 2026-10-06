@@ -4,7 +4,7 @@ slug: "jornada-com-ia"
 translationKey: "ai-journey"
 date: 2026-10-06
 author: "Skittz"
-description: "Um relato sobre chegar atrasado na era da IA, o que entrou no meu workflow e por que não vejo a revisão como gargalo."
+description: "Chegando um pouco atrasado no hype de IA e como está sendo a jornada."
 lang: "pt-br"
 ---
 

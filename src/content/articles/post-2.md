@@ -4,7 +4,7 @@ slug: "ai-journey"
 translationKey: "ai-journey"
 date: 2026-10-06
 author: "Skittz"
-description: "An account of arriving late to the AI era, what made it into my workflow, and why I don’t see review as a bottleneck."
+description: "Arriving a bit late to the AI hype, and how the journey has been so far."
 lang: "en"
 ---
 
