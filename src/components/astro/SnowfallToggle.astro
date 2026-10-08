@@ -85,14 +85,14 @@
       }
     }
 
-    const snowfallEnabled = localStorage.getItem(SNOWFALL_STORAGE_KEY) === 'on';
+    const snowfallEnabled = localStorage.getItem(SNOWFALL_STORAGE_KEY) !== 'off';
 
     updateVisual(snowfallEnabled);
 
     if (!btn.dataset.bound) {
       btn.dataset.bound = 'true';
       btn.addEventListener('click', () => {
-        const isOn = localStorage.getItem(SNOWFALL_STORAGE_KEY) === 'on';
+        const isOn = localStorage.getItem(SNOWFALL_STORAGE_KEY) !== 'off';
 
         localStorage.setItem(SNOWFALL_STORAGE_KEY, isOn ? 'off' : 'on');
 
