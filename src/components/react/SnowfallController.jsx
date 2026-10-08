@@ -1,27 +1,17 @@
 import { useEffect, useState } from 'react';
 import { SnowfallElement } from './SnowfallElement';
-import { SNOWFALL_STORAGE_KEY } from '@/constants/snowfall';
-
-function getInitialValue() {
-  if (typeof window === 'undefined') return true;
-  const stored = localStorage.getItem(SNOWFALL_STORAGE_KEY);
-  return stored === null || stored === 'on';
-}
+import { SNOWFALL_EVENT, isSnowing } from '@/utils/snowfall';
 
 export function SnowfallController() {
-  const [enabled, setEnabled] = useState(getInitialValue);
+  const [enabled, setEnabled] = useState(isSnowing);
 
   useEffect(() => {
-    localStorage.setItem(SNOWFALL_STORAGE_KEY, enabled ? 'on' : 'off');
+    const onChange = (event) => setEnabled(event.detail.enabled);
 
-    window.toggleSnowfall = () => {
-      setEnabled((prev) => !prev);
-    };
+    document.addEventListener(SNOWFALL_EVENT, onChange);
 
-    return () => {
-      delete window.toggleSnowfall;
-    };
-  }, [enabled]);
+    return () => document.removeEventListener(SNOWFALL_EVENT, onChange);
+  }, []);
 
   return <SnowfallElement enabled={enabled} />;
 }

@@ -20,17 +20,13 @@ const label = lang === 'en' ? 'PT-BR' : 'EN';
 </button>
 
 <script>
+  import { switchLang } from '@/utils/switch-lang';
+
   document.addEventListener('astro:page-load', () => {
     const button = document.getElementById('lang-switch');
     if (button) {
       button.addEventListener('click', () => {
-        const currentLang = button.dataset.lang;
-        const nextLang = currentLang === 'en' ? 'pt-br' : 'en';
-        const newPath = window.location.pathname.replace(
-          /^\/(en|pt-br|pt)/,
-          '',
-        );
-        window.location.href = `/${nextLang}${newPath}`;
+        switchLang(button.dataset.lang === 'en' ? 'pt-br' : 'en');
       });
     }
   });
