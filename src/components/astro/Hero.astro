@@ -3,6 +3,7 @@ import AboutPreview from "@components/astro/AboutPreview.astro";
 import Button from "@components/astro/Button.astro";
 import DynamicText from "@components/astro/DynamicText.astro";
 import StatusIndicator from "@components/astro/StatusIndicator.astro";
+import TerminalToggle from "@components/astro/TerminalToggle.astro";
 import ThemeToggle from "@components/astro/ThemeToggle.astro";
 import LangToggle from "./LangToggle.astro";
 import SnowfallToggle from "./SnowfallToggle.astro";
@@ -53,14 +54,11 @@ const projectsCueText =
     : "explore projects";
 ---
 
-<div class="fixed top-6 right-20 z-[9999]">
-  <ThemeToggle />
-</div>
-<div class="fixed top-6 right-6 z-[9999]">
-  <SnowfallToggle />
-</div>
-<div class="fixed top-6 right-36 z-[9999]">
+<div class="fixed top-6 right-6 z-[9999] flex items-center gap-4">
+  <TerminalToggle lang={lang} />
   <LangToggle lang={lang} />
+  <ThemeToggle />
+  <SnowfallToggle />
 </div>
 <div class="flex flex-col min-h-[100dvh] pt-20 sm:pt-0 relative main-header">
   <div class="hero-background absolute inset-0">

@@ -1,7 +1,7 @@
 ---
 import Hero from "@components/astro/Hero.astro";
 import Footer from "@components/astro/Footer.astro";
-import TerminalSections from "@components/astro/TerminalSections.astro";
+import TerminalMode from "@components/astro/TerminalMode.astro";
 import SelectedWork from "@components/astro/SelectedWork.astro";
 import Layout from "@layouts/Layout.astro";
 import en from "@locales/en.json";
@@ -47,7 +47,7 @@ const profileSchema = {
 
   <SelectedWork lang={lang} />
 
-  <TerminalSections lang={lang} />
+  <TerminalMode lang={lang} />
 
   <Footer lang={lang} />
   <script type="application/ld+json" set:html={JSON.stringify(profileSchema)} />

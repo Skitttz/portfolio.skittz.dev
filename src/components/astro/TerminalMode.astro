@@ -1,0 +1,467 @@
+---
+import { getCollection } from "astro:content";
+import { buildTerminalContent } from "@/terminal/content";
+import en from "@locales/en.json";
+import pt from "@locales/pt-br.json";
+
+export interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const isPt = lang === "pt-br";
+const locale = isPt ? pt : en;
+const posts = (await getCollection("articles"))
+  .filter((post) => post.data.lang === (isPt ? "pt-br" : "en"))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const content = buildTerminalContent({
+  lang: isPt ? "pt-br" : "en",
+  nickname: locale.nickname,
+  location: locale.about.location,
+  cvFile: locale.fileName,
+  articles: posts.map((post) => ({
+    title: post.data.title,
+    href: `/${post.data.lang}/articles/${post.id}`,
+  })),
+});
+const ui = isPt
+  ? { label: "Modo terminal", exit: "sair", exitLabel: "Sair do modo terminal", input: "Comando" }
+  : { label: "Terminal mode", exit: "exit", exitLabel: "Leave terminal mode", input: "Command" };
+---
+
+<dialog
+  class="terminal-mode"
+  aria-label={ui.label}
+  data-terminal-mode
+  data-terminal-content={JSON.stringify(content)}
+>
+  <header class="terminal-bar">
+    <strong>~/portfolio</strong>
+    <button type="button" aria-label={ui.exitLabel} data-terminal-close>
+      <kbd>esc</kbd>
+      <span>{ui.exit}</span>
+    </button>
+  </header>
+
+  <div class="terminal-screen" data-terminal-screen>
+    <div class="terminal-output" role="log" data-terminal-output></div>
+
+    <form class="terminal-prompt" data-terminal-form>
+      <label for="terminal-input">
+        <span aria-hidden="true">{content.prompt}</span>
+        <span class="sr-only">{ui.input}</span>
+      </label>
+      <input
+        id="terminal-input"
+        type="text"
+        autocomplete="off"
+        autocapitalize="none"
+        autocorrect="off"
+        spellcheck="false"
+        enterkeyhint="send"
+        autofocus
+        data-terminal-input
+      />
+    </form>
+  </div>
+</dialog>
+
+<script>
+  import { navigate } from "astro:transitions/client";
+  import { complete, createHistory, runCommand } from "@/terminal/shell";
+  import type { Effect, Line, ShellContent } from "@/terminal/shell";
+  import { isSnowing, setSnow } from "@/utils/snowfall";
+  import { switchLang } from "@/utils/switch-lang";
+  import { getTheme, setTheme } from "@/utils/theme";
+
+  // Set before a language switch, so the terminal reopens on the page that loads next.
+  const REOPEN_KEY = "terminal-mode";
+  const recall = createHistory();
+
+  const initTerminalMode = () => {
+    const dialog = document.querySelector<HTMLDialogElement>("[data-terminal-mode]");
+    if (!dialog || dialog.dataset.ready) return;
+    dialog.dataset.ready = "true";
+
+    const content: ShellContent = JSON.parse(dialog.dataset.terminalContent!);
+    const screen = dialog.querySelector<HTMLElement>("[data-terminal-screen]")!;
+    const output = dialog.querySelector<HTMLElement>("[data-terminal-output]")!;
+    const form = dialog.querySelector<HTMLFormElement>("[data-terminal-form]")!;
+    const input = dialog.querySelector<HTMLInputElement>("[data-terminal-input]")!;
+    const closeButton = dialog.querySelector<HTMLButtonElement>("[data-terminal-close]")!;
+    const openers = document.querySelectorAll<HTMLButtonElement>("[data-terminal-open]");
+
+    const print = (line: Line, hang = 0) => {
+      const row = document.createElement("p");
+
+      if (hang) {
+        row.style.paddingLeft = `${hang}ch`;
+        row.style.textIndent = `-${hang}ch`;
+      }
+
+      for (const { text, href, command } of line) {
+        if (command) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.dataset.terminalRun = command;
+          button.textContent = text;
+          row.append(button);
+        } else if (href) {
+          const link = document.createElement("a");
+          link.href = href;
+          link.textContent = text;
+          if (!href.startsWith("/")) {
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+          }
+          row.append(link);
+        } else {
+          row.append(text);
+        }
+      }
+
+      output.append(row);
+    };
+
+    const echo = (value: string) => {
+      const row = document.createElement("p");
+      const prompt = document.createElement("span");
+
+      prompt.textContent = content.prompt;
+      row.className = "terminal-echo";
+      row.append(prompt, ` ${value}`);
+      output.append(row);
+    };
+
+    const scrollToEnd = () => {
+      screen.scrollTop = screen.scrollHeight;
+    };
+
+    const apply = (effect: Effect) => {
+      switch (effect.type) {
+        case "clear":
+          output.replaceChildren();
+          break;
+        case "exit":
+          dialog.close();
+          break;
+        case "scroll": {
+          const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+          dialog.close();
+          document.getElementById(effect.target)?.scrollIntoView({
+            behavior: reduceMotion ? "auto" : "smooth",
+            block: "start",
+          });
+          break;
+        }
+        case "navigate":
+          navigate(effect.href);
+          break;
+        case "download": {
+          const link = document.createElement("a");
+
+          link.href = effect.href;
+          link.download = "";
+          dialog.append(link);
+          link.click();
+          link.remove();
+          break;
+        }
+        case "theme":
+          setTheme(effect.value);
+          break;
+        case "snow":
+          setSnow(effect.value);
+          break;
+        case "lang":
+          sessionStorage.setItem(REOPEN_KEY, "open");
+          switchLang(effect.value);
+          break;
+      }
+    };
+
+    const execute = (value: string) => {
+      echo(value);
+      recall.push(value);
+
+      const { lines, effect, hang } = runCommand(value, content, {
+        theme: getTheme(),
+        snow: isSnowing(),
+      });
+
+      lines.forEach((line) => print(line, hang));
+      input.value = "";
+      if (effect) apply(effect);
+      scrollToEnd();
+    };
+
+    const open = () => {
+      if (!dialog.open) dialog.showModal();
+
+      if (!dialog.dataset.welcomed) {
+        dialog.dataset.welcomed = "true";
+        print(content.welcome);
+      }
+
+      input.focus();
+      scrollToEnd();
+    };
+
+    openers.forEach((button) => {
+      button.hidden = false;
+      button.addEventListener("click", open);
+    });
+
+    closeButton.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("close", () => openers[0]?.focus({ preventScroll: true }));
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      execute(input.value);
+    });
+
+    output.addEventListener("click", (event) => {
+      const button = (event.target as Element).closest<HTMLButtonElement>("[data-terminal-run]");
+      if (!button) return;
+
+      execute(button.dataset.terminalRun!);
+      // On touch screens focusing the field would raise the keyboard over what was just printed.
+      if (dialog.open && !window.matchMedia("(hover: none)").matches) input.focus();
+    });
+
+    screen.addEventListener("click", (event) => {
+      const onControl = (event.target as Element).closest("a, button, input");
+      if (onControl || window.getSelection()?.toString()) return;
+
+      input.focus();
+    });
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+        event.preventDefault();
+        const value = event.key === "ArrowUp" ? recall.previous() : recall.next();
+        if (value !== undefined) input.value = value;
+        return;
+      }
+
+      // With an empty field Tab keeps moving focus, so the keyboard is never trapped here.
+      if (event.key !== "Tab" || event.shiftKey || !input.value.trim()) return;
+
+      event.preventDefault();
+      const { value, candidates } = complete(input.value);
+      input.value = value;
+
+      if (candidates.length) {
+        print([{ text: candidates.join("  ") }]);
+        scrollToEnd();
+      }
+    });
+
+    if (sessionStorage.getItem(REOPEN_KEY)) {
+      sessionStorage.removeItem(REOPEN_KEY);
+      open();
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initTerminalMode);
+  } else {
+    initTerminalMode();
+  }
+
+  document.addEventListener("astro:after-swap", initTerminalMode);
+</script>
+
+<style>
+  .terminal-mode {
+    --terminal-bg: rgb(248, 250, 252);
+    --terminal-bar-bg: rgb(226, 232, 240);
+    --terminal-border: rgb(203, 213, 225);
+    --terminal-text: rgb(15, 23, 42);
+    --terminal-muted: rgb(71, 85, 105);
+    --terminal-command: rgb(15, 118, 110);
+    --terminal-link: rgb(29, 78, 216);
+    --terminal-dot: rgba(100, 116, 139, 0.2);
+
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    overscroll-behavior: contain;
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    font-family: var(--font-mono);
+  }
+
+  :global(.dark) .terminal-mode {
+    --terminal-bg: rgb(2, 6, 23);
+    --terminal-bar-bg: rgb(15, 23, 42);
+    --terminal-border: rgba(71, 85, 105, 0.82);
+    --terminal-text: rgb(226, 232, 240);
+    --terminal-muted: rgb(148, 163, 184);
+    --terminal-command: rgb(74, 222, 128);
+    --terminal-link: rgb(96, 165, 250);
+    --terminal-dot: rgba(148, 163, 184, 0.16);
+  }
+
+  .terminal-mode[open] {
+    display: flex;
+    flex-direction: column;
+    animation: terminal-in 0.16s ease-out;
+  }
+
+  @keyframes terminal-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.4rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem clamp(1rem, 3vw, 2.5rem);
+    border-bottom: 1px solid var(--terminal-border);
+    background: var(--terminal-bar-bg);
+    color: var(--terminal-muted);
+    font-size: 0.8rem;
+  }
+
+  .terminal-bar strong {
+    font-weight: 500;
+  }
+
+  .terminal-bar button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.65rem;
+    border: 1px solid var(--terminal-border);
+    border-radius: 0.4rem;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition:
+      color 0.16s ease,
+      border-color 0.16s ease;
+  }
+
+  .terminal-bar button:hover,
+  .terminal-bar button:focus-visible {
+    border-color: var(--terminal-command);
+    color: var(--terminal-text);
+  }
+
+  .terminal-bar kbd {
+    font: inherit;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .terminal-screen {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 1.1rem clamp(1rem, 3vw, 2.5rem) 2rem;
+    background:
+      radial-gradient(circle at 1px 1px, var(--terminal-dot) 1px, transparent 0) 0 0 / 18px 18px,
+      var(--terminal-bg);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    cursor: text;
+  }
+
+  .terminal-output :global(p) {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .terminal-output :global(.terminal-echo) {
+    margin-top: 0.7rem;
+  }
+
+  .terminal-output :global(.terminal-echo span) {
+    color: var(--terminal-command);
+  }
+
+  .terminal-output :global(a) {
+    color: var(--terminal-link);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .terminal-output :global(button) {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--terminal-command);
+    font: inherit;
+    text-decoration: underline dotted;
+    text-underline-offset: 0.22em;
+    cursor: pointer;
+  }
+
+  .terminal-prompt {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-top: 0.7rem;
+  }
+
+  .terminal-prompt label {
+    flex: none;
+    color: var(--terminal-command);
+    white-space: nowrap;
+  }
+
+  .terminal-prompt input {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    caret-color: var(--terminal-command);
+    outline: none;
+  }
+
+  @media (max-width: 767px), (hover: none) {
+    .terminal-screen {
+      font-size: 0.85rem;
+    }
+
+    .terminal-prompt {
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    /* iOS zooms the page when a focused field uses less than 16px. */
+    .terminal-prompt input {
+      width: 100%;
+      font-size: 16px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .terminal-mode[open] {
+      animation: none;
+    }
+
+    .terminal-bar button {
+      transition: none;
+    }
+  }
+</style>
