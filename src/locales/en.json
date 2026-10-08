@@ -5,10 +5,8 @@
   },
   "textIntro": "Hi, I'm",
   "name": "Carlos",
-  "answer": "Who?",
   "about": {
     "title": "About me",
-    "role": "Front-end Developer",
     "location": "Aracaju-SE, Brazil",
     "actionText": "Hover here",
     "actionTextMobile": "Tap here",

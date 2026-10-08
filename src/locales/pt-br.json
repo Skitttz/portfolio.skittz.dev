@@ -5,10 +5,8 @@
   },
   "textIntro": "Olá, sou",
   "name": "Carlos",
-  "answer": "Quem?",
   "about": {
     "title": "Sobre mim",
-    "role": "Desenvolvedor Front-end",
     "location": "Aracaju-SE, Brasil",
     "actionText": "Passe o mouse",
     "actionTextMobile": "Toque aqui",
