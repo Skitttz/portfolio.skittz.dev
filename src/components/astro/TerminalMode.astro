@@ -215,7 +215,10 @@ const ui = isPt
       dialog.dataset.closing = "true";
       setTerminalMode(false);
       await Promise.allSettled(dialog.getAnimations().map((animation) => animation.finished));
-      if (dialog.isConnected) dialog.close();
+      if (dialog.isConnected) {
+        openers[0]?.setAttribute("data-terminal-focus-restored", "");
+        dialog.close();
+      }
       delete dialog.dataset.closing;
       dialog.style.removeProperty("--terminal-exit-opacity");
       dialog.style.removeProperty("--terminal-exit-transform");
@@ -301,7 +304,12 @@ const ui = isPt
       scrollToEnd();
     };
 
-    openers.forEach((button) => button.addEventListener("click", open));
+    openers.forEach((button) => {
+      button.addEventListener("click", open);
+      button.addEventListener("blur", () => {
+        button.removeAttribute("data-terminal-focus-restored");
+      });
+    });
 
     closeButton.addEventListener("click", () => { void close(); });
     dialog.addEventListener("cancel", (event) => {
@@ -312,6 +320,7 @@ const ui = isPt
     dialog.addEventListener("close", () => {
       if (!dialog.isConnected || dialog.open) return;
       setTerminalMode(false);
+      openers[0]?.setAttribute("data-terminal-focus-restored", "");
       openers[0]?.focus({ preventScroll: true });
       delete dialog.dataset.resumed;
     });
