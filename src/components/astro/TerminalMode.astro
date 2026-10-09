@@ -45,6 +45,7 @@ const ui = isPt
   data-terminal-mode
   data-terminal-content={JSON.stringify(content)}
 >
+  <div class="terminal-snow" data-terminal-snow aria-hidden="true"></div>
   <header class="terminal-bar">
     <strong>~/portfolio</strong>
     <button type="button" aria-label={ui.exitLabel} data-terminal-close>
@@ -97,8 +98,8 @@ const ui = isPt
   import { isSnowing, setSnow } from "@/utils/snowfall";
   import { switchLang } from "@/utils/switch-lang";
   import { getTheme, setTheme } from "@/utils/theme";
+  import { isTerminalMode, setTerminalMode } from "@/utils/terminal-mode";
 
-  const REOPEN_KEY = "terminal-mode";
   const COLORS_KEY = "terminal-colors";
   const recall = createHistory();
 
@@ -253,7 +254,6 @@ const ui = isPt
           setSnow(effect.value);
           break;
         case "lang":
-          sessionStorage.setItem(REOPEN_KEY, "open");
           switchLang(effect.value);
           break;
       }
@@ -279,6 +279,7 @@ const ui = isPt
 
     const open = () => {
       if (!dialog.open) dialog.showModal();
+      setTerminalMode(true);
 
       if (!dialog.dataset.welcomed) {
         dialog.dataset.welcomed = "true";
@@ -295,6 +296,8 @@ const ui = isPt
 
     closeButton.addEventListener("click", () => dialog.close());
     dialog.addEventListener("close", () => {
+      if (!dialog.isConnected || dialog.open) return;
+      setTerminalMode(false);
       if (focusOpenerOnClose) openers[0]?.focus({ preventScroll: true });
       focusOpenerOnClose = true;
       delete dialog.dataset.resumed;
@@ -357,8 +360,7 @@ const ui = isPt
     try { storedColors = localStorage.getItem(COLORS_KEY); } catch {}
     dialog.dataset.colors = colorSchemes.find((name) => name === storedColors) ?? "default";
 
-    if (sessionStorage.getItem(REOPEN_KEY)) {
-      sessionStorage.removeItem(REOPEN_KEY);
+    if (isTerminalMode()) {
       dialog.dataset.resumed = "true";
       open();
     }
@@ -478,6 +480,7 @@ const ui = isPt
     background: var(--terminal-bg);
     color: var(--terminal-text);
     font-family: var(--font-mono);
+    isolation: isolate;
   }
 
   .terminal-mode[open] {
@@ -506,6 +509,8 @@ const ui = isPt
   }
 
   .terminal-bar {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -550,14 +555,23 @@ const ui = isPt
   }
 
   .terminal-screen {
+    position: relative;
+    z-index: 1;
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     padding: 1.1rem clamp(1rem, 3vw, 2.5rem) 2rem;
-    background: var(--terminal-bg);
     font-size: 0.95rem;
     line-height: 1.6;
     cursor: text;
+  }
+
+  .terminal-snow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
   }
 
   .terminal-output :global(p) {
