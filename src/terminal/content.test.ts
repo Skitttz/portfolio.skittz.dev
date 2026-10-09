@@ -91,7 +91,7 @@ describe("terminal content", () => {
       "links úteis",
       "baixa o currículo",
       "lista os posts",
-      "abre o post de número n",
+      "abre o post n em outra aba",
       "vai para a seção de projetos",
       "vai para a seção de experiência",
       "troca o tema",
@@ -109,7 +109,7 @@ describe("terminal content", () => {
       "useful links",
       "download the résumé",
       "list the posts",
-      "open post number n",
+      "open post n in a new tab",
       "go to the projects section",
       "go to the experience section",
       "switch the theme",
@@ -247,7 +247,7 @@ describe("terminal content", () => {
   });
 
   test("open reports success, wrong usage and a missing post", () => {
-    assert.deepEqual(lineTexts("open 2"), ["abrindo: Post antigo"]);
+    assert.deepEqual(lineTexts("open 2"), ["abrindo em outra aba: Post antigo"]);
     assert.deepEqual(lineTexts("open"), ["uso: open <n>. veja os números em articles."]);
     assert.deepEqual(lineTexts("open 7"), ["não existe post 7. digite articles para ver a lista."]);
     assert.deepEqual(lineTexts("open", english), ["usage: open <n>. see the numbers in articles."]);

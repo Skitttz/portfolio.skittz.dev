@@ -98,7 +98,6 @@ const ui = isPt
 </dialog>
 
 <script>
-  import { navigate } from "astro:transitions/client";
   import { colorSchemes, complete, createHistory, highlight, runCommand, suggest } from "@/terminal/shell";
   import type { ColorScheme, Effect, Line, ShellContent } from "@/terminal/shell";
   import { isSnowing, setSnow } from "@/utils/snowfall";
@@ -169,10 +168,8 @@ const ui = isPt
           const link = document.createElement("a");
           link.href = href;
           link.textContent = text;
-          if (!href.startsWith("/")) {
-            link.target = "_blank";
-            link.rel = "noopener noreferrer";
-          }
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
           row.append(link);
         } else if (tone || swatch) {
           const span = document.createElement("span");
@@ -239,8 +236,8 @@ const ui = isPt
           }
           break;
         }
-        case "navigate":
-          navigate(effect.href);
+        case "open":
+          window.open(effect.href, "_blank", "noopener,noreferrer");
           break;
         case "download": {
           const link = document.createElement("a");

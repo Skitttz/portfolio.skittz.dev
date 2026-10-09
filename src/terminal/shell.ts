@@ -13,7 +13,7 @@ type Effect =
   | { type: "clear" }
   | { type: "exit" }
   | { type: "scroll"; target: "projects" | "experience" }
-  | { type: "navigate"; href: string }
+  | { type: "open"; href: string }
   | { type: "download"; href: string }
   | { type: "theme"; value: Theme }
   | { type: "colors"; value: ColorScheme }
@@ -136,7 +136,7 @@ const openArticle = ([value]: string[], { articles, messages }: ShellContent): S
 
   return {
     lines: [text(fillText(messages.openDone, { title: article.title }))],
-    effect: { type: "navigate", href: article.href },
+    effect: { type: "open", href: article.href },
   };
 };
 

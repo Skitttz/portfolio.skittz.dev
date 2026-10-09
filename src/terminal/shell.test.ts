@@ -159,10 +159,10 @@ describe("runCommand", () => {
     assert.deepEqual(run("articles", dark, { ...content, articles: [] }), { lines: [[{ text: "no posts" }]] });
   });
 
-  test("open with a listed number navigates to that post", () => {
+  test("open with a listed number asks to open that post", () => {
     assert.deepEqual(run("open 2"), {
       lines: [[{ text: "opening: First post" }]],
-      effect: { type: "navigate", href: "/en/articles/first" },
+      effect: { type: "open", href: "/en/articles/first" },
     });
   });
 
