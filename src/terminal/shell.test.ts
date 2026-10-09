@@ -178,14 +178,14 @@ describe("runCommand", () => {
     assert.deepEqual(run("open 99999999999999999999"), { lines: [[{ text: "no post 99999999999999999999" }]] });
   });
 
-  test("projects and experience ask to scroll to their sections", () => {
+  test("projects and experience ask to open a panel inside the terminal", () => {
     assert.deepEqual(run("projects"), {
       lines: [[{ text: "to projects" }]],
-      effect: { type: "scroll", target: "projects" },
+      effect: { type: "panel", target: "projects" },
     });
     assert.deepEqual(run("experience"), {
       lines: [[{ text: "to experience" }]],
-      effect: { type: "scroll", target: "experience" },
+      effect: { type: "panel", target: "experience" },
     });
   });
 

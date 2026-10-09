@@ -92,8 +92,8 @@ describe("terminal content", () => {
       "baixa o currículo",
       "lista os posts",
       "abre o post n em outra aba",
-      "vai para a seção de projetos",
-      "vai para a seção de experiência",
+      "abre os projetos no terminal",
+      "abre a experiência no terminal",
       "troca o tema",
       "troca as cores do terminal",
       "troca o idioma",
@@ -110,8 +110,8 @@ describe("terminal content", () => {
       "download the résumé",
       "list the posts",
       "open post n in a new tab",
-      "go to the projects section",
-      "go to the experience section",
+      "open projects inside the terminal",
+      "open experience inside the terminal",
       "switch the theme",
       "switch the terminal colors",
       "switch the language",
@@ -255,10 +255,10 @@ describe("terminal content", () => {
   });
 
   test("projects and experience announce where they go", () => {
-    assert.deepEqual(lineTexts("projects"), ["abrindo a seção de projetos..."]);
-    assert.deepEqual(lineTexts("experience"), ["abrindo a seção de experiência..."]);
-    assert.deepEqual(lineTexts("projects", english), ["opening the projects section..."]);
-    assert.deepEqual(lineTexts("experience", english), ["opening the experience section..."]);
+    assert.deepEqual(lineTexts("projects"), ["abrindo os projetos..."]);
+    assert.deepEqual(lineTexts("experience"), ["abrindo a experiência..."]);
+    assert.deepEqual(lineTexts("projects", english), ["opening projects..."]);
+    assert.deepEqual(lineTexts("experience", english), ["opening experience..."]);
   });
 
   test("theme confirms, refuses a repeat and explains its usage", () => {

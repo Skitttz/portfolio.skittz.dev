@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import { buildTerminalContent } from "@/terminal/content";
 import { projectContent } from "@/constants/projects";
+import TerminalSectionPanel from "./TerminalSectionPanel.astro";
 import en from "@locales/en.json";
 import pt from "@locales/pt-br.json";
 
@@ -90,6 +91,7 @@ const ui = isPt
       </div>
     </form>
   </div>
+  <TerminalSectionPanel lang={lang} />
 </dialog>
 
 <script>
@@ -117,7 +119,7 @@ const ui = isPt
     const openers = document.querySelectorAll<HTMLButtonElement>("[data-terminal-open]");
     const ink = dialog.querySelector<HTMLElement>("[data-terminal-highlight]")!;
     const time = dialog.querySelector<HTMLTimeElement>("[data-terminal-time]")!;
-    let focusOpenerOnClose = true;
+    const panel = dialog.querySelector<HTMLDialogElement>("[data-terminal-panel]")!;
     let suggestion = "";
 
     const updateTime = () => {
@@ -212,23 +214,14 @@ const ui = isPt
         case "exit":
           dialog.close();
           break;
-        case "scroll": {
-          const section = document.getElementById(effect.target);
-          const landing = section?.querySelector<HTMLElement>("h2") ?? section;
-          const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-          focusOpenerOnClose = false;
-          dialog.close();
-          section?.scrollIntoView({
-            behavior: reduceMotion ? "auto" : "smooth",
-            block: "start",
+        case "panel": {
+          panel.querySelectorAll<HTMLElement>("[data-terminal-section]").forEach((section) => {
+            section.hidden = section.dataset.terminalSection !== effect.target;
           });
-
-          if (landing) {
-            landing.tabIndex = -1;
-            landing.style.outline = "none";
-            landing.focus({ preventScroll: true });
-          }
+          panel.setAttribute("aria-labelledby", `terminal-${effect.target}-title`);
+          panel.querySelector<HTMLElement>("[data-terminal-panel-path]")!.textContent = `~/portfolio/${effect.target}`;
+          panel.showModal();
+          panel.querySelector<HTMLElement>("[data-terminal-panel-scroll]")!.scrollTop = 0;
           break;
         }
         case "open":
@@ -298,9 +291,32 @@ const ui = isPt
     dialog.addEventListener("close", () => {
       if (!dialog.isConnected || dialog.open) return;
       setTerminalMode(false);
-      if (focusOpenerOnClose) openers[0]?.focus({ preventScroll: true });
-      focusOpenerOnClose = true;
+      openers[0]?.focus({ preventScroll: true });
       delete dialog.dataset.resumed;
+    });
+
+    panel.querySelector<HTMLButtonElement>("[data-terminal-panel-close]")!.addEventListener("click", () => panel.close());
+    panel.addEventListener("close", () => {
+      if (panel.isConnected && dialog.open) input.focus({ preventScroll: true });
+    });
+    panel.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab" || event.ctrlKey || event.metaKey || event.altKey) return;
+      const controls = [...panel.querySelectorAll<HTMLElement>("button, a[href]")]
+        .filter((control) => control.getClientRects().length > 0);
+      const first = controls[0];
+      const last = controls.at(-1);
+      const destination = event.shiftKey && document.activeElement === first
+        ? last
+        : !event.shiftKey && document.activeElement === last ? first : undefined;
+      if (destination) {
+        event.preventDefault();
+        destination.focus();
+      }
+    });
+    panel.addEventListener("click", (event) => {
+      if (event.target !== panel) return;
+      const box = panel.getBoundingClientRect();
+      if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) panel.close();
     });
 
     form.addEventListener("submit", (event) => {

@@ -12,7 +12,7 @@ type Line = Segment[];
 type Effect =
   | { type: "clear" }
   | { type: "exit" }
-  | { type: "scroll"; target: "projects" | "experience" }
+  | { type: "panel"; target: "projects" | "experience" }
   | { type: "open"; href: string }
   | { type: "download"; href: string }
   | { type: "theme"; value: Theme }
@@ -247,7 +247,7 @@ const dispatch = (input: string, content: ShellContent, state: ShellState): Shel
       return openArticle(args, content);
     case "projects":
     case "experience":
-      return { lines: [text(messages[name])], effect: { type: "scroll", target: name } };
+      return { lines: [text(messages[name])], effect: { type: "panel", target: name } };
     case "theme":
       return switchTheme(args, content, state);
     case "colors":
