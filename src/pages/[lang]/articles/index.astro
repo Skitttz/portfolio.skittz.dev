@@ -85,7 +85,7 @@ const pageMetadata = {
         <h1 class="sr-only">{ui.heading}</h1>
 
         {sortedPosts.length > 0 ? (
-          <ol class="article-index-list">
+          <ul class="article-index-list">
             {sortedPosts.map((post, index) => (
               <li>
                 <article aria-labelledby={`article-title-${index}`}>
@@ -94,15 +94,12 @@ const pageMetadata = {
                     href={`/${post.data.lang}/articles/${post.id}`}
                     aria-labelledby={`article-title-${index}`}
                   >
-                    <span class="article-index-number" aria-hidden="true">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
                     <div class="article-index-content">
                       <time datetime={post.data.date.toISOString()}>
                         {formatDate(new Date(post.data.date), lang)}
                       </time>
                       <h2 class="article-index-title" id={`article-title-${index}`}>
-                        <span>{post.data.title}</span>
+                        {post.data.title}
                       </h2>
                       {post.data.description && (
                         <p class="article-index-description">{post.data.description}</p>
@@ -116,7 +113,7 @@ const pageMetadata = {
                 </article>
               </li>
             ))}
-          </ol>
+          </ul>
         ) : (
           <div class="article-index-empty">
             <p>{ui.emptyHint}</p>
