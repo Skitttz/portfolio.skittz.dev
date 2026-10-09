@@ -95,12 +95,12 @@ describe("terminal content", () => {
 
   test("the welcome line invites to run help", () => {
     assert.deepEqual(portuguese.welcome, [
-      { text: "modo terminal do portfólio. digite " },
+      { text: "digite " },
       { text: "help", command: "help" },
       { text: " para listar os comandos." },
     ]);
     assert.deepEqual(english.welcome, [
-      { text: "portfolio terminal mode. type " },
+      { text: "type " },
       { text: "help", command: "help" },
       { text: " to list the commands." },
     ]);

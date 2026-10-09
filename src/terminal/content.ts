@@ -20,7 +20,7 @@ const run = (command: string): Segment => ({ text: command, command });
 const copy: Record<Lang, Copy> = {
   "pt-br": {
     role: "Desenvolvedor Front-end",
-    welcome: [{ text: "modo terminal do portfólio. digite " }, run("help"), { text: " para listar os comandos." }],
+    welcome: [{ text: "digite " }, run("help"), { text: " para listar os comandos." }],
     help: {
       help: "lista os comandos",
       whoami: "quem está por trás do portfólio",
@@ -67,7 +67,7 @@ const copy: Record<Lang, Copy> = {
   },
   en: {
     role: "Front-end Developer",
-    welcome: [{ text: "portfolio terminal mode. type " }, run("help"), { text: " to list the commands." }],
+    welcome: [{ text: "type " }, run("help"), { text: " to list the commands." }],
     help: {
       help: "list commands",
       whoami: "who is behind this portfolio",
