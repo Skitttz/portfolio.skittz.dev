@@ -223,6 +223,7 @@ const ui = isPt
     dialog.addEventListener("close", () => {
       if (focusOpenerOnClose) openers[0]?.focus({ preventScroll: true });
       focusOpenerOnClose = true;
+      delete dialog.dataset.resumed;
     });
 
     form.addEventListener("submit", (event) => {
@@ -267,6 +268,7 @@ const ui = isPt
 
     if (sessionStorage.getItem(REOPEN_KEY)) {
       sessionStorage.removeItem(REOPEN_KEY);
+      dialog.dataset.resumed = "true";
       open();
     }
   };
@@ -319,6 +321,10 @@ const ui = isPt
     display: flex;
     flex-direction: column;
     animation: terminal-in 0.16s ease-out;
+  }
+
+  .terminal-mode[data-resumed][open] {
+    animation: none;
   }
 
   :global(html:has(.terminal-mode[open])) {
