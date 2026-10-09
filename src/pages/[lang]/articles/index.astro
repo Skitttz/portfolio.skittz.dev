@@ -18,10 +18,7 @@ const indexCopy = {
     homeLabel: 'Back home',
     homeText: 'Home',
     navigationLabel: 'Main navigation',
-    eyebrow: 'Development notes',
-    heading: 'Between releases.',
-    entrySingular: 'entry',
-    entryPlural: 'entries',
+    heading: 'Articles',
     readLabel: 'Read',
     emptyHint: 'No entries yet. New write-ups coming soon.',
   },
@@ -29,10 +26,7 @@ const indexCopy = {
     homeLabel: 'Voltar para home',
     homeText: 'Início',
     navigationLabel: 'Navegação principal',
-    eyebrow: 'Anotações de desenvolvimento',
-    heading: 'Entre uma entrega e outra.',
-    entrySingular: 'texto',
-    entryPlural: 'textos',
+    heading: 'Artigos',
     readLabel: 'Ler',
     emptyHint: 'Ainda sem entradas. Novos textos em breve.',
   },
@@ -88,16 +82,7 @@ const pageMetadata = {
 
     <main class="article-index-main">
       <div class="article-index-shell">
-        <header class="article-index-header">
-          <div>
-            <p class="article-index-eyebrow">{ui.eyebrow}</p>
-            <h1>{ui.heading}</h1>
-          </div>
-          <p class="article-index-count">
-            {String(sortedPosts.length).padStart(2, '0')}
-            <span>{sortedPosts.length === 1 ? ui.entrySingular : ui.entryPlural}</span>
-          </p>
-        </header>
+        <h1 class="sr-only">{ui.heading}</h1>
 
         {sortedPosts.length > 0 ? (
           <ol class="article-index-list">
