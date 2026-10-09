@@ -217,10 +217,7 @@ const ui = isPt
       scrollToEnd();
     };
 
-    openers.forEach((button) => {
-      button.hidden = false;
-      button.addEventListener("click", open);
-    });
+    openers.forEach((button) => button.addEventListener("click", open));
 
     closeButton.addEventListener("click", () => dialog.close());
     dialog.addEventListener("close", () => {

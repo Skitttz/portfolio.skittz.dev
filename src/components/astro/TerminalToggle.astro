@@ -15,7 +15,14 @@ const label = lang === "pt-br" ? "Abrir modo terminal" : "Open terminal mode";
   aria-label={label}
   aria-haspopup="dialog"
   data-terminal-open
-  hidden
 >
   <Icon name="mdi:console-line" class="h-5 w-5" aria-hidden="true" />
 </button>
+
+<style>
+  @media (scripting: none) {
+    button {
+      display: none;
+    }
+  }
+</style>
