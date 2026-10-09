@@ -1,27 +1,31 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { SnowfallElement } from './SnowfallElement';
-import { SNOWFALL_STORAGE_KEY } from '@/constants/snowfall';
+import { SNOWFALL_EVENT, isSnowing } from '@/utils/snowfall';
+import { TERMINAL_MODE_EVENT } from '@/utils/terminal-mode';
 
-function getInitialValue() {
-  if (typeof window === 'undefined') return true;
-  const stored = localStorage.getItem(SNOWFALL_STORAGE_KEY);
-  return stored === null || stored === 'on';
-}
+const terminalSnowHost = () => document.querySelector('[data-terminal-mode][open] [data-terminal-snow]');
 
 export function SnowfallController() {
-  const [enabled, setEnabled] = useState(getInitialValue);
+  const [enabled, setEnabled] = useState(isSnowing);
+  const [host, setHost] = useState(terminalSnowHost);
 
   useEffect(() => {
-    localStorage.setItem(SNOWFALL_STORAGE_KEY, enabled ? 'on' : 'off');
+    const onChange = (event) => setEnabled(event.detail.enabled);
+    const syncHost = () => setHost(terminalSnowHost());
 
-    window.toggleSnowfall = () => {
-      setEnabled((prev) => !prev);
-    };
+    document.addEventListener(SNOWFALL_EVENT, onChange);
+    document.addEventListener(TERMINAL_MODE_EVENT, syncHost);
+    document.addEventListener('astro:after-swap', syncHost);
+    syncHost();
 
     return () => {
-      delete window.toggleSnowfall;
+      document.removeEventListener(SNOWFALL_EVENT, onChange);
+      document.removeEventListener(TERMINAL_MODE_EVENT, syncHost);
+      document.removeEventListener('astro:after-swap', syncHost);
     };
-  }, [enabled]);
+  }, []);
 
-  return <SnowfallElement enabled={enabled} />;
+  const snow = <SnowfallElement enabled={enabled} />;
+  return host ? createPortal(snow, host) : snow;
 }

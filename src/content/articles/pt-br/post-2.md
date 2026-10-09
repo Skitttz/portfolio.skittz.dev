@@ -1,5 +1,5 @@
 ---
-title: "Minha jornada com IA até agora: velocidade e revisão"
+title: "Programando com IA: entre velocidade e revisão"
 slug: "jornada-com-ia"
 translationKey: "ai-journey"
 date: 2026-10-06

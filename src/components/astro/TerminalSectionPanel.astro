@@ -1,0 +1,73 @@
+---
+import "@/styles/terminal-section-panel.css";
+import { projectContent, projectPath } from "@/constants/projects";
+
+export interface Props { lang: string }
+const { lang } = Astro.props;
+const isPt = lang === "pt-br";
+const content = projectContent[isPt ? "pt-br" : "en"];
+const projects = [...content.projects, ...content.otherProjects];
+const closeLabel = isPt ? "Voltar ao terminal" : "Back to terminal";
+---
+
+<dialog class="terminal-panel" data-terminal-panel aria-labelledby="terminal-projects-title">
+  <header class="panel-bar">
+    <span data-terminal-panel-path>~/portfolio/projects</span>
+    <button type="button" data-terminal-panel-close aria-label={closeLabel} autofocus>
+      <kbd>esc</kbd><span>{isPt ? "voltar" : "back"}</span>
+    </button>
+  </header>
+  <div class="panel-scroll" data-terminal-panel-scroll>
+    <section data-terminal-section="projects">
+      <div class="panel-intro">
+        <p class="panel-eyebrow">{isPt ? "Projetos" : "Projects"} / {String(projects.length).padStart(2, "0")}</p>
+        <h2 id="terminal-projects-title">{content.title}</h2>
+        <p>{content.intro}</p>
+      </div>
+      <div class="panel-projects">
+        {projects.map((project, index) => (
+          <article class="panel-card" aria-labelledby={`terminal-project-${project.slug}`}>
+            <div class="card-heading">
+              <span class="card-index">{String(index + 1).padStart(2, "0")}</span>
+              <span class="card-category">{project.category}</span>
+            </div>
+            <h3 id={`terminal-project-${project.slug}`}>{project.name}</h3>
+            <p>{project.summary}</p>
+            <ul class="card-stack" aria-label={isPt ? "Tecnologias" : "Technologies"}>
+              {project.stack.map((technology) => <li>{technology}</li>)}
+            </ul>
+            <div class="card-links">
+              <a href={projectPath(lang, project.slug)} target="_blank" rel="noopener noreferrer">{content.caseLabel}<span aria-hidden="true"> ↗</span></a>
+              {project.href && <a href={project.href} target="_blank" rel="noopener noreferrer">{content.sourceLabel}<span aria-hidden="true"> ↗</span></a>}
+              {project.live && !project.livePaused && <a href={project.live} target="_blank" rel="noopener noreferrer">{content.demoLabel}<span aria-hidden="true"> ↗</span></a>}
+              {project.livePaused && <span class="card-note">{content.pausedLabel}</span>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+    <section data-terminal-section="experience" hidden>
+      <div class="panel-intro">
+        <p class="panel-eyebrow">{isPt ? "Experiência" : "Experience"}</p>
+        <h2 id="terminal-experience-title">{content.experienceTitle}</h2>
+        <p>{content.experienceIntro}</p>
+      </div>
+      <ol class="panel-timeline">
+        {content.experience.map((job, index) => (
+          <li>
+            <p class="job-period"><span class="job-dot" data-current={index === 0 ? "true" : undefined} aria-hidden="true"></span>{job.period}</p>
+            <article class="panel-card">
+              <p class="job-company">{job.company}</p>
+              <h3>{job.role}</h3>
+              <p class="job-location">{job.location}</p>
+              <p>{job.description}</p>
+              <ul class="job-contributions">{job.contributions.map((contribution) => <li>{contribution}</li>)}</ul>
+              {job.impact && <p class="job-impact"><strong>{job.impact}</strong> {job.impactLabel}</p>}
+              <p class="job-stack">{job.stack}</p>
+            </article>
+          </li>
+        ))}
+      </ol>
+    </section>
+  </div>
+</dialog>

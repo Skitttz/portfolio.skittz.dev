@@ -1,0 +1,68 @@
+---
+import "@/styles/about-preview.css";
+import { Icon } from "astro-icon/components";
+import en from "@locales/en.json";
+import pt from "@locales/pt-br.json";
+
+export interface Props { lang: string; }
+
+const { lang } = Astro.props;
+const isPt = lang === "pt-br";
+const { about } = isPt ? pt : en;
+const paragraphs = about.description.split("\n\n");
+---
+
+<div class="preview-shell">
+  <button class="preview-trigger" type="button" aria-label={about.title} data-about-trigger>
+    <img src="https://github.com/skitttz.png" alt="" width="80" height="80" />
+  </button>
+  <span class="preview-hint preview-hint--desktop">{about.actionText}</span>
+  <span class="preview-hint preview-hint--mobile">{about.actionTextMobile}</span>
+
+  <div class="preview-panel" role="group" aria-labelledby="about-panel-title">
+    <div class="preview-head">
+      <h2 id="about-panel-title">{about.title}</h2>
+      <p class="preview-location"><Icon name="material-symbols:location-on-rounded" aria-hidden="true" />{about.location}</p>
+    </div>
+    <div class="preview-body">{paragraphs.map((paragraph) => <p>{paragraph}</p>)}</div>
+  </div>
+
+  <dialog class="preview-dialog" aria-labelledby="about-dialog-title" data-about-dialog>
+    <div class="preview-head">
+      <h2 id="about-dialog-title">{about.title}</h2>
+      <button type="button" data-about-close aria-label={isPt ? "Fechar" : "Close"}><Icon name="mdi:close" aria-hidden="true" /></button>
+    </div>
+    <p class="preview-location"><Icon name="material-symbols:location-on-rounded" aria-hidden="true" />{about.location}</p>
+    <div class="preview-body">{paragraphs.map((paragraph) => <p>{paragraph}</p>)}</div>
+  </dialog>
+</div>
+
+<script>
+  const setupAboutPreview = () => {
+    document.querySelectorAll<HTMLElement>(".preview-shell").forEach((shell) => {
+      if (shell.dataset.ready) return;
+      shell.dataset.ready = "true";
+      const trigger = shell.querySelector<HTMLButtonElement>("[data-about-trigger]");
+      const dialog = shell.querySelector<HTMLDialogElement>("[data-about-dialog]");
+      const close = shell.querySelector<HTMLButtonElement>("[data-about-close]");
+      const restore = () => shell.classList.remove("is-dismissed");
+      shell.addEventListener("pointerenter", restore);
+      shell.addEventListener("pointerleave", restore);
+      shell.addEventListener("focusout", restore);
+      trigger?.addEventListener("click", () => {
+        if (window.matchMedia("(hover: none), (max-width: 767px)").matches) dialog?.showModal();
+      });
+      close?.addEventListener("click", () => { dialog?.close(); trigger?.focus(); });
+      dialog?.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+    });
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setupAboutPreview, { once: true });
+  else setupAboutPreview();
+  document.addEventListener("astro:after-swap", setupAboutPreview);
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    document.querySelectorAll<HTMLElement>(".preview-shell").forEach((shell) => {
+      if (shell.matches(":hover") || shell.contains(document.activeElement)) shell.classList.add("is-dismissed");
+    });
+  });
+</script>

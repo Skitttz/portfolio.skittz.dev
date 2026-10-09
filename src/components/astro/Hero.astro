@@ -1,12 +1,13 @@
 ---
+import "@/styles/hero.css";
+import AboutPreview from "@components/astro/AboutPreview.astro";
 import Button from "@components/astro/Button.astro";
-import DynamicText from "@components/astro/DynamicText.astro";
-import GithubPreview from "@components/astro/GithubPreview.astro";
+import RefractionText from "@components/astro/RefractionText.astro";
 import StatusIndicator from "@components/astro/StatusIndicator.astro";
+import TerminalToggle from "@components/astro/TerminalToggle.astro";
 import ThemeToggle from "@components/astro/ThemeToggle.astro";
 import LangToggle from "./LangToggle.astro";
 import SnowfallToggle from "./SnowfallToggle.astro";
-import ModalAboutMe from "./ModalAboutMe.astro";
 
 export interface Props {
   lang: string;
@@ -21,13 +22,6 @@ export interface Props {
   nickname: string;
   fileName: string;
   linkedInText: string;
-  answer: string;
-  about: {
-    title: string;
-    description: string;
-    role: string;
-    location: string;
-  };
 }
 
 const {
@@ -39,23 +33,17 @@ const {
   nickname,
   fileName,
   linkedInText,
-  answer,
   lang,
-  about,
 } = Astro.props;
 
-const textsProfissional = {
+const professionalText = {
   en: ["Front-End Developer.", "Software Engineer.", "UI Developer."],
-  "pt-br": [
-    "Desenvolvedor Front-End.",
-    "Engenheiro de Software.",
-    "Desenvolvedor de UI.",
-  ],
+  "pt-br": ["Desenvolvedor Front-End.", "Engenheiro de Software.", "Desenvolvedor de UI."],
 };
 
-const textsToDynamicText: string[] =
-  textsProfissional[lang as keyof typeof textsProfissional] ||
-  textsProfissional.en;
+const roleTexts =
+  professionalText[lang as keyof typeof professionalText] ||
+  professionalText.en;
 const articlesMobileText = textSecondary.replace(/\s+posts$/i, "");
 const projectsCueText =
   lang === "pt-br"
@@ -63,14 +51,11 @@ const projectsCueText =
     : "explore projects";
 ---
 
-<div class="fixed top-6 right-20 z-[9999]">
-  <ThemeToggle />
-</div>
-<div class="fixed top-6 right-6 z-[9999]">
-  <SnowfallToggle />
-</div>
-<div class="fixed top-6 right-36 z-[9999]">
+<div class="fixed top-6 right-6 z-[9999] flex items-center gap-4">
   <LangToggle lang={lang} />
+  <ThemeToggle />
+  <TerminalToggle lang={lang} />
+  <SnowfallToggle />
 </div>
 <div class="flex flex-col min-h-[100dvh] pt-20 sm:pt-0 relative main-header">
   <div class="hero-background absolute inset-0">
@@ -89,19 +74,12 @@ const projectsCueText =
         <div class="space-y-3">
           <div class="flex gap-2 items-center justify-center flex-wrap">
             <h1
-              class="text-2xl md:text-4xl font-semibold text-gray-900 dark:text-slate-100"
+              class="contents text-2xl md:text-4xl font-semibold text-gray-900 dark:text-slate-100"
             >
-              {textIntro}
+              <span>{textIntro}</span>{" "}
+              <span class="order-1">{name}</span>
             </h1>
-            <GithubPreview lang={lang} />
-            <ModalAboutMe
-              name={name}
-              answer={answer}
-              description={about.description}
-              title={about.title}
-              role={about.role}
-              location={about.location}
-            />
+            <AboutPreview lang={lang} />
           </div>
 
           <p
@@ -119,7 +97,7 @@ const projectsCueText =
         <div class="flex items-center justify-center space-x-2 text-lg">
           <span class="text-gray-600 dark:text-slate-400"
             >{selfProfissionalText} {" "}
-            <DynamicText texts={textsToDynamicText} /></span
+            <RefractionText words={roleTexts} /></span
           >
         </div>
         <div class="flex justify-center">
@@ -210,109 +188,3 @@ const projectsCueText =
 
   document.addEventListener("astro:after-swap", initProjectScrollCue);
 </script>
-
-<style>
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  .animate-fadeInUp {
-    animation: fadeInUp 0.7s ease-out both;
-  }
-
-  .hero-background {
-    overflow: hidden;
-    background:
-      radial-gradient(
-        circle at 70% -12%,
-        rgba(14, 165, 233, 0.12),
-        transparent 30rem
-      ),
-      radial-gradient(
-        circle at 10% 18%,
-        rgba(59, 130, 246, 0.06),
-        transparent 24rem
-      ),
-      linear-gradient(
-        180deg,
-        rgb(248, 250, 252) 0%,
-        rgb(241, 245, 249) 56%,
-        rgb(226, 232, 240) 100%
-      );
-  }
-
-  .hero-background::after {
-    content: "";
-    position: absolute;
-    inset: auto 0 0;
-    height: 36%;
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba(226, 232, 240, 0.58) 48%,
-      #e2e8f0 100%
-    );
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  :global(.dark) .hero-background {
-    background:
-      radial-gradient(
-        circle at 62% -10%,
-        rgba(14, 165, 233, 0.12),
-        transparent 30rem
-      ),
-      radial-gradient(
-        circle at 18% 12%,
-        rgba(59, 130, 246, 0.06),
-        transparent 28rem
-      ),
-      linear-gradient(
-        180deg,
-        rgb(15, 23, 42) 0%,
-        rgb(11, 18, 32) 58%,
-        rgb(8, 13, 27) 100%
-      );
-  }
-
-  :global(.dark) .hero-background::after {
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba(7, 17, 29, 0.48) 48%,
-      #07111d 100%
-    );
-  }
-
-  .hero-grid {
-    opacity: 0.1;
-    z-index: 0;
-    mask-image: linear-gradient(180deg, black 0%, black 62%, transparent 100%);
-  }
-
-  .terminal-cue-mark {
-    width: 0.45rem;
-    height: 0.45rem;
-    border-right: 1px solid currentColor;
-    border-bottom: 1px solid currentColor;
-    transform: rotate(45deg) translateY(-1px);
-  }
-
-  :global(.dark) .hero-grid {
-    opacity: 0.07;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .animate-fadeInUp {
-      animation: none !important;
-    }
-  }
-</style>

@@ -1,0 +1,422 @@
+---
+import "@/styles/terminal-mode.css";
+import { getCollection } from "astro:content";
+import { buildTerminalContent } from "@/terminal/content";
+import { projectContent } from "@/constants/projects";
+import TerminalSectionPanel from "./TerminalSectionPanel.astro";
+import en from "@locales/en.json";
+import pt from "@locales/pt-br.json";
+
+export interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const isPt = lang === "pt-br";
+const locale = isPt ? pt : en;
+const posts = (await getCollection("articles"))
+  .filter((post) => post.data.lang === (isPt ? "pt-br" : "en"))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const projectList = projectContent[isPt ? "pt-br" : "en"];
+const git = {
+  branch: import.meta.env.VERCEL_GIT_COMMIT_REF || "main",
+  commit: import.meta.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7),
+};
+const content = buildTerminalContent({
+  projects: projectList.projects.length + projectList.otherProjects.length,
+  git,
+  now: new Date(),
+  lang: isPt ? "pt-br" : "en",
+  nickname: locale.nickname,
+  location: locale.about.location,
+  cvFile: locale.fileName,
+  articles: posts.map((post) => ({
+    title: post.data.title,
+    href: `/${post.data.lang}/articles/${post.id}`,
+  })),
+});
+const ui = isPt
+  ? { label: "Modo terminal", exit: "sair", exitLabel: "Sair do modo terminal", input: "Comando" }
+  : { label: "Terminal mode", exit: "exit", exitLabel: "Leave terminal mode", input: "Command" };
+---
+
+<dialog
+  class="terminal-mode"
+  aria-label={ui.label}
+  data-colors="default"
+  data-terminal-mode
+  data-terminal-content={JSON.stringify(content)}
+>
+  <div class="terminal-snow" data-terminal-snow aria-hidden="true"></div>
+  <header class="terminal-bar">
+    <strong>~/portfolio</strong>
+    <button type="button" aria-label={ui.exitLabel} data-terminal-close>
+      <kbd>esc</kbd>
+      <span>{ui.exit}</span>
+    </button>
+  </header>
+
+  <div class="terminal-screen" data-terminal-screen>
+    <div class="terminal-output" role="log" data-terminal-output></div>
+
+    <form class="terminal-prompt" data-terminal-form data-result="success">
+      <div class="terminal-prompt-top" aria-hidden="true">
+        <span class="terminal-directory">~/portfolio</span>
+        <span class="terminal-git">
+          <span class="terminal-on">on</span>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="3" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="4" cy="13" r="2"/><path d="M4 5v6m8-5c0 4-8 1-8 5"/></svg>
+          <span class="terminal-branch" title={git.branch}>{git.branch}</span>
+          {git.commit && <span class="terminal-commit">@ {git.commit}</span>}
+        </span>
+        <time data-terminal-time></time>
+      </div>
+      <div class="terminal-prompt-bottom">
+        <label for="terminal-input">
+          <span class="terminal-arrow" aria-hidden="true">$</span>
+          <span class="sr-only">{ui.input}</span>
+        </label>
+        <div class="terminal-input-wrap">
+          <div class="terminal-highlight" aria-hidden="true" data-terminal-highlight></div>
+          <input
+            id="terminal-input"
+            type="text"
+            autocomplete="off"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+            enterkeyhint="send"
+            autofocus
+            data-terminal-input
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+  <TerminalSectionPanel lang={lang} />
+</dialog>
+
+<script>
+  import { colorSchemes, complete, createHistory, highlight, runCommand, suggest } from "@/terminal/shell";
+  import type { ColorScheme, Effect, Line, ShellContent } from "@/terminal/shell";
+  import { isSnowing, setSnow } from "@/utils/snowfall";
+  import { switchLang } from "@/utils/switch-lang";
+  import { getTheme, setTheme } from "@/utils/theme";
+  import { isTerminalMode, setTerminalMode } from "@/utils/terminal-mode";
+
+  const COLORS_KEY = "terminal-colors";
+  const recall = createHistory();
+
+  const initTerminalMode = () => {
+    const dialog = document.querySelector<HTMLDialogElement>("[data-terminal-mode]");
+    if (!dialog || dialog.dataset.ready) return;
+    dialog.dataset.ready = "true";
+
+    const content: ShellContent = JSON.parse(dialog.dataset.terminalContent!);
+    const screen = dialog.querySelector<HTMLElement>("[data-terminal-screen]")!;
+    const output = dialog.querySelector<HTMLElement>("[data-terminal-output]")!;
+    const form = dialog.querySelector<HTMLFormElement>("[data-terminal-form]")!;
+    const input = dialog.querySelector<HTMLInputElement>("[data-terminal-input]")!;
+    const closeButton = dialog.querySelector<HTMLButtonElement>("[data-terminal-close]")!;
+    const openers = document.querySelectorAll<HTMLButtonElement>("[data-terminal-open]");
+    const ink = dialog.querySelector<HTMLElement>("[data-terminal-highlight]")!;
+    const time = dialog.querySelector<HTMLTimeElement>("[data-terminal-time]")!;
+    const panel = dialog.querySelector<HTMLDialogElement>("[data-terminal-panel]")!;
+    let suggestion = "";
+
+    const updateTime = () => {
+      const now = new Date();
+      time.textContent = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+      time.dateTime = now.toISOString();
+    };
+
+    const syncInk = () => {
+      ink.replaceChildren();
+      for (const part of highlight(input.value)) {
+        const span = document.createElement("span");
+        span.textContent = part.text;
+        span.dataset.highlight = part.type;
+        ink.append(span);
+      }
+      suggestion = suggest(input.value, recall.find(input.value));
+      if (suggestion) {
+        const ghost = document.createElement("span");
+        ghost.dataset.terminalSuggestion = "";
+        ghost.textContent = suggestion.slice(input.value.length);
+        ink.append(ghost);
+      }
+      ink.style.transform = `translateX(${-input.scrollLeft}px)`;
+    };
+
+    const print = (line: Line, hang = 0) => {
+      const row = document.createElement("p");
+
+      if (hang) {
+        row.style.paddingLeft = `${hang}ch`;
+        row.style.textIndent = `-${hang}ch`;
+      }
+
+      for (const { text, href, command, tone, swatch, scheme } of line) {
+        if (command) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.dataset.terminalRun = command;
+          button.textContent = text;
+          row.append(button);
+        } else if (href) {
+          const link = document.createElement("a");
+          link.href = href;
+          link.textContent = text;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          row.append(link);
+        } else if (tone || swatch) {
+          const span = document.createElement("span");
+          span.textContent = text;
+          if (tone) span.dataset.tone = tone;
+          if (swatch) span.dataset.swatch = swatch;
+          if (scheme) span.dataset.colors = scheme;
+          row.append(span);
+        } else {
+          row.append(text);
+        }
+      }
+
+      output.append(row);
+    };
+
+    const echo = (value: string, ok: boolean) => {
+      const row = document.createElement("p");
+      const prompt = document.createElement("span");
+
+      prompt.textContent = "$";
+      prompt.dataset.result = ok ? "success" : "error";
+      row.className = "terminal-echo";
+      row.append(prompt, ` ${value}`);
+      output.append(row);
+    };
+
+    const scrollToEnd = () => {
+      screen.scrollTop = screen.scrollHeight;
+    };
+
+    const setColors = (name: ColorScheme) => {
+      dialog.dataset.colors = name;
+      try {
+        if (name === "default") localStorage.removeItem(COLORS_KEY);
+        else localStorage.setItem(COLORS_KEY, name);
+      } catch {}
+    };
+
+    const close = async () => {
+      if (!dialog.open || dialog.dataset.closing) return;
+      const presentation = getComputedStyle(dialog);
+      dialog.style.setProperty("--terminal-exit-opacity", presentation.opacity);
+      dialog.style.setProperty("--terminal-exit-transform", presentation.transform);
+      dialog.dataset.closing = "true";
+      setTerminalMode(false);
+      await Promise.allSettled(dialog.getAnimations().map((animation) => animation.finished));
+      if (dialog.isConnected) {
+        openers[0]?.setAttribute("data-terminal-focus-restored", "");
+        dialog.close();
+      }
+      delete dialog.dataset.closing;
+      dialog.style.removeProperty("--terminal-exit-opacity");
+      dialog.style.removeProperty("--terminal-exit-transform");
+    };
+
+    const apply = (effect: Effect) => {
+      switch (effect.type) {
+        case "clear":
+          output.replaceChildren();
+          break;
+        case "exit":
+          void close();
+          break;
+        case "panel": {
+          panel.querySelectorAll<HTMLElement>("[data-terminal-section]").forEach((section) => {
+            section.hidden = section.dataset.terminalSection !== effect.target;
+          });
+          panel.setAttribute("aria-labelledby", `terminal-${effect.target}-title`);
+          panel.querySelector<HTMLElement>("[data-terminal-panel-path]")!.textContent = `~/portfolio/${effect.target}`;
+          panel.showModal();
+          panel.querySelector<HTMLElement>("[data-terminal-panel-scroll]")!.scrollTop = 0;
+          break;
+        }
+        case "open":
+          window.open(effect.href, "_blank", "noopener,noreferrer");
+          break;
+        case "download": {
+          const link = document.createElement("a");
+
+          link.href = effect.href;
+          link.download = "";
+          dialog.append(link);
+          link.click();
+          link.remove();
+          break;
+        }
+        case "theme":
+          setTheme(effect.value);
+          break;
+        case "colors":
+          setColors(effect.value);
+          break;
+        case "snow":
+          setSnow(effect.value);
+          break;
+        case "lang":
+          switchLang(effect.value);
+          break;
+      }
+    };
+
+    const execute = (value: string) => {
+      if (dialog.dataset.closing) return;
+      const { lines, effect, hang, ok } = runCommand(value, content, {
+        theme: getTheme(),
+        snow: isSnowing(),
+        colors: dialog.dataset.colors as ColorScheme,
+      });
+
+      echo(value, ok ?? (form.dataset.result !== "error"));
+      recall.push(value);
+      if (ok !== undefined) form.dataset.result = ok ? "success" : "error";
+      updateTime();
+      lines.forEach((line) => print(line, hang));
+      input.value = "";
+      syncInk();
+      if (effect) apply(effect);
+      scrollToEnd();
+    };
+
+    const open = () => {
+      if (!dialog.open) dialog.showModal();
+      setTerminalMode(true);
+
+      if (!dialog.dataset.welcomed) {
+        dialog.dataset.welcomed = "true";
+        print(content.welcome);
+      }
+
+      updateTime();
+      input.focus();
+      syncInk();
+      scrollToEnd();
+    };
+
+    openers.forEach((button) => {
+      button.addEventListener("click", open);
+      button.addEventListener("blur", () => {
+        button.removeAttribute("data-terminal-focus-restored");
+      });
+    });
+
+    closeButton.addEventListener("click", () => { void close(); });
+    dialog.addEventListener("cancel", (event) => {
+      if (event.target !== dialog) return;
+      event.preventDefault();
+      void close();
+    });
+    dialog.addEventListener("close", () => {
+      if (!dialog.isConnected || dialog.open) return;
+      setTerminalMode(false);
+      openers[0]?.setAttribute("data-terminal-focus-restored", "");
+      openers[0]?.focus({ preventScroll: true });
+      delete dialog.dataset.resumed;
+    });
+
+    panel.querySelector<HTMLButtonElement>("[data-terminal-panel-close]")!.addEventListener("click", () => panel.close());
+    panel.addEventListener("close", () => {
+      if (panel.isConnected && dialog.open) input.focus({ preventScroll: true });
+    });
+    panel.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab" || event.ctrlKey || event.metaKey || event.altKey) return;
+      const controls = [...panel.querySelectorAll<HTMLElement>("button, a[href]")]
+        .filter((control) => control.getClientRects().length > 0);
+      const first = controls[0];
+      const last = controls.at(-1);
+      const destination = event.shiftKey && document.activeElement === first
+        ? last
+        : !event.shiftKey && document.activeElement === last ? first : undefined;
+      if (destination) {
+        event.preventDefault();
+        destination.focus();
+      }
+    });
+    panel.addEventListener("click", (event) => {
+      if (event.target !== panel) return;
+      const box = panel.getBoundingClientRect();
+      if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) panel.close();
+    });
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      execute(input.value);
+    });
+
+    output.addEventListener("click", (event) => {
+      const button = (event.target as Element).closest<HTMLButtonElement>("[data-terminal-run]");
+      if (!button) return;
+
+      execute(button.dataset.terminalRun!);
+      if (dialog.open && !window.matchMedia("(hover: none)").matches) input.focus();
+    });
+
+    screen.addEventListener("click", (event) => {
+      const onControl = (event.target as Element).closest("a, button, input");
+      if (onControl || window.getSelection()?.toString()) return;
+
+      input.focus();
+    });
+
+    input.addEventListener("input", syncInk);
+    input.addEventListener("scroll", syncInk);
+    input.addEventListener("keyup", syncInk);
+    input.addEventListener("keydown", (event) => {
+      if (event.isComposing || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.key === "ArrowRight" && !event.shiftKey && suggestion && input.selectionStart === input.value.length && input.selectionEnd === input.value.length) {
+        event.preventDefault();
+        input.value = suggestion;
+        input.setSelectionRange(input.value.length, input.value.length);
+        syncInk();
+        return;
+      }
+      if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+        event.preventDefault();
+        const value = event.key === "ArrowUp" ? recall.previous() : recall.next();
+        if (value !== undefined) input.value = value;
+        syncInk();
+        return;
+      }
+
+      if (event.key !== "Tab" || event.shiftKey || !input.value.trim()) return;
+
+      event.preventDefault();
+      const { value, candidates } = complete(input.value);
+      input.value = value;
+      syncInk();
+
+      if (candidates.length) {
+        print([{ text: candidates.join("  ") }]);
+        scrollToEnd();
+      }
+    });
+
+    let storedColors: string | null = null;
+    try { storedColors = localStorage.getItem(COLORS_KEY); } catch {}
+    dialog.dataset.colors = colorSchemes.find((name) => name === storedColors) ?? "default";
+
+    if (isTerminalMode()) {
+      dialog.dataset.resumed = "true";
+      open();
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initTerminalMode);
+  } else {
+    initTerminalMode();
+  }
+
+  document.addEventListener("astro:after-swap", initTerminalMode);
+</script>

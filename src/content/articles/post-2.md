@@ -1,5 +1,5 @@
 ---
-title: "My AI Journey So Far: Speed and Review"
+title: "Coding with AI: Balancing Speed and Review"
 slug: "ai-journey"
 translationKey: "ai-journey"
 date: 2026-10-06

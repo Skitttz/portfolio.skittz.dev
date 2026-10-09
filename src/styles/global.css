@@ -167,9 +167,3 @@
     @apply px-4 py-3 border-b border-gray-200 dark:border-gray-600;
   }
 }
-
-@layer components {
-  #about-me-modal {
-    @apply isolate;
-  }
-}

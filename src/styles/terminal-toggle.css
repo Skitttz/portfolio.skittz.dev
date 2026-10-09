@@ -1,0 +1,9 @@
+[data-terminal-open][data-terminal-focus-restored]:focus {
+  outline: none;
+}
+
+@media (scripting: none) {
+  [data-terminal-open] {
+    display: none;
+  }
+}
