@@ -474,6 +474,13 @@ const ui = isPt
     }
   }
 
+  @media (hover: none) {
+    .terminal-output :global(button) {
+      margin-inline: -0.5rem;
+      padding: 0.4rem 0.5rem;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .terminal-mode[open] {
       animation: none;
