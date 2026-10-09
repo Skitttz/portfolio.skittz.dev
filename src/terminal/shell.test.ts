@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
-import { complete, createHistory, runCommand } from "./shell.ts";
+import { colorSchemes, complete, createHistory, highlight, runCommand, suggest } from "./shell.ts";
 import type { ShellContent, ShellState } from "./shell.ts";
 
 const content: ShellContent = {
@@ -10,6 +10,7 @@ const content: ShellContent = {
   help: [
     { name: "help", args: "", description: "list commands" },
     { name: "whoami", args: "", description: "who" },
+    { name: "neofetch", args: "", description: "summary" },
     { name: "stack", args: "", description: "tools" },
     { name: "contact", args: "", description: "links" },
     { name: "cv", args: "", description: "resume" },
@@ -18,12 +19,21 @@ const content: ShellContent = {
     { name: "projects", args: "", description: "projects" },
     { name: "experience", args: "", description: "experience" },
     { name: "theme", args: "[light|dark]", description: "theme" },
+    { name: "colors", args: "[name]", description: "colors" },
     { name: "lang", args: "[pt|en]", description: "language" },
     { name: "snow", args: "[on|off]", description: "snow" },
     { name: "clear", args: "", description: "clear" },
     { name: "exit", args: "", description: "leave" },
   ],
   whoami: ["Ada Lovelace", "Engineer"],
+  neofetch: {
+    title: "ada@shell",
+    rows: [
+      { label: "role", value: "Engineer" },
+      { label: "uptime", value: "1 year" },
+    ],
+    colorsLabel: "colors",
+  },
   stack: ["ui: a", "build: b"],
   contact: [{ label: "site", href: "https://example.com" }],
   cv: { href: "/cv.pdf", file: "cv.pdf" },
@@ -50,13 +60,21 @@ const content: ShellContent = {
     snowSet: { on: "snow on", off: "snow off" },
     snowAlready: { on: "already on", off: "already off" },
     snowUsage: "usage: snow",
+    colorsActive: "(active)",
+    colorsHint: [{ text: "type " }, { text: "colors dracula", command: "colors dracula" }],
+    colorsSet: "colors: {name}",
+    colorsAlready: "already {name}",
+    colorsUsage: "usage: colors",
     exit: "bye",
   },
 };
 
-const dark: ShellState = { theme: "dark", snow: true };
-const light: ShellState = { theme: "light", snow: false };
-const run = (input: string, state = dark, source = content) => runCommand(input, source, state);
+const dark: ShellState = { theme: "dark", snow: true, colors: "default" };
+const light: ShellState = { theme: "light", snow: false, colors: "default" };
+const run = (input: string, state = dark, source = content) => {
+  const { ok, ...result } = runCommand(input, source, state);
+  return result;
+};
 
 describe("runCommand", () => {
   test("an empty line prints nothing and has no effect", () => {
@@ -74,6 +92,38 @@ describe("runCommand", () => {
 
   test("about is an alias of whoami", () => {
     assert.deepEqual(run("about"), run("whoami"));
+  });
+
+  test("neofetch prints the card, the active scheme and the color strip", () => {
+    assert.deepEqual(run("neofetch", { ...dark, colors: "dracula" }), {
+      lines: [
+        [{ text: "ada@shell", tone: "accent" }],
+        [{ text: "---------" }],
+        [{ text: "role      ", tone: "accent" }, { text: "Engineer" }],
+        [{ text: "uptime    ", tone: "accent" }, { text: "1 year" }],
+        [{ text: "colors    ", tone: "accent" }, { text: "dracula" }],
+        [{ text: " " }],
+        [
+          { text: "   ", swatch: "red" },
+          { text: " " },
+          { text: "   ", swatch: "green" },
+          { text: " " },
+          { text: "   ", swatch: "yellow" },
+          { text: " " },
+          { text: "   ", swatch: "blue" },
+          { text: " " },
+          { text: "   ", swatch: "magenta" },
+          { text: " " },
+          { text: "   ", swatch: "cyan" },
+        ],
+      ],
+      hang: 10,
+    });
+  });
+
+  test("neofetch names the scheme that is active when it runs", () => {
+    assert.deepEqual(run("neofetch").lines[4], [{ text: "colors    ", tone: "accent" }, { text: "default" }]);
+    assert.deepEqual(run("NeoFetch", { ...light, colors: "tokyo-night" }).lines[4][1], { text: "tokyo-night" });
   });
 
   test("stack prints one line per entry", () => {
@@ -204,6 +254,47 @@ describe("runCommand", () => {
     }
   });
 
+  test("the five color schemes are exported in listing order", () => {
+    assert.deepEqual(colorSchemes, ["default", "dracula", "gruvbox", "catppuccin", "tokyo-night"]);
+  });
+
+  test("colors without an argument lists every scheme with its own swatches and marks the active one", () => {
+    const strip = (scheme: string) =>
+      ["red", "green", "yellow", "blue", "magenta", "cyan"].map((swatch) => ({ text: "  ", swatch, scheme }));
+
+    assert.deepEqual(run("colors", { ...dark, colors: "gruvbox" }), {
+      lines: [
+        [{ text: "default", command: "colors default" }, { text: "      " }, ...strip("default")],
+        [{ text: "dracula", command: "colors dracula" }, { text: "      " }, ...strip("dracula")],
+        [{ text: "gruvbox", command: "colors gruvbox" }, { text: "      " }, ...strip("gruvbox"), { text: "  (active)", tone: "muted" }],
+        [{ text: "catppuccin", command: "colors catppuccin" }, { text: "   " }, ...strip("catppuccin")],
+        [{ text: "tokyo-night", command: "colors tokyo-night" }, { text: "  " }, ...strip("tokyo-night")],
+        [{ text: "type " }, { text: "colors dracula", command: "colors dracula" }],
+      ],
+      hang: 13,
+    });
+  });
+
+  test("colors with a scheme name asks to switch to it", () => {
+    assert.deepEqual(run("colors dracula"), {
+      lines: [[{ text: "colors: dracula" }]],
+      effect: { type: "colors", value: "dracula" },
+    });
+    assert.deepEqual(run("colors DEFAULT", { ...dark, colors: "dracula" }).effect, { type: "colors", value: "default" });
+    assert.deepEqual(run("colors tokyo-night").effect, { type: "colors", value: "tokyo-night" });
+  });
+
+  test("colors with the active scheme changes nothing", () => {
+    assert.deepEqual(run("colors default"), { lines: [[{ text: "already default" }]] });
+    assert.deepEqual(run("colors gruvbox", { ...dark, colors: "gruvbox" }), { lines: [[{ text: "already gruvbox" }]] });
+  });
+
+  test("colors with an unknown name prints the usage", () => {
+    for (const input of ["colors solarized", "colors constructor", "colors __proto__", "colors 0", "colors length", "colors dracula-pro"]) {
+      assert.deepEqual(run(input), { lines: [[{ text: "usage: colors" }]] }, input);
+    }
+  });
+
   test("clear asks to empty the screen", () => {
     assert.deepEqual(run("clear"), { lines: [], effect: { type: "clear" } });
   });
@@ -242,8 +333,9 @@ describe("runCommand", () => {
     assert.equal(hang, 20);
     assert.deepEqual(lines.map((line) => line[0]), content.help.map(({ name }) => ({ text: name, command: name })));
     assert.deepEqual(lines[0], [{ text: "help", command: "help" }, { text: "                list commands" }]);
-    assert.deepEqual(lines[6], [{ text: "open", command: "open" }, { text: " <n>            open post" }]);
-    assert.deepEqual(lines[9], [{ text: "theme", command: "theme" }, { text: " [light|dark]  theme" }]);
+    assert.deepEqual(lines[2], [{ text: "neofetch", command: "neofetch" }, { text: "            summary" }]);
+    assert.deepEqual(lines[7], [{ text: "open", command: "open" }, { text: " <n>            open post" }]);
+    assert.deepEqual(lines[10], [{ text: "theme", command: "theme" }, { text: " [light|dark]  theme" }]);
   });
 });
 
@@ -256,11 +348,12 @@ describe("complete", () => {
   test("a unique command prefix completes with a trailing space", () => {
     assert.deepEqual(complete("he"), { value: "help ", candidates: [] });
     assert.deepEqual(complete("exi"), { value: "exit ", candidates: [] });
+    assert.deepEqual(complete("n"), { value: "neofetch ", candidates: [] });
   });
 
   test("an ambiguous prefix completes to the common part and lists the candidates", () => {
     assert.deepEqual(complete("e"), { value: "ex", candidates: ["experience", "exit"] });
-    assert.deepEqual(complete("c"), { value: "c", candidates: ["contact", "cv", "clear"] });
+    assert.deepEqual(complete("c"), { value: "c", candidates: ["contact", "cv", "colors", "clear"] });
   });
 
   test("an unknown prefix is left alone", () => {
@@ -280,6 +373,12 @@ describe("complete", () => {
     assert.deepEqual(complete("lang "), { value: "lang ", candidates: ["pt", "en"] });
     assert.deepEqual(complete("snow o"), { value: "snow o", candidates: ["on", "off"] });
     assert.deepEqual(complete("snow of"), { value: "snow off ", candidates: [] });
+  });
+
+  test("the scheme names of colors complete", () => {
+    assert.deepEqual(complete("col"), { value: "colors ", candidates: [] });
+    assert.deepEqual(complete("colors tok"), { value: "colors tokyo-night ", candidates: [] });
+    assert.deepEqual(complete("colors d"), { value: "colors d", candidates: ["default", "dracula"] });
   });
 
   test("commands without fixed arguments complete nothing after the name", () => {
@@ -343,5 +442,49 @@ describe("createHistory", () => {
 
     assert.equal(history.previous(), undefined);
     assert.equal(history.next(), "");
+  });
+});
+
+describe("prompt status and typing aids", () => {
+  test("invalid commands and arguments fail while successful or repeated actions succeed", () => {
+    for (const input of ["nope", "open", "open abc", "open 0", "open 3", "theme blue", "lang constructor", "snow __proto__", "colors solarized"]) {
+      assert.equal(runCommand(input, content, dark).ok, false, input);
+    }
+    for (const input of ["help", "whoami", "about", "neofetch", "stack", "contact", "cv", "articles", "open 1", "projects", "experience", "theme light", "theme dark", "lang en", "lang pt", "snow on", "snow off", "colors", "colors default", "colors dracula", "clear", "exit"]) {
+      assert.equal(runCommand(input, content, dark).ok, true, input);
+    }
+    assert.equal(runCommand("   ", content, dark).ok, undefined);
+  });
+
+  test("highlight preserves whitespace, recognizes case and aliases, and leaves arguments plain", () => {
+    assert.deepEqual(highlight(""), []);
+    assert.deepEqual(highlight("  "), [{ text: "  ", type: "plain" }]);
+    assert.deepEqual(highlight("  THEME light"), [
+      { text: "  ", type: "plain" }, { text: "THEME", type: "command" }, { text: " light", type: "plain" },
+    ]);
+    assert.deepEqual(highlight("about"), [{ text: "about", type: "command" }]);
+    assert.deepEqual(highlight("constructor x"), [{ text: "constructor", type: "unknown" }, { text: " x", type: "plain" }]);
+  });
+
+  test("history finds the newest prefix without moving the recall cursor", () => {
+    const history = createHistory();
+    history.push("colors dracula");
+    history.push("colors gruvbox");
+    history.push("help");
+    assert.equal(history.find("COL"), "colors gruvbox");
+    assert.equal(history.find(""), undefined);
+    assert.equal(history.find("nope"), undefined);
+    assert.equal(history.previous(), "help");
+  });
+
+  test("suggestion prefers recent history and otherwise uses only a unique completion", () => {
+    assert.equal(suggest("co", "colors gruvbox"), "colors gruvbox");
+    assert.equal(suggest("COL", "colors dracula"), "COLors dracula");
+    assert.equal(suggest("he"), "help");
+    assert.equal(suggest("  he"), "  help");
+    assert.equal(suggest("colors tok"), "colors tokyo-night");
+    for (const input of ["", "  ", "help", "c", "colors d", "zzz"]) assert.equal(suggest(input), "", input);
+    assert.equal(suggest("help", "help"), "");
+    assert.equal(suggest("help", "HELPer"), "helper");
   });
 });

@@ -1,7 +1,12 @@
 import type { Lang } from "../utils/switch-lang.ts";
 import type { Theme } from "../utils/theme.ts";
 
-type Segment = { text: string; href?: string; command?: string };
+const colorSchemes = ["default", "dracula", "gruvbox", "catppuccin", "tokyo-night"] as const;
+const swatchNames = ["red", "green", "yellow", "blue", "magenta", "cyan"] as const;
+
+type ColorScheme = (typeof colorSchemes)[number];
+type Swatch = (typeof swatchNames)[number];
+type Segment = { text: string; href?: string; command?: string; tone?: "accent" | "muted" | Swatch; swatch?: Swatch; scheme?: ColorScheme };
 type Line = Segment[];
 
 type Effect =
@@ -11,15 +16,17 @@ type Effect =
   | { type: "navigate"; href: string }
   | { type: "download"; href: string }
   | { type: "theme"; value: Theme }
+  | { type: "colors"; value: ColorScheme }
   | { type: "lang"; value: Lang }
   | { type: "snow"; value: boolean };
 
-type ShellState = { theme: Theme; snow: boolean };
-type ShellResult = { lines: Line[]; effect?: Effect; hang?: number };
+type ShellState = { theme: Theme; snow: boolean; colors: ColorScheme };
+type ShellResult = { lines: Line[]; ok?: boolean; effect?: Effect; hang?: number };
 
 const commands = [
   { name: "help", args: "" },
   { name: "whoami", args: "" },
+  { name: "neofetch", args: "" },
   { name: "stack", args: "" },
   { name: "contact", args: "" },
   { name: "cv", args: "" },
@@ -28,6 +35,7 @@ const commands = [
   { name: "projects", args: "" },
   { name: "experience", args: "" },
   { name: "theme", args: "[light|dark]" },
+  { name: "colors", args: "[name]" },
   { name: "lang", args: "[pt|en]" },
   { name: "snow", args: "[on|off]" },
   { name: "clear", args: "" },
@@ -42,6 +50,7 @@ type ShellContent = {
   welcome: Line;
   help: { name: CommandName; args: string; description: string }[];
   whoami: string[];
+  neofetch: { title: string; rows: { label: string; value: string }[]; colorsLabel: string };
   stack: string[];
   contact: { label: string; href: string }[];
   cv: { href: string; file: string };
@@ -65,6 +74,11 @@ type ShellContent = {
     snowSet: { on: string; off: string };
     snowAlready: { on: string; off: string };
     snowUsage: string;
+    colorsActive: string;
+    colorsHint: Line;
+    colorsSet: string;
+    colorsAlready: string;
+    colorsUsage: string;
     exit: string;
   };
 };
@@ -72,7 +86,12 @@ type ShellContent = {
 const themeValues = new Map<string, Theme>([["light", "light"], ["claro", "light"], ["dark", "dark"], ["escuro", "dark"]]);
 const langValues = new Map<string, Lang>([["pt", "pt-br"], ["pt-br", "pt-br"], ["en", "en"]]);
 const snowValues = new Map<string, boolean>([["on", true], ["off", false]]);
-const argumentValues = new Map<string, string[]>([["theme", ["light", "dark"]], ["lang", ["pt", "en"]], ["snow", ["on", "off"]]]);
+const argumentValues = new Map<string, readonly string[]>([
+  ["theme", ["light", "dark"]],
+  ["colors", colorSchemes],
+  ["lang", ["pt", "en"]],
+  ["snow", ["on", "off"]],
+]);
 const CONTACT_LABEL_WIDTH = 10;
 
 const text = (value: string): Line => [{ text: value }];
@@ -110,10 +129,10 @@ const listArticles = ({ articles, messages }: ShellContent): ShellResult => {
 };
 
 const openArticle = ([value]: string[], { articles, messages }: ShellContent): ShellResult => {
-  if (!value || !/^\d+$/.test(value)) return { lines: [messages.openUsage] };
+  if (!value || !/^\d+$/.test(value)) return { ok: false, lines: [messages.openUsage] };
 
   const article = articles[Number(value) - 1];
-  if (!article) return { lines: [fill(messages.openMissing, { n: value })] };
+  if (!article) return { ok: false, lines: [fill(messages.openMissing, { n: value })] };
 
   return {
     lines: [text(fillText(messages.openDone, { title: article.title }))],
@@ -124,7 +143,7 @@ const openArticle = ([value]: string[], { articles, messages }: ShellContent): S
 const switchTheme = ([value]: string[], { messages }: ShellContent, state: ShellState): ShellResult => {
   const theme = value === undefined ? (state.theme === "dark" ? "light" : "dark") : themeValues.get(value);
 
-  if (!theme) return { lines: [text(messages.themeUsage)] };
+  if (!theme) return { ok: false, lines: [text(messages.themeUsage)] };
   if (theme === state.theme) return { lines: [text(messages.themeAlready[theme])] };
 
   return { lines: [text(messages.themeSet[theme])], effect: { type: "theme", value: theme } };
@@ -133,7 +152,7 @@ const switchTheme = ([value]: string[], { messages }: ShellContent, state: Shell
 const switchLanguage = ([value]: string[], { lang, messages }: ShellContent): ShellResult => {
   const next = value === undefined ? (lang === "en" ? "pt-br" : "en") : langValues.get(value);
 
-  if (!next) return { lines: [text(messages.langUsage)] };
+  if (!next) return { ok: false, lines: [text(messages.langUsage)] };
   if (next === lang) return { lines: [text(messages.langAlready)] };
 
   return { lines: [text(messages.langSet)], effect: { type: "lang", value: next } };
@@ -142,7 +161,7 @@ const switchLanguage = ([value]: string[], { lang, messages }: ShellContent): Sh
 const switchSnow = ([value]: string[], { messages }: ShellContent, state: ShellState): ShellResult => {
   const snow = value === undefined ? !state.snow : snowValues.get(value);
 
-  if (snow === undefined) return { lines: [text(messages.snowUsage)] };
+  if (snow === undefined) return { ok: false, lines: [text(messages.snowUsage)] };
 
   const key = snow ? "on" : "off";
   if (snow === state.snow) return { lines: [text(messages.snowAlready[key])] };
@@ -150,7 +169,36 @@ const switchSnow = ([value]: string[], { messages }: ShellContent, state: ShellS
   return { lines: [text(messages.snowSet[key])], effect: { type: "snow", value: snow } };
 };
 
-const runCommand = (input: string, content: ShellContent, state: ShellState): ShellResult => {
+const listColors = ({ messages }: ShellContent, state: ShellState): ShellResult => {
+  const width = Math.max(...colorSchemes.map((name) => name.length)) + 2;
+
+  return {
+    lines: [
+      ...colorSchemes.map((name): Line => [
+        { text: name, command: `colors ${name}` },
+        { text: " ".repeat(width - name.length) },
+        ...swatchNames.map((swatch): Segment => ({ text: "  ", swatch, scheme: name })),
+        ...(name === state.colors ? [{ text: `  ${messages.colorsActive}`, tone: "muted" } as const] : []),
+      ]),
+      messages.colorsHint,
+    ],
+    hang: width,
+  };
+};
+
+const switchColors = ([value]: string[], content: ShellContent, state: ShellState): ShellResult => {
+  if (value === undefined) return listColors(content, state);
+
+  const { messages } = content;
+  const colors = colorSchemes.find((name) => name === value);
+
+  if (!colors) return { ok: false, lines: [text(messages.colorsUsage)] };
+  if (colors === state.colors) return { lines: [text(fillText(messages.colorsAlready, { name: colors }))] };
+
+  return { lines: [text(fillText(messages.colorsSet, { name: colors }))], effect: { type: "colors", value: colors } };
+};
+
+const dispatch = (input: string, content: ShellContent, state: ShellState): ShellResult => {
   const [typed = "", ...rest] = input.trim().split(/\s+/);
   const name = typed.toLowerCase();
   const args = rest.map((value) => value.toLowerCase());
@@ -164,6 +212,23 @@ const runCommand = (input: string, content: ShellContent, state: ShellState): Sh
     case "whoami":
     case "about":
       return { lines: content.whoami.map(text) };
+    case "neofetch": {
+      const { title, rows, colorsLabel } = content.neofetch;
+      return {
+        lines: [
+          [{ text: title, tone: "accent" }],
+          text("-".repeat(title.length)),
+          ...[...rows, { label: colorsLabel, value: state.colors }].map(({ label, value }): Line => [
+            { text: label.padEnd(10), tone: "accent" }, { text: value },
+          ]),
+          text(" "),
+          swatchNames.flatMap((swatch, index): Segment[] => [
+            ...(index ? [{ text: " " }] : []), { text: "   ", swatch },
+          ]),
+        ],
+        hang: 10,
+      };
+    }
     case "stack":
       return { lines: content.stack.map(text) };
     case "contact":
@@ -185,6 +250,8 @@ const runCommand = (input: string, content: ShellContent, state: ShellState): Sh
       return { lines: [text(messages[name])], effect: { type: "scroll", target: name } };
     case "theme":
       return switchTheme(args, content, state);
+    case "colors":
+      return switchColors(args, content, state);
     case "lang":
       return switchLanguage(args, content);
     case "snow":
@@ -194,8 +261,13 @@ const runCommand = (input: string, content: ShellContent, state: ShellState): Sh
     case "exit":
       return { lines: [text(messages.exit)], effect: { type: "exit" } };
     default:
-      return { lines: [fill(messages.unknown, { name: typed })] };
+      return { ok: false, lines: [fill(messages.unknown, { name: typed })] };
   }
+};
+
+const runCommand = (input: string, content: ShellContent, state: ShellState): ShellResult => {
+  const result = dispatch(input, content, state);
+  return input.trim() ? { ok: true, ...result } : result;
 };
 
 const commonPrefix = (values: string[]) =>
@@ -236,6 +308,10 @@ const createHistory = () => {
       if (value && entries.at(-1) !== value) entries.push(value);
       cursor = entries.length;
     },
+    find(prefix: string): string | undefined {
+      if (!prefix.trim()) return undefined;
+      return entries.findLast((entry) => entry.toLowerCase().startsWith(prefix.toLowerCase()));
+    },
     previous(): string | undefined {
       if (cursor > 0) cursor -= 1;
       return entries[cursor];
@@ -247,5 +323,30 @@ const createHistory = () => {
   };
 };
 
-export { commands, complete, createHistory, runCommand };
-export type { CommandName, Effect, Line, Segment, ShellContent, ShellResult, ShellState };
+type Highlight = { text: string; type: "command" | "unknown" | "plain" };
+
+const highlight = (input: string): Highlight[] => {
+  const match = /^(\s*)(\S+)([\s\S]*)$/.exec(input);
+  if (!match) return input ? [{ text: input, type: "plain" }] : [];
+  const [, spaces, word, rest] = match;
+  const known = word.toLowerCase() === "about" || commands.some(({ name }) => name === word.toLowerCase());
+  return [
+    ...(spaces ? [{ text: spaces, type: "plain" } as const] : []),
+    { text: word, type: known ? "command" : "unknown" },
+    ...(rest ? [{ text: rest, type: "plain" } as const] : []),
+  ];
+};
+
+const suggest = (input: string, recent?: string): string => {
+  if (!input.trim()) return "";
+  if (recent?.toLowerCase().startsWith(input.toLowerCase())) {
+    return recent.length > input.length ? input + recent.slice(input.length) : "";
+  }
+  const { value, candidates } = complete(input);
+  const candidate = input.slice(0, input.length - input.trimStart().length) + value.trimEnd();
+  if (candidates.length || candidate.length <= input.length || !candidate.toLowerCase().startsWith(input.toLowerCase())) return "";
+  return input + candidate.slice(input.length);
+};
+
+export { colorSchemes, commands, complete, createHistory, highlight, runCommand, suggest };
+export type { ColorScheme, CommandName, Effect, Line, Segment, ShellContent, ShellResult, ShellState };

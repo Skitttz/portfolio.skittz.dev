@@ -1,5 +1,5 @@
 import type { Lang } from "../utils/switch-lang.ts";
-import { commands } from "./shell.ts";
+import { colorSchemes, commands } from "./shell.ts";
 import type { CommandName, Segment, ShellContent } from "./shell.ts";
 
 type ContentInput = {
@@ -8,6 +8,9 @@ type ContentInput = {
   location: string;
   cvFile: string;
   articles: ShellContent["articles"];
+  projects: number;
+  git: { branch: string; commit?: string };
+  now: Date;
 };
 
 type Copy = Pick<ShellContent, "welcome" | "stack" | "messages"> & {
@@ -16,6 +19,7 @@ type Copy = Pick<ShellContent, "welcome" | "stack" | "messages"> & {
 };
 
 const run = (command: string): Segment => ({ text: command, command });
+const colorsUsage = `colors [${colorSchemes.join("|")}]`;
 
 const copy: Record<Lang, Copy> = {
   "pt-br": {
@@ -24,6 +28,7 @@ const copy: Record<Lang, Copy> = {
     help: {
       help: "lista os comandos",
       whoami: "quem está por trás do portfólio",
+      neofetch: "resumo no estilo neofetch",
       stack: "ferramentas e contexto técnico",
       contact: "links úteis",
       cv: "baixa o currículo",
@@ -32,6 +37,7 @@ const copy: Record<Lang, Copy> = {
       projects: "vai para a seção de projetos",
       experience: "vai para a seção de experiência",
       theme: "troca o tema",
+      colors: "troca as cores do terminal",
       lang: "troca o idioma",
       snow: "liga ou desliga a neve",
       clear: "limpa o terminal",
@@ -62,6 +68,11 @@ const copy: Record<Lang, Copy> = {
       snowSet: { on: "neve ligada.", off: "neve desligada." },
       snowAlready: { on: "a neve já está ligada.", off: "a neve já está desligada." },
       snowUsage: "uso: snow [on|off]",
+      colorsActive: "(ativo)",
+      colorsHint: [{ text: "digite " }, run("colors dracula"), { text: " para trocar" }],
+      colorsSet: "cores: {name}.",
+      colorsAlready: "as cores já são {name}.",
+      colorsUsage: `uso: ${colorsUsage}`,
       exit: "saindo do modo terminal.",
     },
   },
@@ -71,6 +82,7 @@ const copy: Record<Lang, Copy> = {
     help: {
       help: "list commands",
       whoami: "who is behind this portfolio",
+      neofetch: "summary in neofetch style",
       stack: "tools and technical context",
       contact: "useful links",
       cv: "download the résumé",
@@ -79,6 +91,7 @@ const copy: Record<Lang, Copy> = {
       projects: "go to the projects section",
       experience: "go to the experience section",
       theme: "switch the theme",
+      colors: "switch the terminal colors",
       lang: "switch the language",
       snow: "turn the snow on or off",
       clear: "reset terminal",
@@ -109,12 +122,29 @@ const copy: Record<Lang, Copy> = {
       snowSet: { on: "snow on.", off: "snow off." },
       snowAlready: { on: "the snow is already on.", off: "the snow is already off." },
       snowUsage: "usage: snow [on|off]",
+      colorsActive: "(active)",
+      colorsHint: [{ text: "type " }, run("colors dracula"), { text: " to switch" }],
+      colorsSet: "colors: {name}.",
+      colorsAlready: "the colors are already {name}.",
+      colorsUsage: `usage: ${colorsUsage}`,
       exit: "leaving terminal mode.",
     },
   },
 };
 
-const buildTerminalContent = ({ lang, nickname, location, cvFile, articles }: ContentInput): ShellContent => {
+const careerTime = (lang: Lang, now: Date): string => {
+  const months = Math.max(0, (now.getUTCFullYear() - 2023) * 12 + now.getUTCMonth());
+  const years = Math.floor(months / 12);
+  const remainder = months % 12;
+  const pt = lang === "pt-br";
+  const parts = [
+    ...(years ? [`${years} ${pt ? (years === 1 ? "ano" : "anos") : (years === 1 ? "year" : "years")}`] : []),
+    ...(remainder || !years ? [`${remainder} ${pt ? (remainder === 1 ? "mês" : "meses") : (remainder === 1 ? "month" : "months")}`] : []),
+  ];
+  return parts.join(pt ? " e " : " and ") + (pt ? " de carreira" : " in the field");
+};
+
+const buildTerminalContent = ({ lang, nickname, location, cvFile, articles, projects, git, now }: ContentInput): ShellContent => {
   const { role, welcome, help, stack, messages } = copy[lang];
 
   return {
@@ -123,6 +153,19 @@ const buildTerminalContent = ({ lang, nickname, location, cvFile, articles }: Co
     welcome,
     help: commands.map(({ name, args }) => ({ name, args, description: help[name] })),
     whoami: [`Carlos Vinicius (${nickname})`, `${role} · ${location}`],
+    neofetch: {
+      title: "skittz@portfolio",
+      rows: [
+        { label: lang === "pt-br" ? "cargo" : "role", value: role },
+        { label: lang === "pt-br" ? "local" : "location", value: location },
+        { label: "uptime", value: careerTime(lang, now) },
+        { label: "stack", value: "React, Next.js, Astro, TypeScript" },
+        { label: lang === "pt-br" ? "projetos" : "projects", value: String(projects) },
+        { label: "posts", value: String(articles.length) },
+        { label: "commit", value: git.branch + (git.commit ? ` @ ${git.commit.slice(0, 7)}` : "") },
+      ],
+      colorsLabel: lang === "pt-br" ? "cores" : "colors",
+    },
     stack,
     contact: [
       { label: "linkedin", href: "https://linkedin.com/in/carlos-vinicius-dev" },

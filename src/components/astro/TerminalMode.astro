@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import { buildTerminalContent } from "@/terminal/content";
+import { projectContent } from "@/constants/projects";
 import en from "@locales/en.json";
 import pt from "@locales/pt-br.json";
 
@@ -14,7 +15,15 @@ const locale = isPt ? pt : en;
 const posts = (await getCollection("articles"))
   .filter((post) => post.data.lang === (isPt ? "pt-br" : "en"))
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const projectList = projectContent[isPt ? "pt-br" : "en"];
+const git = {
+  branch: import.meta.env.VERCEL_GIT_COMMIT_REF || "main",
+  commit: import.meta.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7),
+};
 const content = buildTerminalContent({
+  projects: projectList.projects.length + projectList.otherProjects.length,
+  git,
+  now: new Date(),
   lang: isPt ? "pt-br" : "en",
   nickname: locale.nickname,
   location: locale.about.location,
@@ -32,6 +41,7 @@ const ui = isPt
 <dialog
   class="terminal-mode"
   aria-label={ui.label}
+  data-colors="default"
   data-terminal-mode
   data-terminal-content={JSON.stringify(content)}
 >
@@ -46,35 +56,57 @@ const ui = isPt
   <div class="terminal-screen" data-terminal-screen>
     <div class="terminal-output" role="log" data-terminal-output></div>
 
-    <form class="terminal-prompt" data-terminal-form>
-      <label for="terminal-input">
-        <span aria-hidden="true">{content.prompt}</span>
-        <span class="sr-only">{ui.input}</span>
-      </label>
-      <input
-        id="terminal-input"
-        type="text"
-        autocomplete="off"
-        autocapitalize="none"
-        autocorrect="off"
-        spellcheck="false"
-        enterkeyhint="send"
-        autofocus
-        data-terminal-input
-      />
+    <form class="terminal-prompt" data-terminal-form data-result="success">
+      <div class="terminal-prompt-top" aria-hidden="true">
+        <div class="terminal-segments">
+          <span class="terminal-segment terminal-user">skittz</span>
+          <span class="terminal-segment terminal-directory">~/portfolio</span>
+          <span class="terminal-segment terminal-git">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="3" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="4" cy="13" r="2"/><path d="M4 5v6m8-5c0 4-8 1-8 5"/></svg>
+            <span class="terminal-branch" title={git.branch}>{git.branch}</span>
+            {git.commit && <span class="terminal-commit">@ {git.commit}</span>}
+          </span>
+        </div>
+        <span class="terminal-prompt-meta">
+          <svg class="terminal-status-success" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 8 3 3 7-7"/></svg>
+          <svg class="terminal-status-error" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 4 8 8m0-8-8 8"/></svg>
+          <time data-terminal-time></time>
+        </span>
+      </div>
+      <div class="terminal-prompt-bottom">
+        <label for="terminal-input">
+          <span class="terminal-arrow" aria-hidden="true">❯</span>
+          <span class="sr-only">{ui.input}</span>
+        </label>
+        <div class="terminal-input-wrap">
+          <div class="terminal-highlight" aria-hidden="true" data-terminal-highlight></div>
+          <input
+            id="terminal-input"
+            type="text"
+            autocomplete="off"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+            enterkeyhint="send"
+            autofocus
+            data-terminal-input
+          />
+        </div>
+      </div>
     </form>
   </div>
 </dialog>
 
 <script>
   import { navigate } from "astro:transitions/client";
-  import { complete, createHistory, runCommand } from "@/terminal/shell";
-  import type { Effect, Line, ShellContent } from "@/terminal/shell";
+  import { colorSchemes, complete, createHistory, highlight, runCommand, suggest } from "@/terminal/shell";
+  import type { ColorScheme, Effect, Line, ShellContent } from "@/terminal/shell";
   import { isSnowing, setSnow } from "@/utils/snowfall";
   import { switchLang } from "@/utils/switch-lang";
   import { getTheme, setTheme } from "@/utils/theme";
 
   const REOPEN_KEY = "terminal-mode";
+  const COLORS_KEY = "terminal-colors";
   const recall = createHistory();
 
   const initTerminalMode = () => {
@@ -89,7 +121,34 @@ const ui = isPt
     const input = dialog.querySelector<HTMLInputElement>("[data-terminal-input]")!;
     const closeButton = dialog.querySelector<HTMLButtonElement>("[data-terminal-close]")!;
     const openers = document.querySelectorAll<HTMLButtonElement>("[data-terminal-open]");
+    const ink = dialog.querySelector<HTMLElement>("[data-terminal-highlight]")!;
+    const time = dialog.querySelector<HTMLTimeElement>("[data-terminal-time]")!;
     let focusOpenerOnClose = true;
+    let suggestion = "";
+
+    const updateTime = () => {
+      const now = new Date();
+      time.textContent = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+      time.dateTime = now.toISOString();
+    };
+
+    const syncInk = () => {
+      ink.replaceChildren();
+      for (const part of highlight(input.value)) {
+        const span = document.createElement("span");
+        span.textContent = part.text;
+        span.dataset.highlight = part.type;
+        ink.append(span);
+      }
+      suggestion = suggest(input.value, recall.find(input.value));
+      if (suggestion) {
+        const ghost = document.createElement("span");
+        ghost.dataset.terminalSuggestion = "";
+        ghost.textContent = suggestion.slice(input.value.length);
+        ink.append(ghost);
+      }
+      ink.style.transform = `translateX(${-input.scrollLeft}px)`;
+    };
 
     const print = (line: Line, hang = 0) => {
       const row = document.createElement("p");
@@ -99,7 +158,7 @@ const ui = isPt
         row.style.textIndent = `-${hang}ch`;
       }
 
-      for (const { text, href, command } of line) {
+      for (const { text, href, command, tone, swatch, scheme } of line) {
         if (command) {
           const button = document.createElement("button");
           button.type = "button";
@@ -115,6 +174,13 @@ const ui = isPt
             link.rel = "noopener noreferrer";
           }
           row.append(link);
+        } else if (tone || swatch) {
+          const span = document.createElement("span");
+          span.textContent = text;
+          if (tone) span.dataset.tone = tone;
+          if (swatch) span.dataset.swatch = swatch;
+          if (scheme) span.dataset.colors = scheme;
+          row.append(span);
         } else {
           row.append(text);
         }
@@ -123,11 +189,12 @@ const ui = isPt
       output.append(row);
     };
 
-    const echo = (value: string) => {
+    const echo = (value: string, ok: boolean) => {
       const row = document.createElement("p");
       const prompt = document.createElement("span");
 
-      prompt.textContent = content.prompt;
+      prompt.textContent = "❯";
+      prompt.dataset.result = ok ? "success" : "error";
       row.className = "terminal-echo";
       row.append(prompt, ` ${value}`);
       output.append(row);
@@ -135,6 +202,14 @@ const ui = isPt
 
     const scrollToEnd = () => {
       screen.scrollTop = screen.scrollHeight;
+    };
+
+    const setColors = (name: ColorScheme) => {
+      dialog.dataset.colors = name;
+      try {
+        if (name === "default") localStorage.removeItem(COLORS_KEY);
+        else localStorage.setItem(COLORS_KEY, name);
+      } catch {}
     };
 
     const apply = (effect: Effect) => {
@@ -180,6 +255,9 @@ const ui = isPt
         case "theme":
           setTheme(effect.value);
           break;
+        case "colors":
+          setColors(effect.value);
+          break;
         case "snow":
           setSnow(effect.value);
           break;
@@ -191,16 +269,19 @@ const ui = isPt
     };
 
     const execute = (value: string) => {
-      echo(value);
-      recall.push(value);
-
-      const { lines, effect, hang } = runCommand(value, content, {
+      const { lines, effect, hang, ok } = runCommand(value, content, {
         theme: getTheme(),
         snow: isSnowing(),
+        colors: dialog.dataset.colors as ColorScheme,
       });
 
+      echo(value, ok ?? (form.dataset.result !== "error"));
+      recall.push(value);
+      if (ok !== undefined) form.dataset.result = ok ? "success" : "error";
+      updateTime();
       lines.forEach((line) => print(line, hang));
       input.value = "";
+      syncInk();
       if (effect) apply(effect);
       scrollToEnd();
     };
@@ -213,7 +294,9 @@ const ui = isPt
         print(content.welcome);
       }
 
+      updateTime();
       input.focus();
+      syncInk();
       scrollToEnd();
     };
 
@@ -246,11 +329,23 @@ const ui = isPt
       input.focus();
     });
 
+    input.addEventListener("input", syncInk);
+    input.addEventListener("scroll", syncInk);
+    input.addEventListener("keyup", syncInk);
     input.addEventListener("keydown", (event) => {
+      if (event.isComposing || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.key === "ArrowRight" && !event.shiftKey && suggestion && input.selectionStart === input.value.length && input.selectionEnd === input.value.length) {
+        event.preventDefault();
+        input.value = suggestion;
+        input.setSelectionRange(input.value.length, input.value.length);
+        syncInk();
+        return;
+      }
       if (event.key === "ArrowUp" || event.key === "ArrowDown") {
         event.preventDefault();
         const value = event.key === "ArrowUp" ? recall.previous() : recall.next();
         if (value !== undefined) input.value = value;
+        syncInk();
         return;
       }
 
@@ -259,12 +354,17 @@ const ui = isPt
       event.preventDefault();
       const { value, candidates } = complete(input.value);
       input.value = value;
+      syncInk();
 
       if (candidates.length) {
         print([{ text: candidates.join("  ") }]);
         scrollToEnd();
       }
     });
+
+    let storedColors: string | null = null;
+    try { storedColors = localStorage.getItem(COLORS_KEY); } catch {}
+    dialog.dataset.colors = colorSchemes.find((name) => name === storedColors) ?? "default";
 
     if (sessionStorage.getItem(REOPEN_KEY)) {
       sessionStorage.removeItem(REOPEN_KEY);
@@ -283,15 +383,99 @@ const ui = isPt
 </script>
 
 <style>
+  .terminal-mode,
+  .terminal-mode :global([data-colors="default"]) {
+    --terminal-bg: #f8fafc;
+    --terminal-bar-bg: #e2e8f0;
+    --terminal-border: #cbd5e1;
+    --terminal-surface: #e2e8f0;
+    --terminal-text: #0f172a;
+    --terminal-red: #b91c1c;
+    --terminal-green: #0f766e;
+    --terminal-yellow: #a16207;
+    --terminal-blue: #1d4ed8;
+    --terminal-magenta: #7e22ce;
+    --terminal-cyan: #0e7490;
+  }
+
+  :global(.dark) .terminal-mode,
+  :global(.dark) .terminal-mode :global([data-colors="default"]) {
+    --terminal-bg: #020617;
+    --terminal-bar-bg: #0f172a;
+    --terminal-border: #475569;
+    --terminal-surface: #1e293b;
+    --terminal-text: #e2e8f0;
+    --terminal-red: #f87171;
+    --terminal-green: #4ade80;
+    --terminal-yellow: #facc15;
+    --terminal-blue: #60a5fa;
+    --terminal-magenta: #c084fc;
+    --terminal-cyan: #22d3ee;
+  }
+
+  .terminal-mode[data-colors="dracula"],
+  .terminal-mode :global([data-colors="dracula"]) {
+    --terminal-bg: #282a36;
+    --terminal-bar-bg: #21222c;
+    --terminal-border: #44475a;
+    --terminal-surface: #44475a;
+    --terminal-text: #f8f8f2;
+    --terminal-red: #ff5555;
+    --terminal-green: #50fa7b;
+    --terminal-yellow: #f1fa8c;
+    --terminal-blue: #bd93f9;
+    --terminal-magenta: #ff79c6;
+    --terminal-cyan: #8be9fd;
+  }
+
+  .terminal-mode[data-colors="gruvbox"],
+  .terminal-mode :global([data-colors="gruvbox"]) {
+    --terminal-bg: #282828;
+    --terminal-bar-bg: #1d2021;
+    --terminal-border: #504945;
+    --terminal-surface: #3c3836;
+    --terminal-text: #ebdbb2;
+    --terminal-red: #fb4934;
+    --terminal-green: #b8bb26;
+    --terminal-yellow: #fabd2f;
+    --terminal-blue: #83a598;
+    --terminal-magenta: #d3869b;
+    --terminal-cyan: #8ec07c;
+  }
+
+  .terminal-mode[data-colors="catppuccin"],
+  .terminal-mode :global([data-colors="catppuccin"]) {
+    --terminal-bg: #1e1e2e;
+    --terminal-bar-bg: #181825;
+    --terminal-border: #45475a;
+    --terminal-surface: #313244;
+    --terminal-text: #cdd6f4;
+    --terminal-red: #f38ba8;
+    --terminal-green: #a6e3a1;
+    --terminal-yellow: #f9e2af;
+    --terminal-blue: #89b4fa;
+    --terminal-magenta: #cba6f7;
+    --terminal-cyan: #94e2d5;
+  }
+
+  .terminal-mode[data-colors="tokyo-night"],
+  .terminal-mode :global([data-colors="tokyo-night"]) {
+    --terminal-bg: #1a1b26;
+    --terminal-bar-bg: #16161e;
+    --terminal-border: #414868;
+    --terminal-surface: #292e42;
+    --terminal-text: #c0caf5;
+    --terminal-red: #f7768e;
+    --terminal-green: #9ece6a;
+    --terminal-yellow: #e0af68;
+    --terminal-blue: #7aa2f7;
+    --terminal-magenta: #bb9af7;
+    --terminal-cyan: #7dcfff;
+  }
+
   .terminal-mode {
-    --terminal-bg: rgb(248, 250, 252);
-    --terminal-bar-bg: rgb(226, 232, 240);
-    --terminal-border: rgb(203, 213, 225);
-    --terminal-text: rgb(15, 23, 42);
-    --terminal-muted: rgb(71, 85, 105);
-    --terminal-command: rgb(15, 118, 110);
-    --terminal-link: rgb(29, 78, 216);
-    --terminal-dot: rgba(100, 116, 139, 0.2);
+    --terminal-muted: color-mix(in srgb, var(--terminal-text) 62%, var(--terminal-bg));
+    --terminal-dot: color-mix(in srgb, var(--terminal-text) 16%, transparent);
 
     width: 100%;
     height: 100%;
@@ -304,17 +488,6 @@ const ui = isPt
     background: var(--terminal-bg);
     color: var(--terminal-text);
     font-family: var(--font-mono);
-  }
-
-  :global(.dark) .terminal-mode {
-    --terminal-bg: rgb(2, 6, 23);
-    --terminal-bar-bg: rgb(15, 23, 42);
-    --terminal-border: rgba(71, 85, 105, 0.82);
-    --terminal-text: rgb(226, 232, 240);
-    --terminal-muted: rgb(148, 163, 184);
-    --terminal-command: rgb(74, 222, 128);
-    --terminal-link: rgb(96, 165, 250);
-    --terminal-dot: rgba(148, 163, 184, 0.16);
   }
 
   .terminal-mode[open] {
@@ -350,7 +523,7 @@ const ui = isPt
     padding: 0.6rem clamp(1rem, 3vw, 2.5rem);
     border-bottom: 1px solid var(--terminal-border);
     background: var(--terminal-bar-bg);
-    color: var(--terminal-muted);
+    color: color-mix(in srgb, var(--terminal-text) 62%, var(--terminal-bar-bg));
     font-size: 0.8rem;
   }
 
@@ -375,7 +548,7 @@ const ui = isPt
 
   .terminal-bar button:hover,
   .terminal-bar button:focus-visible {
-    border-color: var(--terminal-command);
+    border-color: var(--terminal-green);
     color: var(--terminal-text);
   }
 
@@ -410,11 +583,15 @@ const ui = isPt
   }
 
   .terminal-output :global(.terminal-echo span) {
-    color: var(--terminal-command);
+    color: var(--terminal-green);
+  }
+
+  .terminal-output :global(.terminal-echo [data-result="error"]) {
+    color: var(--terminal-red);
   }
 
   .terminal-output :global(a) {
-    color: var(--terminal-link);
+    color: var(--terminal-blue);
     text-decoration: underline;
     text-underline-offset: 0.18em;
   }
@@ -423,36 +600,208 @@ const ui = isPt
     padding: 0;
     border: 0;
     background: none;
-    color: var(--terminal-command);
+    color: var(--terminal-green);
     font: inherit;
     text-decoration: underline dotted;
     text-underline-offset: 0.22em;
     cursor: pointer;
   }
 
-  .terminal-prompt {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    margin-top: 0.7rem;
+  .terminal-output :global([data-tone="accent"]),
+  .terminal-output :global([data-tone="blue"]) {
+    color: var(--terminal-blue);
+  }
+  .terminal-output :global([data-tone="red"]) {
+    color: var(--terminal-red);
+  }
+  .terminal-output :global([data-tone="green"]) {
+    color: var(--terminal-green);
+  }
+  .terminal-output :global([data-tone="yellow"]) {
+    color: var(--terminal-yellow);
+  }
+  .terminal-output :global([data-tone="magenta"]) {
+    color: var(--terminal-magenta);
+  }
+  .terminal-output :global([data-tone="cyan"]) {
+    color: var(--terminal-cyan);
   }
 
-  .terminal-prompt label {
-    flex: none;
-    color: var(--terminal-command);
+  .terminal-output :global([data-tone="muted"]) {
+    color: var(--terminal-muted);
+  }
+
+  .terminal-output :global([data-swatch]) {
+    white-space: pre;
+  }
+
+  .terminal-output :global([data-swatch="red"]) {
+    background: var(--terminal-red);
+  }
+
+  .terminal-output :global([data-swatch="green"]) {
+    background: var(--terminal-green);
+  }
+
+  .terminal-output :global([data-swatch="yellow"]) {
+    background: var(--terminal-yellow);
+  }
+
+  .terminal-output :global([data-swatch="blue"]) {
+    background: var(--terminal-blue);
+  }
+
+  .terminal-output :global([data-swatch="magenta"]) {
+    background: var(--terminal-magenta);
+  }
+
+  .terminal-output :global([data-swatch="cyan"]) {
+    background: var(--terminal-cyan);
+  }
+
+  .terminal-prompt {
+    --prompt-status: var(--terminal-green);
+    position: relative;
+    margin-top: 1rem;
+    padding-left: 0.8rem;
+    border-left: 1px solid var(--terminal-border);
+  }
+
+  .terminal-prompt[data-result="error"] {
+    --prompt-status: var(--terminal-red);
+  }
+  .terminal-prompt-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.78rem;
+  }
+  .terminal-segments {
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+  }
+  .terminal-segment {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.18rem 0.6rem 0.18rem 0.85rem;
+    background: var(--segment-bg);
+    color: var(--segment-text);
     white-space: nowrap;
   }
-
-  .terminal-prompt input {
+  .terminal-segment::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 0.65rem;
+    height: 100%;
+    background: var(--segment-bg);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+    z-index: 1;
+  }
+  .terminal-user {
+    --segment-bg: var(--terminal-blue);
+    --segment-text: var(--terminal-bg);
+    padding-left: 0.55rem;
+    z-index: 3;
+  }
+  .terminal-directory {
+    --segment-bg: var(--terminal-surface);
+    --segment-text: var(--terminal-text);
+    z-index: 2;
+  }
+  .terminal-git {
+    --segment-bg: var(--terminal-green);
+    --segment-text: var(--terminal-bg);
+    min-width: 0;
+  }
+  .terminal-branch {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .terminal-commit {
+    flex: none;
+  }
+  .terminal-prompt svg {
+    width: 1rem;
+    height: 1rem;
+    flex: none;
+  }
+  .terminal-prompt-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+    flex: none;
+    color: var(--prompt-status);
+  }
+  .terminal-prompt-meta time {
+    color: var(--terminal-muted);
+  }
+  .terminal-status-error {
+    display: none;
+  }
+  .terminal-prompt[data-result="error"] .terminal-status-success {
+    display: none;
+  }
+  .terminal-prompt[data-result="error"] .terminal-status-error {
+    display: block;
+  }
+  .terminal-prompt-bottom {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-top: 0.35rem;
+  }
+  .terminal-prompt label {
+    flex: none;
+    color: var(--prompt-status);
+  }
+  .terminal-input-wrap {
+    position: relative;
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .terminal-highlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    white-space: pre;
+    font: inherit;
+  }
+  .terminal-highlight :global([data-highlight="command"]) {
+    color: var(--terminal-green);
+  }
+  .terminal-highlight :global([data-highlight="unknown"]) {
+    color: var(--terminal-red);
+  }
+  .terminal-highlight :global([data-terminal-suggestion]) {
+    color: var(--terminal-muted);
+  }
+  .terminal-prompt input {
+    position: relative;
+    display: block;
+    width: 100%;
     min-width: 0;
     padding: 0;
     border: 0;
     background: transparent;
-    color: inherit;
+    color: transparent;
     font: inherit;
-    caret-color: var(--terminal-command);
+    line-height: inherit;
+    caret-color: var(--terminal-text);
     outline: none;
+  }
+  .terminal-prompt:focus-within {
+    border-left-color: var(--prompt-status);
+  }
+  .terminal-prompt input::selection {
+    background: var(--terminal-surface);
+    color: var(--terminal-text);
   }
 
   @media (max-width: 767px), (hover: none) {
@@ -460,14 +809,40 @@ const ui = isPt
       font-size: 0.85rem;
     }
 
-    .terminal-prompt {
-      flex-direction: column;
-      gap: 0.1rem;
+    .terminal-input-wrap {
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .terminal-commit,
+    .terminal-prompt-meta time {
+      display: none;
     }
 
+    .terminal-prompt-top {
+      gap: 1.2rem;
+      font-size: 0.72rem;
+    }
+
+    .terminal-prompt {
+      padding-left: 0.5rem;
+    }
+
+    .terminal-segment {
+      gap: 0.25rem;
+      padding-right: 0.4rem;
+    }
+  }
+
+  @media (forced-colors: active) {
     .terminal-prompt input {
-      width: 100%;
-      font-size: 16px;
+      color: CanvasText;
+      caret-color: CanvasText;
+    }
+
+    .terminal-highlight {
+      visibility: hidden;
     }
   }
 
