@@ -1,0 +1,46 @@
+.reactive-text {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  color: #047857;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+.dark .reactive-text {
+  color: #6ee7b7;
+}
+
+.reactive-text > .sr-only {
+  user-select: none;
+}
+
+.reactive-text-visual {
+  display: inline;
+}
+
+.reactive-text-letter {
+  position: relative;
+  display: inline-block;
+  white-space: pre;
+}
+
+.reactive-text-letter::before {
+  content: attr(data-character);
+  font-weight: 800;
+  visibility: hidden;
+}
+
+.reactive-text-glyph {
+  position: absolute;
+  inset: 0;
+  text-align: center;
+  font-weight: 500;
+  transition: font-weight 0.16s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reactive-text-glyph {
+    transition: none;
+  }
+}

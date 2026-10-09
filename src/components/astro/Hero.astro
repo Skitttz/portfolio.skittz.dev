@@ -2,7 +2,7 @@
 import "@/styles/hero.css";
 import AboutPreview from "@components/astro/AboutPreview.astro";
 import Button from "@components/astro/Button.astro";
-import DynamicText from "@components/astro/DynamicText.astro";
+import ReactiveText from "@components/astro/ReactiveText.astro";
 import StatusIndicator from "@components/astro/StatusIndicator.astro";
 import TerminalToggle from "@components/astro/TerminalToggle.astro";
 import ThemeToggle from "@components/astro/ThemeToggle.astro";
@@ -36,18 +36,14 @@ const {
   lang,
 } = Astro.props;
 
-const textsProfissional = {
-  en: ["Front-End Developer.", "Software Engineer.", "UI Developer."],
-  "pt-br": [
-    "Desenvolvedor Front-End.",
-    "Engenheiro de Software.",
-    "Desenvolvedor de UI.",
-  ],
+const professionalText = {
+  en: "Front-End Developer.",
+  "pt-br": "Desenvolvedor Front-End.",
 };
 
-const textsToDynamicText: string[] =
-  textsProfissional[lang as keyof typeof textsProfissional] ||
-  textsProfissional.en;
+const roleText =
+  professionalText[lang as keyof typeof professionalText] ||
+  professionalText.en;
 const articlesMobileText = textSecondary.replace(/\s+posts$/i, "");
 const projectsCueText =
   lang === "pt-br"
@@ -101,7 +97,7 @@ const projectsCueText =
         <div class="flex items-center justify-center space-x-2 text-lg">
           <span class="text-gray-600 dark:text-slate-400"
             >{selfProfissionalText} {" "}
-            <DynamicText texts={textsToDynamicText} /></span
+            <ReactiveText text={roleText} /></span
           >
         </div>
         <div class="flex justify-center">

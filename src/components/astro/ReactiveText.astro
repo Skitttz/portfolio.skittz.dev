@@ -1,0 +1,138 @@
+---
+import "@/styles/reactive-text.css";
+
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+---
+
+<span class="reactive-text" data-reactive-text>
+  <span class="sr-only">{text}</span>
+  <span class="reactive-text-visual" aria-hidden="true">
+    {Array.from(text).map((character) => (
+      <span class="reactive-text-letter" data-character={character}>
+        <span class="reactive-text-glyph">{character}</span>
+      </span>
+    ))}
+  </span>
+</span>
+
+<script>
+  const BASE_WEIGHT = 500;
+  const ACTIVE_WEIGHT = 800;
+  const RADIUS = 80;
+
+  const mountReactiveText = (root: HTMLElement) => {
+    const letters = Array.from(
+      root.querySelectorAll<HTMLElement>(".reactive-text-letter"),
+    );
+    const glyphs = letters.map(
+      (letter) => letter.querySelector<HTMLElement>(".reactive-text-glyph")!,
+    );
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const controller = new AbortController();
+    const { signal } = controller;
+    let frame: number | null = null;
+    let touchTimer: number | null = null;
+    let active = false;
+    let point = { x: 0, y: 0 };
+
+    const reset = () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      if (touchTimer !== null) clearTimeout(touchTimer);
+      frame = null;
+      touchTimer = null;
+      if (active) glyphs.forEach((glyph) => glyph.style.removeProperty("font-weight"));
+      active = false;
+    };
+
+    const render = () => {
+      frame = null;
+      const weights = letters.map((letter) => {
+        const bounds = letter.getBoundingClientRect();
+        const distance = Math.hypot(
+          point.x - (bounds.left + bounds.width / 2),
+          point.y - (bounds.top + bounds.height / 2),
+        );
+        const influence = Math.max(0, 1 - distance / RADIUS);
+        return Math.round(
+          BASE_WEIGHT + (ACTIVE_WEIGHT - BASE_WEIGHT) * influence ** 2,
+        );
+      });
+
+      glyphs.forEach((glyph, index) => {
+        const weight = String(weights[index]);
+        if (glyph.style.fontWeight !== weight) glyph.style.fontWeight = weight;
+      });
+      active = true;
+    };
+
+    const respond = (event: PointerEvent) => {
+      if (reducedMotion.matches || document.hidden) return;
+      point = { x: event.clientX, y: event.clientY };
+      const bounds = root.getBoundingClientRect();
+      if (
+        point.x < bounds.left - RADIUS || point.x > bounds.right + RADIUS ||
+        point.y < bounds.top - RADIUS || point.y > bounds.bottom + RADIUS
+      ) {
+        reset();
+        return;
+      }
+      if (frame === null) frame = requestAnimationFrame(render);
+    };
+
+    document.addEventListener("pointermove", (event) => {
+      if (event.pointerType !== "touch") respond(event);
+    }, { signal });
+
+    root.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "touch") return;
+      if (touchTimer !== null) clearTimeout(touchTimer);
+      touchTimer = null;
+      respond(event);
+    }, { signal });
+
+    root.addEventListener("pointerup", (event) => {
+      if (event.pointerType === "touch") touchTimer = window.setTimeout(reset, 220);
+    }, { signal });
+
+    root.addEventListener("pointercancel", reset, { signal });
+    document.addEventListener("pointerout", (event) => {
+      if (event.pointerType !== "touch" && !event.relatedTarget) reset();
+    }, { signal });
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) reset();
+    }, { signal });
+    window.addEventListener("blur", reset, { signal });
+    window.addEventListener("resize", reset, { signal });
+    window.addEventListener("scroll", reset, { signal, capture: true });
+    reducedMotion.addEventListener("change", reset, { signal });
+
+    return () => {
+      controller.abort();
+      reset();
+    };
+  };
+
+  let cleanupReactiveText = () => {};
+
+  const initReactiveText = () => {
+    cleanupReactiveText();
+    const cleanups = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-reactive-text]"),
+      mountReactiveText,
+    );
+    cleanupReactiveText = () => cleanups.forEach((cleanup) => cleanup());
+  };
+
+  document.addEventListener("astro:page-load", initReactiveText);
+  document.addEventListener("astro:before-swap", () => cleanupReactiveText());
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initReactiveText, { once: true });
+  } else {
+    initReactiveText();
+  }
+</script>
