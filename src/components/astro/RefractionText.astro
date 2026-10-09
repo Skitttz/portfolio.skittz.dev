@@ -1,0 +1,164 @@
+---
+import "@/styles/refraction-text.css";
+
+interface Props {
+  words: string[];
+}
+
+const { words } = Astro.props;
+const primaryText = words[0] || "";
+---
+
+<span class="refraction-text" data-refraction-text data-words={JSON.stringify(words)}>
+  <span class="sr-only">{primaryText}</span>
+  <span class="refraction-text-visual" aria-hidden="true">
+    <span class="refraction-text-sizer">
+      {words.map((word) => <span>{word}</span>)}
+    </span>
+    <span class="refraction-text-track">
+      <span class="refraction-text-word">{primaryText}</span>
+    </span>
+  </span>
+</span>
+
+<script>
+  const mountRefractionText = (root: HTMLElement) => {
+    const words = JSON.parse(root.dataset.words || "[]") as string[];
+    const track = root.querySelector<HTMLElement>(".refraction-text-track")!;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const controller = new AbortController();
+    const { signal } = controller;
+    let index = 0;
+    let generation = 0;
+    let timer: number | null = null;
+    let disposed = false;
+
+    const wordLayer = (text: string) => {
+      const layer = document.createElement("span");
+      layer.className = "refraction-text-word";
+      layer.textContent = text;
+      return layer;
+    };
+
+    const clear = () => {
+      generation++;
+      if (timer !== null) clearTimeout(timer);
+      timer = null;
+      track.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
+      track.replaceChildren();
+    };
+
+    const settle = () => {
+      clear();
+      track.append(wordLayer(words[index]));
+    };
+
+    const canAnimate = () => !disposed && !reducedMotion.matches && !document.hidden;
+
+    const animate = (layer: HTMLElement, keyframes: Keyframe[], duration: number, delay = 0) => {
+      const animation = layer.animate(keyframes, {
+        duration,
+        delay,
+        easing: "cubic-bezier(.16, 1, .3, 1)",
+        fill: "both",
+      });
+      return animation.finished.catch(() => {});
+    };
+
+    const schedule = () => {
+      if (!canAnimate() || words.length < 2) return;
+      timer = window.setTimeout(() => {
+        const previous = words[index];
+        index = (index + 1) % words.length;
+        void transition(previous);
+      }, 3200);
+    };
+
+    const transition = async (previous = "") => {
+      clear();
+      if (!canAnimate()) {
+        settle();
+        return;
+      }
+      const currentGeneration = generation;
+      const jobs: Promise<unknown>[] = [];
+
+      if (previous) {
+        const outgoing = wordLayer(previous);
+        track.append(outgoing);
+        jobs.push(animate(outgoing, [
+          { opacity: 1, filter: "blur(0px)" },
+          { opacity: 0, filter: "blur(3px)", transform: "translateX(-12px)" },
+        ], 260));
+      }
+
+      const cuts = [[0, 73], [27, 37], [63, 0]];
+      cuts.forEach(([top, bottom], part) => {
+        const layer = wordLayer(words[index]);
+        layer.style.clipPath = `inset(${top}% 0 ${bottom}% 0)`;
+        track.append(layer);
+        const shift = part === 1 ? 34 : -28;
+        jobs.push(animate(layer, [
+          {
+            opacity: 0,
+            transform: `translateX(${shift}px) skewX(${part === 1 ? -16 : 12}deg)`,
+            filter: "blur(1.5px)",
+            color: "var(--refraction-highlight)",
+          },
+          {
+            opacity: 1,
+            transform: `translateX(${shift / 3}px) skewX(0deg)`,
+            filter: "blur(0px)",
+            offset: 0.55,
+          },
+          {
+            opacity: 1,
+            transform: "translateX(0px) skewX(0deg)",
+            filter: "blur(0px)",
+            color: "var(--refraction-color)",
+          },
+        ], 800, 130 + part * 65));
+      });
+
+      await Promise.all(jobs);
+      if (disposed || generation !== currentGeneration) return;
+      settle();
+      schedule();
+    };
+
+    const syncMotion = () => {
+      settle();
+      schedule();
+    };
+
+    document.addEventListener("visibilitychange", syncMotion, { signal });
+    reducedMotion.addEventListener("change", syncMotion, { signal });
+    if (words.length > 1) void transition();
+
+    return () => {
+      disposed = true;
+      controller.abort();
+      settle();
+    };
+  };
+
+  let cleanupRefractionText = () => {};
+
+  const initRefractionText = () => {
+    cleanupRefractionText();
+    const cleanups = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-refraction-text]"),
+      mountRefractionText,
+    );
+    cleanupRefractionText = () => cleanups.forEach((cleanup) => cleanup());
+  };
+
+  document.addEventListener("astro:page-load", initRefractionText);
+  document.addEventListener("astro:before-swap", () => cleanupRefractionText());
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initRefractionText, { once: true });
+  } else {
+    initRefractionText();
+  }
+</script>

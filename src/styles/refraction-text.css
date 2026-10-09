@@ -1,0 +1,48 @@
+.refraction-text {
+  --refraction-color: #047857;
+  --refraction-highlight: #0369a1;
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--refraction-color);
+  vertical-align: baseline;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.dark .refraction-text {
+  --refraction-color: #6ee7b7;
+  --refraction-highlight: #7dd3fc;
+}
+
+.refraction-text > .sr-only {
+  user-select: none;
+}
+
+.refraction-text-visual {
+  position: relative;
+  display: grid;
+}
+
+.refraction-text-sizer {
+  display: grid;
+  visibility: hidden;
+}
+
+.refraction-text-sizer > span {
+  grid-area: 1 / 1;
+}
+
+.refraction-text-track {
+  position: absolute;
+  inset: 0;
+}
+
+.refraction-text-word {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transform-origin: left center;
+}
