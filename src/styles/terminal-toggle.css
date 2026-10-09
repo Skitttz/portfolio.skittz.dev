@@ -1,0 +1,5 @@
+@media (scripting: none) {
+  [data-terminal-open] {
+    display: none;
+  }
+}

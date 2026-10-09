@@ -1,0 +1,266 @@
+.preview-shell {
+  position: relative;
+  z-index: 60;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+}
+
+:where(.preview-shell) .preview-trigger {
+  display: grid;
+  width: 6rem;
+  height: 6rem;
+  place-items: center;
+  padding: 0.45rem;
+  border: 1px solid #d7dee7;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.13);
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+:where(.preview-shell) .preview-trigger:hover,
+:where(.preview-shell) .preview-trigger:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18);
+}
+
+:where(.preview-shell) .preview-trigger img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.65rem;
+}
+
+.dark :where(.preview-shell) .preview-trigger {
+  border-color: #334155;
+  background: #0f172a;
+}
+
+:where(.preview-shell) .preview-hint {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 0.45rem 0.7rem;
+  border-radius: 99px;
+  background: #1f2937;
+  color: #fff;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.14);
+  font-size: 0.67rem;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+:where(.preview-shell) .preview-hint--mobile {
+  display: none;
+}
+
+.preview-shell:hover .preview-hint,
+:where(.preview-shell) .preview-trigger:focus-visible ~ .preview-hint {
+  opacity: 0;
+}
+
+:where(.preview-shell) .preview-panel {
+  position: absolute;
+  top: calc(100% + 1rem);
+  left: 50%;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  width: min(38rem, calc(100vw - 2rem));
+  max-height: calc(50dvh + 6.75rem);
+  transform: translate(-50%, -0.4rem);
+  padding: 1rem 1.25rem 1.1rem;
+  border: 1px solid #dbe3e7;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+  color: #152b34;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.2s,
+    transform 0.2s,
+    visibility 0.2s;
+}
+
+:where(.preview-shell) .preview-panel::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: 1rem;
+}
+
+.preview-shell:hover .preview-panel,
+:where(.preview-shell) .preview-trigger:focus-visible ~ .preview-panel,
+:where(.preview-shell) .preview-panel:focus-within {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+}
+
+.preview-shell.is-dismissed .preview-panel {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.dark :where(.preview-shell) .preview-panel {
+  border-color: #334155;
+  background: #111f2b;
+  color: #edf6f4;
+}
+
+:where(.preview-shell) .preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+:where(.preview-shell) .preview-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+:where(.preview-shell) .preview-location {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0;
+  color: #657882;
+  font: 600 0.68rem var(--font-mono);
+}
+
+:where(.preview-shell) .preview-location svg {
+  flex: none;
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.dark :where(.preview-shell) .preview-location {
+  color: #8ea4b2;
+}
+
+:where(.preview-shell) .preview-body {
+  display: grid;
+  gap: 0.5rem;
+  min-height: 0;
+  overflow-y: auto;
+  color: #475569;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+:where(.preview-shell) .preview-body p {
+  margin: 0;
+}
+
+.dark :where(.preview-shell) .preview-body {
+  color: #a9bdc7;
+}
+
+:where(.preview-shell) .preview-dialog {
+  width: min(26rem, calc(100vw - 2rem));
+  max-height: 90dvh;
+  margin: auto;
+  padding: 1.2rem;
+  overscroll-behavior: contain;
+  border: 1px solid #dbe3e7;
+  border-radius: 1rem;
+  background: #fff;
+  color: #152b34;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  text-align: left;
+}
+
+:where(.preview-shell) .preview-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+:where(.preview-shell) .preview-dialog::backdrop {
+  background: rgba(5, 15, 25, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+:where(.preview-shell) .preview-dialog .preview-head {
+  margin-bottom: 0.35rem;
+}
+
+:where(.preview-shell) .preview-dialog .preview-head h2 {
+  font-size: 1.1rem;
+}
+
+:where(.preview-shell) .preview-dialog .preview-head button {
+  display: grid;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 0;
+  border-radius: 0.4rem;
+  background: #edf2f2;
+  cursor: pointer;
+}
+
+:where(.preview-shell) .preview-dialog .preview-head svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+:where(.preview-shell) .preview-dialog .preview-location {
+  margin-bottom: 0.85rem;
+}
+
+:where(.preview-shell) .preview-dialog .preview-body {
+  gap: 0.65rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.dark :where(.preview-shell) .preview-dialog {
+  border-color: #334155;
+  background: #111f2b;
+  color: #edf6f4;
+}
+
+.dark :where(.preview-shell) .preview-dialog .preview-head button {
+  background: #263b45;
+  color: #edf6f4;
+}
+
+@media (max-width: 767px), (hover: none) {
+  :where(.preview-shell) .preview-panel {
+    display: none;
+  }
+  :where(.preview-shell) .preview-hint {
+    font-size: 0.62rem;
+  }
+  :where(.preview-shell) .preview-hint--desktop {
+    display: none;
+  }
+  :where(.preview-shell) .preview-hint--mobile {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.preview-shell) .preview-trigger,
+  :where(.preview-shell) .preview-panel {
+    transition: none;
+  }
+}

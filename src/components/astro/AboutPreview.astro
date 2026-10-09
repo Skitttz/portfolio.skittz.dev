@@ -1,4 +1,5 @@
 ---
+import "@/styles/about-preview.css";
 import { Icon } from "astro-icon/components";
 import en from "@locales/en.json";
 import pt from "@locales/pt-br.json";
@@ -65,40 +66,3 @@ const paragraphs = about.description.split("\n\n");
     });
   });
 </script>
-
-<style>
-  .preview-shell { position: relative; z-index: 60; display: inline-grid; place-items: center; flex: none; }
-  .preview-trigger { display: grid; width: 6rem; height: 6rem; place-items: center; padding: .45rem; border: 1px solid #d7dee7; border-radius: 1rem; background: #fff; box-shadow: 0 12px 28px rgba(15,23,42,.13); cursor: pointer; transition: transform .2s, box-shadow .2s; }
-  .preview-trigger:hover, .preview-trigger:focus-visible { transform: translateY(-3px); box-shadow: 0 18px 36px rgba(15,23,42,.18); }
-  .preview-trigger img { width: 100%; height: 100%; object-fit: cover; border-radius: .65rem; }
-  :global(.dark) .preview-trigger { border-color: #334155; background: #0f172a; }
-  .preview-hint { position: absolute; bottom: calc(100% + .5rem); left: 50%; transform: translateX(-50%); white-space: nowrap; padding: .45rem .7rem; border-radius: 99px; background: #1f2937; color: #fff; box-shadow: 0 5px 16px rgba(0,0,0,.14); font-size: .67rem; font-weight: 600; pointer-events: none; }
-  .preview-hint--mobile { display: none; }
-  .preview-shell:hover .preview-hint, .preview-trigger:focus-visible ~ .preview-hint { opacity: 0; }
-  .preview-panel { position: absolute; top: calc(100% + 1rem); left: 50%; z-index: 80; display: flex; flex-direction: column; width: min(38rem, calc(100vw - 2rem)); max-height: calc(50dvh + 6.75rem); transform: translate(-50%, -.4rem); padding: 1rem 1.25rem 1.1rem; border: 1px solid #dbe3e7; border-radius: 1rem; background: #fff; box-shadow: 0 24px 60px rgba(15,23,42,.24); color: #152b34; text-align: left; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s, transform .2s, visibility .2s; }
-  .preview-panel::before { content: ""; position: absolute; bottom: 100%; left: 0; right: 0; height: 1rem; }
-  .preview-shell:hover .preview-panel, .preview-trigger:focus-visible ~ .preview-panel, .preview-panel:focus-within { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, 0); }
-  .preview-shell.is-dismissed .preview-panel { opacity: 0; visibility: hidden; pointer-events: none; }
-  :global(.dark) .preview-panel { border-color: #334155; background: #111f2b; color: #edf6f4; }
-  .preview-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: .6rem; }
-  .preview-head h2 { margin: 0; font-size: 1.05rem; font-weight: 700; line-height: 1.3; }
-  .preview-location { display: flex; align-items: center; gap: .3rem; margin: 0; color: #657882; font: 600 .68rem var(--font-mono); }
-  .preview-location :global(svg) { flex: none; width: .9rem; height: .9rem; }
-  :global(.dark) .preview-location { color: #8ea4b2; }
-  .preview-body { display: grid; gap: .5rem; min-height: 0; overflow-y: auto; color: #475569; font-size: .8125rem; line-height: 1.55; }
-  .preview-body p { margin: 0; }
-  :global(.dark) .preview-body { color: #a9bdc7; }
-  .preview-dialog { width: min(26rem, calc(100vw - 2rem)); max-height: 90dvh; margin: auto; padding: 1.2rem; overscroll-behavior: contain; border: 1px solid #dbe3e7; border-radius: 1rem; background: #fff; color: #152b34; box-shadow: 0 30px 80px rgba(0,0,0,.35); text-align: left; }
-  .preview-dialog[open] { display: flex; flex-direction: column; }
-  .preview-dialog::backdrop { background: rgba(5,15,25,.65); backdrop-filter: blur(4px); }
-  .preview-dialog .preview-head { margin-bottom: .35rem; }
-  .preview-dialog .preview-head h2 { font-size: 1.1rem; }
-  .preview-dialog .preview-head button { display: grid; flex: none; width: 2rem; height: 2rem; place-items: center; border: 0; border-radius: .4rem; background: #edf2f2; cursor: pointer; }
-  .preview-dialog .preview-head :global(svg) { width: 1.1rem; height: 1.1rem; }
-  .preview-dialog .preview-location { margin-bottom: .85rem; }
-  .preview-dialog .preview-body { gap: .65rem; font-size: .875rem; line-height: 1.6; }
-  :global(.dark) .preview-dialog { border-color: #334155; background: #111f2b; color: #edf6f4; }
-  :global(.dark) .preview-dialog .preview-head button { background: #263b45; color: #edf6f4; }
-  @media (max-width: 767px), (hover: none) { .preview-panel { display: none; } .preview-hint { font-size: .62rem; } .preview-hint--desktop { display: none; } .preview-hint--mobile { display: block; } }
-  @media (prefers-reduced-motion: reduce) { .preview-trigger, .preview-panel { transition: none; } }
-</style>
