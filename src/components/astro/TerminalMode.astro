@@ -74,7 +74,6 @@ const ui = isPt
   import { switchLang } from "@/utils/switch-lang";
   import { getTheme, setTheme } from "@/utils/theme";
 
-  // Set before a language switch, so the terminal reopens on the page that loads next.
   const REOPEN_KEY = "terminal-mode";
   const recall = createHistory();
 
@@ -158,7 +157,6 @@ const ui = isPt
             block: "start",
           });
 
-          // The keyboard continues from the section. Left on the button, the next Tab would jump back to the top of the page.
           if (landing) {
             landing.tabIndex = -1;
             landing.style.outline = "none";
@@ -240,7 +238,6 @@ const ui = isPt
       if (!button) return;
 
       execute(button.dataset.terminalRun!);
-      // On touch screens focusing the field would raise the keyboard over what was just printed.
       if (dialog.open && !window.matchMedia("(hover: none)").matches) input.focus();
     });
 
@@ -259,7 +256,6 @@ const ui = isPt
         return;
       }
 
-      // With an empty field Tab keeps moving focus, so the keyboard is never trapped here.
       if (event.key !== "Tab" || event.shiftKey || !input.value.trim()) return;
 
       event.preventDefault();
@@ -328,7 +324,6 @@ const ui = isPt
     animation: terminal-in 0.16s ease-out;
   }
 
-  /* Otherwise the page scrollbar stays visible beside the terminal, and dragging it scrolls the page behind. */
   :global(html:has(.terminal-mode[open])) {
     overflow: hidden;
   }
@@ -467,7 +462,6 @@ const ui = isPt
       gap: 0.1rem;
     }
 
-    /* iOS zooms the page when a focused field uses less than 16px. */
     .terminal-prompt input {
       width: 100%;
       font-size: 16px;

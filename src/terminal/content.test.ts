@@ -8,7 +8,6 @@ import type { ShellState } from "./shell.ts";
 
 const state: ShellState = { theme: "dark", snow: true };
 
-// The real locale values feed the builder; every expectation is a literal copied from the spec tables.
 const portuguese = buildTerminalContent({
   lang: "pt-br",
   nickname: pt.nickname,

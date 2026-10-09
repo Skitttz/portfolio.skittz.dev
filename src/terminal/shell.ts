@@ -15,7 +15,6 @@ type Effect =
   | { type: "snow"; value: boolean };
 
 type ShellState = { theme: Theme; snow: boolean };
-// `hang` is the width, in characters, of the label column of "label + value" lines, so wrapped text can align under the value.
 type ShellResult = { lines: Line[]; effect?: Effect; hang?: number };
 
 const commands = [
@@ -70,7 +69,6 @@ type ShellContent = {
   };
 };
 
-// Maps instead of object literals: a typed word such as "constructor" must not hit Object.prototype.
 const themeValues = new Map<string, Theme>([["light", "light"], ["claro", "light"], ["dark", "dark"], ["escuro", "dark"]]);
 const langValues = new Map<string, Lang>([["pt", "pt-br"], ["pt-br", "pt-br"], ["en", "en"]]);
 const snowValues = new Map<string, boolean>([["on", true], ["off", false]]);

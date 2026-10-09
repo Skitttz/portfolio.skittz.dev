@@ -58,7 +58,6 @@ const paragraphs = about.description.split("\n\n");
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setupAboutPreview, { once: true });
   else setupAboutPreview();
   document.addEventListener("astro:after-swap", setupAboutPreview);
-  // Escape hides the panel until the pointer or the focus comes back, so what opens on hover can be dismissed without moving away.
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
     document.querySelectorAll<HTMLElement>(".preview-shell").forEach((shell) => {
@@ -76,10 +75,8 @@ const paragraphs = about.description.split("\n\n");
   .preview-hint { position: absolute; bottom: calc(100% + .5rem); left: 50%; transform: translateX(-50%); white-space: nowrap; padding: .45rem .7rem; border-radius: 99px; background: #1f2937; color: #fff; box-shadow: 0 5px 16px rgba(0,0,0,.14); font-size: .67rem; font-weight: 600; pointer-events: none; }
   .preview-hint--mobile { display: none; }
   .preview-shell:hover .preview-hint, .preview-trigger:focus-visible ~ .preview-hint { opacity: 0; }
-  /* The photo sits just above the middle of the hero, so about half the viewport plus 7rem is left below it. */
   .preview-panel { position: absolute; top: calc(100% + 1rem); left: 50%; z-index: 80; display: flex; flex-direction: column; width: min(38rem, calc(100vw - 2rem)); max-height: calc(50dvh + 6.75rem); transform: translate(-50%, -.4rem); padding: 1rem 1.25rem 1.1rem; border: 1px solid #dbe3e7; border-radius: 1rem; background: #fff; box-shadow: 0 24px 60px rgba(15,23,42,.24); color: #152b34; text-align: left; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s, transform .2s, visibility .2s; }
   .preview-panel::before { content: ""; position: absolute; bottom: 100%; left: 0; right: 0; height: 1rem; }
-  /* Keyboard focus opens the panel; the focus a mouse click leaves on the photo does not, or the panel would stay over the buttons below. */
   .preview-shell:hover .preview-panel, .preview-trigger:focus-visible ~ .preview-panel, .preview-panel:focus-within { opacity: 1; visibility: visible; pointer-events: auto; transform: translate(-50%, 0); }
   .preview-shell.is-dismissed .preview-panel { opacity: 0; visibility: hidden; pointer-events: none; }
   :global(.dark) .preview-panel { border-color: #334155; background: #111f2b; color: #edf6f4; }

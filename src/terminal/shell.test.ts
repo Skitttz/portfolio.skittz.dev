@@ -3,7 +3,6 @@ import { describe, test } from "node:test";
 import { complete, createHistory, runCommand } from "./shell.ts";
 import type { ShellContent, ShellState } from "./shell.ts";
 
-// A small content written by hand, so every expectation below is a literal.
 const content: ShellContent = {
   lang: "en",
   prompt: "test@shell:~$",
