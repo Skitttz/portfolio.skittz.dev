@@ -206,13 +206,27 @@ const ui = isPt
       } catch {}
     };
 
+    const close = async () => {
+      if (!dialog.open || dialog.dataset.closing) return;
+      const presentation = getComputedStyle(dialog);
+      dialog.style.setProperty("--terminal-exit-opacity", presentation.opacity);
+      dialog.style.setProperty("--terminal-exit-transform", presentation.transform);
+      dialog.dataset.closing = "true";
+      setTerminalMode(false);
+      await Promise.allSettled(dialog.getAnimations().map((animation) => animation.finished));
+      if (dialog.isConnected) dialog.close();
+      delete dialog.dataset.closing;
+      dialog.style.removeProperty("--terminal-exit-opacity");
+      dialog.style.removeProperty("--terminal-exit-transform");
+    };
+
     const apply = (effect: Effect) => {
       switch (effect.type) {
         case "clear":
           output.replaceChildren();
           break;
         case "exit":
-          dialog.close();
+          void close();
           break;
         case "panel": {
           panel.querySelectorAll<HTMLElement>("[data-terminal-section]").forEach((section) => {
@@ -253,6 +267,7 @@ const ui = isPt
     };
 
     const execute = (value: string) => {
+      if (dialog.dataset.closing) return;
       const { lines, effect, hang, ok } = runCommand(value, content, {
         theme: getTheme(),
         snow: isSnowing(),
@@ -287,7 +302,12 @@ const ui = isPt
 
     openers.forEach((button) => button.addEventListener("click", open));
 
-    closeButton.addEventListener("click", () => dialog.close());
+    closeButton.addEventListener("click", () => { void close(); });
+    dialog.addEventListener("cancel", (event) => {
+      if (event.target !== dialog) return;
+      event.preventDefault();
+      void close();
+    });
     dialog.addEventListener("close", () => {
       if (!dialog.isConnected || dialog.open) return;
       setTerminalMode(false);
@@ -509,6 +529,10 @@ const ui = isPt
     animation: none;
   }
 
+  .terminal-mode[data-closing][open] {
+    animation: terminal-out 0.16s ease-in forwards;
+  }
+
   :global(html:has(.terminal-mode[open])) {
     overflow: hidden;
   }
@@ -521,6 +545,17 @@ const ui = isPt
     to {
       opacity: 1;
       transform: none;
+    }
+  }
+
+  @keyframes terminal-out {
+    from {
+      opacity: var(--terminal-exit-opacity, 1);
+      transform: var(--terminal-exit-transform, none);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(0.4rem);
     }
   }
 
@@ -833,7 +868,8 @@ const ui = isPt
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .terminal-mode[open] {
+    .terminal-mode[open],
+    .terminal-mode[data-closing][open] {
       animation: none;
     }
 
