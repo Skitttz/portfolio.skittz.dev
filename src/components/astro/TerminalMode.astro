@@ -328,6 +328,11 @@ const ui = isPt
     animation: terminal-in 0.16s ease-out;
   }
 
+  /* Otherwise the page scrollbar stays visible beside the terminal, and dragging it scrolls the page behind. */
+  :global(html:has(.terminal-mode[open])) {
+    overflow: hidden;
+  }
+
   @keyframes terminal-in {
     from {
       opacity: 0;
